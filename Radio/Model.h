@@ -49,10 +49,6 @@ class Model
   void setMaxValue(uint8_t channel, int value);
   void setTrimValue(uint8_t channel, uint16_t value); 
   void setRevertValue(uint8_t channel, bool value);
-
-  void saveToEEPROM();
-  void loadFromEEPROM();
-
 };
 
 #endif

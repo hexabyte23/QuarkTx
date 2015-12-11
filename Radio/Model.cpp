@@ -1,7 +1,6 @@
 #include "Model.h"
 
 #include <arduino.h>
-#include <EEPROM.h>
 #include "config.h"
 #include "FlashMem.h"
 
@@ -78,36 +77,6 @@ void Model::dump()
     Serial.print(channel_[idx].servo_.isRevert_, HEX);
     Serial.println();
   }
-}
-
-void Model::saveToEEPROM()
-{
-  EEPROM.put(0, channel_);
-/*
-  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
-    EEPROM.put(idx  , channel_[idx].servo_.minCurse_);
-    EEPROM.put(idx+1, channel_[idx].servo_.maxCurse_);
-    EEPROM.put(idx+2, channel_[idx].servo_.isRevert_);
-  }
-*/
-}
-
-void Model::loadFromEEPROM()
-{
-  EEPROM.get(0, channel_);
-/*
-  int data;
-  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
-    EEPROM.get(idx, data);
-    channel_[idx].servo_.minCurse_ = data;
-    EEPROM.get(idx+1, data);
-    channel_[idx].servo_.maxCurse_ = data;
-    EEPROM.get(idx+2, data);
-    channel_[idx].servo_.minCurse_ = data;
-  }
-*/
 }
 
 void Model::reset()

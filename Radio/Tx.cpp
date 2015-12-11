@@ -1,5 +1,6 @@
 #include "Tx.h"
 #include "FlashMem.h"
+#include <EEPROM.h>
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
@@ -110,7 +111,7 @@ bool Tx::setup()
   ADCSRA |=B01000000;
 #endif
 
-  printf("Tx\t\tOK %d\n", A1);
+  printf("Tx\t\tOK\n");
   return ret1 | ret2;
 }
 
@@ -255,9 +256,39 @@ void Tx::onCalibrateAnalogicSensors()
   //debug("[d] enter calibrate sensors loop\n");
 }
 
+void Tx::onLoadFromEEPROM()
+{
+  uint8_t i;
+  
+  EEPROM.get(0, i);
+  currentModel_ = &modelList_[i];
+  //debug("load %d\n", i);
+  EEPROM.get(sizeof(uint8_t), modelList_);
+}
+
+void Tx::onSaveToEEPROM()
+{
+  uint8_t i = getCurrentModelIndex();
+  //debug("save %d\n", i);
+  
+  EEPROM.put(0, i);
+  EEPROM.put(sizeof(uint8_t), modelList_);
+}
+
 void Tx::onReset()
 {
   //debug("[d] reset\n");
   for(int idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
 }
+
+uint8_t Tx::getCurrentModelIndex()
+{
+  for(int idx = 0; idx < MAX_MODEL; idx++)
+  {
+    if(currentModel_ == &modelList_[idx])
+      return idx;
+  }
+  return -1;
+}
+

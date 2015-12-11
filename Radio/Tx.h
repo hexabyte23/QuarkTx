@@ -53,12 +53,15 @@ class Tx
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();
   void onCalibrateAnalogicSensors();
+  void onLoadFromEEPROM();
+  void onSaveToEEPROM();
   void onReset();
 
   // Functions
   void idle();
   void calculatePPMOutput();
   Model* getCurrentModel() {return currentModel_;}
+  uint8_t getCurrentModelIndex();
 };
 
 #endif

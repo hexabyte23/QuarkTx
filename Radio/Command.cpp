@@ -12,7 +12,7 @@ bool Command::setup(Tx *tx)
 {
   tx_ = tx;
 
-  tx_->getCurrentModel()->loadFromEEPROM();
+  tx_->onLoadFromEEPROM();
   
   printf("Command\t\tOK\n");
   return true;
@@ -97,13 +97,13 @@ void Command::toggleCalibrateAnalogicSensorCmd()
 
 void Command::loadModelsFromEEPROMCmd()
 {
- tx_->getCurrentModel()->loadFromEEPROM();
+ tx_->onLoadFromEEPROM();
  info(INFO_LOAD_FROM_EEPROM);
 }
 
 void Command::saveModelsToEEPROMCmd()
 {
- tx_->getCurrentModel()->saveToEEPROM();
+ tx_->onSaveToEEPROM();
  info(INFO_SAVE_TO_EEPROM);
 }
 
