@@ -14,7 +14,7 @@ ServoCommande::ServoCommande()
 
 uint16_t ServoCommande::getValue(uint16_t rawInputValue)
 {
-  return map(rawInputValue, 0, 1024, isRevert_?maxCurse_:minCurse_, isRevert_?minCurse_:maxCurse_) + trim_;
+  return map(rawInputValue, 0, 1023, isRevert_?maxCurse_:minCurse_, isRevert_?minCurse_:maxCurse_) + trim_;
 }
 
 void ServoCommande::reset()
@@ -64,7 +64,7 @@ void Model::dump()
 {
   Serial.println("Servo");
   Serial.println("# Min   Max     Trim   Rev");
-  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     Serial.print(idx);
     Serial.print(" ");
@@ -81,7 +81,7 @@ void Model::dump()
 
 void Model::reset()
 {
-  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     channel_[idx].servo_.reset();
 }
 
