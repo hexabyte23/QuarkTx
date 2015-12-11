@@ -275,7 +275,6 @@ void Tx::onSaveToEEPROM()
 {
   uint8_t i = getCurrentModelIndex();
   //debug("save %d\n", i);
-  
   EEPROM.put(0, i);
   EEPROM.put(sizeof(uint8_t), modelList_);
 }
