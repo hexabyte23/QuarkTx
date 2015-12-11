@@ -6,6 +6,7 @@
 #define ERR_BAD_PARAM_IDX_EMPTY       2
 #define ERR_BUFFER_OVERSIZE           3
 #define ERR_EEPROM_DATA_CORRUPTED     4
+#define ERR_COMMAND_UNKNOWN           5
 
 #define INFO_SWITCH_MODE_TRANSMIT     0
 #define INFO_SWITCH_MODE_SETTINGS     1

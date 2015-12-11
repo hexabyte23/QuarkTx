@@ -44,7 +44,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 's': setModelCmd(cmdStr+2);break;
     case 'r': resetCmd();break;
     default: 
-      printf("[e] Command '%s' unknown\n", cmdStr);
+      error(ERR_COMMAND_UNKNOWN, cmdStr);
       break;
   }
 }

@@ -9,9 +9,10 @@ const char err_string_1[] PROGMEM = "[e] bad parameter: index (%d) >= max %d\n";
 const char err_string_2[] PROGMEM = "[e] bad parameter: index empty\n";
 const char err_string_3[] PROGMEM = "[e] buffer oversize\n";
 const char err_string_4[] PROGMEM = "[e] EEPROM data is corrupted\n";
+const char err_string_5[] PROGMEM = "[e] Command '%s' unknown\n";
 
 // global error tab
-const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4};
+const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5};
 
 // Define all information messages
 const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";
