@@ -132,7 +132,7 @@ void Ppm::isr()
 	OCR1A += timings_[timingPos_];
 	
 	// toggle pin, pins 9 and 10 will toggle themselves
-	if (port_ != 0)
+	if(port_ != 0)
 		*port_ |= mask_;
 	
 	// update position

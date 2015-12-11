@@ -182,7 +182,7 @@ void Tx::displayInputUpdate()
 
     for(int idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     {
-      Serial.print(analogicSensorInputValue_[idx], HEX);
+      Serial.print(analogicSensorInputValue_[idx], DISPLAY_BASE);
       Serial.print("\t");
     }
     Serial.println();
@@ -199,7 +199,7 @@ void Tx::displayOutputUpdate()
 
   for(int idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
-    Serial.print((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0, HEX);
+    Serial.print((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0, DISPLAY_BASE);
     Serial.print("\t");
   }
 

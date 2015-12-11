@@ -68,13 +68,13 @@ void Model::dump()
   {
     Serial.print(idx);
     Serial.print(" ");
-    Serial.print(channel_[idx].servo_.minCurse_, HEX);
+    Serial.print(channel_[idx].servo_.minCurse_, DISPLAY_BASE);
     Serial.print("\t");
-    Serial.print(channel_[idx].servo_.maxCurse_, HEX);
+    Serial.print(channel_[idx].servo_.maxCurse_, DISPLAY_BASE);
     Serial.print("\t");
-    Serial.print(channel_[idx].servo_.trim_, HEX);
+    Serial.print(channel_[idx].servo_.trim_, DISPLAY_BASE);
     Serial.print("\t");
-    Serial.print(channel_[idx].servo_.isRevert_, HEX);
+    Serial.print(channel_[idx].servo_.isRevert_, DISPLAY_BASE);
     Serial.println();
   }
 }
