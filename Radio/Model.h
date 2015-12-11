@@ -15,9 +15,9 @@ struct Mixer
 
 struct ServoCommande
 {
-  int maxCurse_;    // in microsecs
-  int minCurse_;    // in microsecs
-  uint16_t trim_;   // in microsecs
+  uint16_t maxCurse_;    // in microsecs
+  uint16_t minCurse_;    // in microsecs
+  int16_t trim_;         // in microsecs
   bool isRevert_;
 
   ServoCommande();
