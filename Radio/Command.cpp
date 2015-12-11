@@ -121,19 +121,19 @@ void Command::setModelCmd(const char* param)
   {
     case 'i':
       tx_->getCurrentModel()->setMinValue(c, v);
-      printf("Set Min channel %d value %d\n", c, v);
+      info(INFO_SET_MIN_CHANNEL, c, v);
       break;
     case 'a':
       tx_->getCurrentModel()->setMaxValue(c , v);
-      printf("Set Max channel %d value %d\n", c, v);
+      info(INFO_SET_MAX_CHANNEL, c, v);
       break;
     case 't':
       tx_->getCurrentModel()->setTrimValue(c , v);
-      printf("Set Trim channel %d value %d\n", c, v);
+      info(INFO_SET_TRIM_CHANNEL, c, v);
       break;
     case 'r':
       tx_->getCurrentModel()->setRevertValue(c , v);
-      printf("Set Revert channel %d value %d\n", c, v);
+      info(INFO_SET_REVERT_CHANNEL, c, v);
       break;
     default:
       error(ERR_BAD_PARAM_IDX_EMPTY);

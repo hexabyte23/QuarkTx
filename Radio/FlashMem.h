@@ -15,6 +15,10 @@
 #define INFO_HELP_USAGE               4
 #define INFO_SAVE_TO_EEPROM           5
 #define INFO_LOAD_FROM_EEPROM         6
+#define INFO_SET_MIN_CHANNEL          7
+#define INFO_SET_MAX_CHANNEL          8
+#define INFO_SET_TRIM_CHANNEL         9
+#define INFO_SET_REVERT_CHANNEL       10
 
 void error(int idx, ...);
 void info(int idx, ...);
