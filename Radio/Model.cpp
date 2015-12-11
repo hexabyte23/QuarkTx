@@ -62,8 +62,7 @@ void Model::setRevertValue(uint8_t channel, bool value)
 
 void Model::dump()
 {
-  Serial.println("Servo");
-  Serial.println("# Min   Max     Trim   Rev");
+  info(INFO_DUMP_SERVO_HEADER);
   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     Serial.print(idx);

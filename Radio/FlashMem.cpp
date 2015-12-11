@@ -40,10 +40,11 @@ const char info_string_7[] PROGMEM = "Set Min channel %d value %d\n";
 const char info_string_8[] PROGMEM = "Set Max channel %d value %d\n";
 const char info_string_9[] PROGMEM = "Set Trim channel %d value %d\n";
 const char info_string_10[] PROGMEM = "Set Revert channel %d value %d\n";
+const char info_string_11[] PROGMEM = "Servo\n# Min   Max     Trim   Rev\n";
 
 // global error tab
 const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_string_2, info_string_3, info_string_4, info_string_5, 
-                                          info_string_6, info_string_7, info_string_8, info_string_9, info_string_10};
+                                          info_string_6, info_string_7, info_string_8, info_string_9, info_string_10, info_string_11};
 
 
 // global functions
