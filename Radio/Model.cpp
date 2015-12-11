@@ -1,69 +1,96 @@
 #include "Model.h"
 
 #include <arduino.h>
+#include <EEPROM.h>
 #include "config.h"
 #include "FlashMem.h"
 
+uint16_t ServoCommande::getValue(uint16_t rawInputValue)
+{
+  return map(rawInputValue, 0, 1024, isRevert_?maxCurse_:minCurse_, isRevert_?minCurse_:maxCurse_) + trim_;
+}
+
 Model::Model()
 {
-  for(int idx=0; idx < MAX_PPM_CHANNEL; idx++)
-  {
-    ppmOutput_[idx] = PPM_MID_VALUE;
-  }
 }
 
-bool Model::setup(volatile int *ref)
+bool Model::setup()
 {
-  analogicSensorValueTabRef_ = ref;
 }
 
-void Model::idle()
+uint16_t Model::getOutputValue(uint8_t channel, uint16_t rawInputValue)
 {
-  calculatePPMOutput();
+  channel_[channel].servo_.getValue(rawInputValue);
+}
+
+void Model::setMinValue(uint8_t channel, int value)
+{
+  channel_[channel].servo_.minCurse_ = value;
+}
+
+void Model::setMaxValue(uint8_t channel, int value)
+{
+  channel_[channel].servo_.maxCurse_ = value;
+}
+
+void Model::setTrimValue(uint8_t channel, uint16_t value)
+{
+  channel_[channel].servo_.trim_ = value;
+}
+
+void Model::setRevertValue(uint8_t channel, bool value)
+{
+  channel_[channel].servo_.isRevert_ = value;
 }
 
 void Model::dump()
 {
   //debug("[d] dump model\n");
 
-  Serial.print("PPM output\t");
-  for(int idx =0; idx < MAX_PPM_CHANNEL; idx++)
+  Serial.println("Servos");
+  Serial.println("# Min   Max     Trim   Rev");
+  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
-    Serial.print(ppmOutput_[idx], HEX);
+    Serial.print(idx);
+    Serial.print(" ");
+    Serial.print(channel_[idx].servo_.minCurse_, HEX);
     Serial.print("\t");
-  }
-  Serial.println();
-
-  Serial.print("Mixer\t\t");
-  for(int idx =0; idx < MAX_MIXER; idx++)
-  {
-    Serial.print(mixer_[idx], HEX);
+    Serial.print(channel_[idx].servo_.maxCurse_, HEX);
     Serial.print("\t");
+    Serial.print(channel_[idx].servo_.trim_, HEX);
+    Serial.print("\t");
+    Serial.print(channel_[idx].servo_.isRevert_, HEX);
+    Serial.println();
   }
-  Serial.println();
 }
 
-void Model::calculatePPMOutput()
+void Model::saveToEEPROM()
 {
-  // Get analogic imput from sensors
-  for(int idx=0; idx < MAX_ADC_CHANNEL; idx++)
+  EEPROM.put(0, channel_);
+/*
+  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
-    int v = *(analogicSensorValueTabRef_ + idx);
-//    Serial.print(v, HEX);
-//    Serial.print("\t");
+    EEPROM.put(idx  , channel_[idx].servo_.minCurse_);
+    EEPROM.put(idx+1, channel_[idx].servo_.maxCurse_);
+    EEPROM.put(idx+2, channel_[idx].servo_.isRevert_);
   }
-//  Serial.println();
+*/
+}
 
-  static int inc = 1;
-  static uint32_t before = millis();
-  uint32_t now = millis();
-
-  if(now - before > 10)
+void Model::loadFromEEPROM()
+{
+  EEPROM.get(0, channel_);
+/*
+  int data;
+  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
-    before = now;
-    ppmOutput_[0] += inc;
-    if(ppmOutput_[0] >= PPM_MAX_VALUE) inc = -1;
-    if(ppmOutput_[0] <= PPM_MIN_VALUE) inc = +1;
+    EEPROM.get(idx, data);
+    channel_[idx].servo_.minCurse_ = data;
+    EEPROM.get(idx+1, data);
+    channel_[idx].servo_.maxCurse_ = data;
+    EEPROM.get(idx+2, data);
+    channel_[idx].servo_.minCurse_ = data;
   }
+*/
 }
 

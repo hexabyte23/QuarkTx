@@ -6,6 +6,8 @@
 #include "SerialLink.h"
 #include "Command.h"
 #include "Model.h"
+#include "Timer.h"
+#include "Ppm.h"
 
 class Tx
 {
@@ -13,21 +15,27 @@ class Tx
   Command command_;
   Model modelList_[MAX_MODEL];
   Model *currentModel_;
-  bool updateToSerial_;
-  int *ppmOutputRef_;
+
+  volatile int analogicSensorInputValue_[MAX_ADC_INPUT_CHANNEL];
+  bool digitalSensorInputValue_[MAX_DIG_INPUT_CHANNEL];
+  uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+  uint8_t  ppmWorkValue_[PPM_WORK_SIZE(MAX_PPM_OUTPUT_CHANNEL)];
+  Ppm ppmOut_;
+    
+  enum {tTransmit, tSetting} toggleMode_;
+  bool toggleDisplayInputUpdate_;
+  bool toggleDisplayOutputUpdate_;
+
   
 #ifdef GET_ADC_BY_IRQ
   volatile byte adcIrqChannel_;
 #endif
-  volatile int analogicSensorValueTab_[MAX_ADC_CHANNEL];
 
   // private functions
-  void setupIrqPPM();
-#ifdef GET_ADC_BY_IRQ
-  void setupIrqADC();
-#else
-  void syncAdcUpdate();
-#endif
+  void displayInputUpdate();
+  void displayOutputUpdate();
+  void setupOutputSignal();
+  void setupInputSignal();
   
   public:
   
@@ -39,15 +47,17 @@ class Tx
 #ifdef GET_ADC_BY_IRQ
   void onIrqAdcChange();
 #endif
-  void onIrqTimerChange();
   void onChangeCurrentModel(int idx);
   void onDumpModel(int idx);
-  void onStartUpdateToSerial() {updateToSerial_= true;}
-  void onStopUpdateToSerial()  {updateToSerial_= false;}
+  void onToggleMode();
+  void onToggleDisplayInputUpdate();
+  void onToggleDisplayOutputUpdate();
   void onCalibrateAnalogicSensors();
 
   // Functions
   void idle();
+  void calculatePPMOutput();
+  Model* getCurrentModel() {return currentModel_;}
 };
 
 #endif

@@ -1,0 +1,30 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="setup">artwork/1411253250_Control Panel.png</file>
+        <file alias="model">artwork/1411448639_airplane_512px_GREY.png</file>
+        <file>qml/Antena.qml</file>
+        <file>qml/Battery.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/MyButton.qml</file>
+        <file>qml/TrimStatus.qml</file>
+        <file>qml/Header.qml</file>
+        <file>qml/MainContent.qml</file>
+        <file>qml/Footer.qml</file>
+        <file>QuarkTx_fr_FR.qm</file>
+        <file>qml/BTScanner.qml</file>
+        <file>artwork/disk-save-as-icon.png</file>
+        <file>artwork/clock-icon.png</file>
+        <file>artwork/libreoffice-main-icon.png</file>
+        <file>artwork/utilities-system-monitor-icon.png</file>
+        <file>artwork/web-google-docs-icon.png</file>
+        <file>artwork/web-chrome-app-icon.png</file>
+        <file>artwork/usb-icon.png</file>
+        <file>artwork/seahorse-icon.png</file>
+        <file alias="model2">artwork/rocket-icon.png</file>
+        <file>artwork/QtProject-config-icon.png</file>
+        <file>artwork/browser-web-icon.png</file>
+        <file>artwork/preferences-icon.png</file>
+        <file>artwork/properties-icon.png</file>
+        <file alias="bluetooth">artwork/bluetooth-icon.png</file>
+    </qresource>
+</RCC>

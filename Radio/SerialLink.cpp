@@ -33,6 +33,11 @@ void SerialLink::clearSerialBuffer()
   memset((void*)idxBuffer_,0,sizeof(idxBuffer_));
 }
 
+void SerialLink::displayPrompt()
+{
+  printf(">\n");
+}
+
 void SerialLink::idle()
 {
   if(Serial.available() <= 0)
@@ -52,8 +57,10 @@ void SerialLink::idle()
       if(cmd_ != NULL)
       {
         //debug(" %d Sent\n", idxBuffer_);
+        Serial.println(serialBuffer_);
         cmd_->onNewCommand(serialBuffer_);
         idxBuffer_ = 0;
+        displayPrompt();
       }
     }
     else

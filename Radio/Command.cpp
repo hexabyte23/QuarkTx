@@ -4,16 +4,8 @@
 #include "FlashMem.h"
 
 Command::Command()
-:mode_(cmTransmit),
-startUpdate_(true),
-tx_(NULL)
+:tx_(NULL)
 {
-  
-}
-
-void Command::displayPrompt()
-{
-  printf(">\n");
 }
 
 bool Command::setup(Tx *tx)
@@ -28,10 +20,7 @@ void Command::onNewCommand(const char* cmdStr)
 {
   //debug("[d] Command '%s'\n", cmdStr);
   if(cmdStr[0] == 0)
-  {
-    displayPrompt();
     return; // just ignore
-  }
         
   if(cmdStr[1] != ' ' && cmdStr[1] != 0)
   {
@@ -42,16 +31,19 @@ void Command::onNewCommand(const char* cmdStr)
   switch(cmdStr[0])
   {
     case 'h': helpCmd();break;
-    case 'm': setGetModeCmd(cmdStr+2);break;
+    case 'm': toggleTransmitModeCmd();break;
     case 'l': changeCurrentModelCmd(cmdStr+2);break;
-    case 'p': dumpModelCmd(cmdStr+2);break;
-    case 'a': starStoptUpdateCmd();break;
-    case 'c': calibrateAnalogicSensorCmd();break;
+    case 'd': dumpModelCmd(cmdStr+2);break;
+    case 'i': toggleDisplayInputUpdateCmd();break;
+    case 'o': toggleDisplayOutputUpdateCmd();break;
+    case 'c': toggleCalibrateAnalogicSensorCmd();break;
+    case 'a': loadModelsFromEEPROMCmd();break;
+    case 'v': saveModelsToEEPROMCmd();break;
+    case 's': setModelCmd(cmdStr+2);break;
     default: 
       printf("[e] Command '%s' unknown\n", cmdStr);
       break;
   }
-  displayPrompt();
 }
 
 void Command::helpCmd()
@@ -59,39 +51,16 @@ void Command::helpCmd()
   info(INFO_HELP_USAGE);
 }
 
-void Command::setGetModeCmd(const char *modeStr)
+void Command::toggleTransmitModeCmd()
 {
-  if(strlen(modeStr) == 0)
-  {
-    if(mode_ == cmSetting)
-      info(INFO_CURRENT_MODE_TRANSMIT);
-    else
-      info(INFO_CURRENT_MODE_SETTINGS);
-  }
-  else
-  {
-    if(modeStr[0] == 't')
-    {
-      setMode(cmTransmit);
-      info(INFO_SWITCH_MODE_TRANSMIT);
-    }
-    else if(modeStr[0] == 's')
-    {
-      setMode(cmSetting);
-      info(INFO_SWITCH_MODE_SETTINGS);
-    }
-    else
-      error(ERR_BAD_PARAM_EXP_TS);
-  }
+   tx_->onToggleMode();
 }
 
 void Command::changeCurrentModelCmd(const char *idxStr)
 {
   //debug("[d] load model %s\n", idxStr);  
   if(strlen(idxStr) != 0)
-  {
     tx_->onChangeCurrentModel(atoi(idxStr));
-  }
   else
     error(ERR_BAD_PARAM_IDX_EMPTY);
 }
@@ -100,25 +69,69 @@ void Command::dumpModelCmd(const char *idxStr)
 {
   //debug("[d] dump model %s\n", idxStr);  
   if(strlen(idxStr) != 0)
-  {
     tx_->onDumpModel(atoi(idxStr));
-  }
   else
     error(ERR_BAD_PARAM_IDX_EMPTY);
 }
 
-void Command::starStoptUpdateCmd()
+void Command::toggleDisplayInputUpdateCmd()
 {
-  if(startUpdate_)
-    tx_->onStartUpdateToSerial();
-  else
-    tx_->onStopUpdateToSerial();
-
-  startUpdate_ = !startUpdate_;
+  tx_->onToggleDisplayInputUpdate();
 }
 
-void Command::calibrateAnalogicSensorCmd()
+void Command::toggleDisplayOutputUpdateCmd()
+{
+  tx_->onToggleDisplayOutputUpdate();
+}
+
+void Command::toggleCalibrateAnalogicSensorCmd()
 {
   tx_->onCalibrateAnalogicSensors();
+}
+
+void Command::loadModelsFromEEPROMCmd()
+{
+ tx_->getCurrentModel()->loadFromEEPROM();
+ info(INFO_LOAD_FROM_EEPROM);
+}
+
+void Command::saveModelsToEEPROMCmd()
+{
+ tx_->getCurrentModel()->saveToEEPROM();
+ info(INFO_SAVE_TO_EEPROM);
+}
+
+void Command::setModelCmd(const char* param)
+{
+  uint8_t c = atoi(param+2);
+  if(c > MAX_PPM_OUTPUT_CHANNEL-1)
+  {
+    error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_PPM_OUTPUT_CHANNEL-1);
+    return;
+  }
+  int v = atoi(param+4);
+  
+  switch(param[0])
+  {
+    case 'i':
+      tx_->getCurrentModel()->setMinValue(c, v);
+      printf("Set Min channel %d value %d\n", c, v);
+      break;
+    case 'a':
+      tx_->getCurrentModel()->setMaxValue(c , v);
+      printf("Set Max channel %d value %d\n", c, v);
+      break;
+    case 't':
+      tx_->getCurrentModel()->setTrimValue(c , v);
+      printf("Set Trim channel %d value %d\n", c, v);
+      break;
+    case 'r':
+      tx_->getCurrentModel()->setRevertValue(c , v);
+      printf("Set Revert channel %d value %d\n", c, v);
+      break;
+    default:
+      error(ERR_BAD_PARAM_IDX_EMPTY);
+      break;
+  }
 }
 

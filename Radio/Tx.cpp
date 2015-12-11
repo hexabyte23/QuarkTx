@@ -3,20 +3,23 @@
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
-ppmOutputRef_(modelList_[0].getPPMOutputRef()),
-updateToSerial_(false)
+ppmOut_(MAX_PPM_OUTPUT_CHANNEL, ppmOutputValue_, ppmWorkValue_, MAX_PPM_OUTPUT_CHANNEL),
+toggleMode_(tTransmit),
+toggleDisplayInputUpdate_(false),
+toggleDisplayOutputUpdate_(false)
 #ifdef GET_ADC_BY_IRQ
 ,adcIrqChannel_(0)
 #endif
 {
-  // set ref to each models
-  for(int idx=0; idx < MAX_MODEL; idx++)
-    modelList_[idx].setup(analogicSensorValueTab_);
 }
 
-#ifdef GET_ADC_BY_IRQ
-void Tx::setupIrqADC()
+void Tx::setupInputSignal()
 {
+#ifdef GET_ADC_BY_IRQ
+// Configure ADC for collecting data by interrupt way
+
+  cli();
+    
   // clear ADLAR to right-adjust the result ADCL will contain lower 8 bits, ADCH upper 2 bits
   ADMUX &= B11011111;
    
@@ -48,29 +51,22 @@ void Tx::setupIrqADC()
   // Set ADIE to enable the ADC interrupt.
   // Without this, the internal interrupt will not trigger.
   ADCSRA |= B00001000;
-}
+
+  sei();
 #endif
+}
 
-void Tx::setupIrqPPM()
+
+void Tx::setupOutputSignal()
 {
-/*  
-  TCCR1A = B00110001; // COM1B1, COM1B0, WGM10 set to 1 (8-bit register)
-  TCCR1B = B00010010; // WGM13 & CS11 set to 1 (8-bit register)
-  TCCR1C = B00000000;
-  TIMSK1 = B00000010; // All interrupts are individually masked with the Timer Interrupt Mask Register TIMSK1
-  TIFR1  = B00000010; // Int on compare B
+  Timer::setup();
 
-//  OCR1A = PPM_PERIOD; // PPM frequency (double buffered Output Compare 16-bit Register)
-//  OCR1B = PPM_LOW;    // (double buffered Output Compare 16-bit Register), hard-wired to PPM_PIN
-*/
+  ppmOut_.setup();
 
-  TCCR1A = 0; // set entire TCCR1 register to 0
-  TCCR1B = 0;
-  
-  OCR1A = 100;  // compare match register, change this
-  TCCR1B |= (1 << WGM12);  // turn on CTC mode
-  TCCR1B |= (1 << CS11);  // 8 prescaler: 0,5 microseconds at 16mhz
-  TIMSK1 |= (1 << OCIE1A); // enable timer compare interrupt
+  ppmOut_.setPulseLength(PPM_PULSE_LEN); // pulse length in microseconds
+  ppmOut_.setPauseLength(PPM_PAUSE_LEN); // length of pause after last channel in microseconds
+
+  ppmOut_.start(PPM_PIN, PPM_INVERT, PPM_DEBUG);
 }
 
 bool Tx::setup()
@@ -94,24 +90,16 @@ bool Tx::setup()
   pinMode(A1, INPUT);           // gimbal 2
   pinMode(A2, INPUT);           // gimbal 3
   pinMode(A3, INPUT);           // gimbal 4
-  pinMode(A4, INPUT_PULLUP);    // reserved for extra POT
-  pinMode(A5, INPUT_PULLUP);    // reserved for extra POT
+  pinMode(A4, INPUT);           
+  digitalWrite(A4, HIGH);       // reserved for extra POT
+  pinMode(A5, INPUT);           
+  digitalWrite(A5, HIGH);       // reserved for extra POT
   pinMode(A7, INPUT);           // Battery level
-
-  // Set the PPM signal pin to the default state (off)
-  digitalWrite(PPM_PIN, !PPM_POLARITY);
   
-  cli();
+  // Configure Timer for PPM signal generation
+  setupOutputSignal();
 
-  // Configure Timer1 for PPM signal generation
-  setupIrqPPM();
-
-#ifdef GET_ADC_BY_IRQ
-  // Configure ADC for collecting data by interrupt way
-  setupIrqADC();
-#endif
-  
-  sei();
+  setupInputSignal();
 
   // Serial setup() must always be the first module to initialize
   bool ret1 = serialLink_.setup(&command_);
@@ -122,13 +110,11 @@ bool Tx::setup()
   ADCSRA |=B01000000;
 #endif
 
-  printf("Tx\t\tOK\n");
-
-  return true;
+  printf("Tx\t\tOK %d\n", A1);
+  return ret1 | ret2;
 }
 
 #ifdef GET_ADC_BY_IRQ
-
 void Tx::onIrqAdcChange()
 {
   // Warning this is an Interrupt routine
@@ -149,81 +135,92 @@ void Tx::onIrqAdcChange()
   // Set ADSC to start another conversion
   ADCSRA |= B01000000;
 }
-
-#else
-
-void Tx::syncAdcUpdate()
-{
-  for(int idx=0; idx < MAX_ADC_CHANNEL; idx++)
-  {
-    analogicSensorValueTab_[idx] = analogRead(idx);
-  }
-}
-
 #endif
-
-static boolean state = true;
-void Tx::onIrqTimerChange()
-{
-  TCNT1 = 0;
-  
-  if(state) 
-  {  
-    // Start pulse
-    digitalWrite(PPM_PIN, PPM_POLARITY);
-    OCR1A = PPM_PULSE_LEN*2;
-    state = false;
-  }
-  else
-  {
-    // End pulse and calculate when to start the next pulse
-    static byte cur_chan_numb;
-    static unsigned int calc_rest;
-  
-    digitalWrite(PPM_PIN, !PPM_POLARITY);
-    state = true;
-
-    if(cur_chan_numb >= MAX_PPM_CHANNEL)
-    {
-      cur_chan_numb = 0;
-      calc_rest += PPM_PULSE_LEN;
-      OCR1A = (PPM_FRAME_LEN - calc_rest) * 2;
-      calc_rest = 0;
-    }
-    else
-    {
-      OCR1A = (*(ppmOutputRef_ + cur_chan_numb) - PPM_PULSE_LEN)*2;
-      calc_rest += *(ppmOutputRef_ + cur_chan_numb);
-      cur_chan_numb++;
-    }     
-  }
-  
-}
 
 void Tx::idle()
 {
-  currentModel_->idle();
+  calculatePPMOutput();
+  
   serialLink_.idle();
 
+  if(toggleDisplayInputUpdate_)
+    displayInputUpdate();
+  if(toggleDisplayOutputUpdate_)
+    displayOutputUpdate();
+}
+
+void Tx::calculatePPMOutput()
+{
+    // Get analogic input from all sensors
 #ifndef GET_ADC_BY_IRQ
-  syncAdcUpdate();
+  for(int idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+    analogicSensorInputValue_[idx] = analogRead(A0 + idx);
 #endif
 
-  if(updateToSerial_)
+  for(int idx=0; idx < MAX_DIG_INPUT_CHANNEL; idx++)
+    digitalSensorInputValue_[idx] = digitalRead(idx);
+
+  // convert analog value to to microseconds
+  for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
+    ppmOutputValue_[idx] = currentModel_->getOutputValue(idx, analogicSensorInputValue_[idx]);
+  }
+
+  // Sent to PPM pin
+  if(toggleMode_ == tTransmit)
+     ppmOut_.update();
+}
+
+void Tx::displayInputUpdate()
+{
 #ifdef GET_ADC_BY_IRQ
-      Serial.print("I\t");
+      Serial.print("<I\t");   // get input from Irq way
 #else
-      Serial.print("R\t");
+      Serial.print("<S\t");   // det inpout from synchrone way
 #endif
 
-    for(int idx = 0; idx < MAX_ADC_CHANNEL; idx++)
+    for(int idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     {
-      Serial.print(analogicSensorValueTab_[idx], HEX);
+      Serial.print(analogicSensorInputValue_[idx], HEX);
       Serial.print("\t");
     }
     Serial.println();
-    
+}
+
+void Tx::onToggleDisplayInputUpdate()
+{
+  toggleDisplayInputUpdate_ = !toggleDisplayInputUpdate_;
+}
+
+void Tx::displayOutputUpdate()
+{
+  Serial.print(">\t");
+
+  for(int idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  {
+    Serial.print((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0, HEX);
+    Serial.print("\t");
+  }
+
+  Serial.println();
+}
+
+void Tx::onToggleDisplayOutputUpdate()
+{
+  toggleDisplayOutputUpdate_ = !toggleDisplayOutputUpdate_;
+}
+
+void Tx::onToggleMode()
+{
+  if(toggleMode_ == tTransmit)
+  {
+     toggleMode_ = tSetting;
+     info(INFO_SWITCH_MODE_SETTINGS);
+  }
+  else
+  {
+     toggleMode_ = tTransmit;
+     info(INFO_SWITCH_MODE_TRANSMIT);
   }
 }
 
@@ -234,7 +231,6 @@ void Tx::onChangeCurrentModel(int idx)
   {
     printf("Load model %d\n",idx);
     currentModel_ = &modelList_[idx];
-    ppmOutputRef_ = currentModel_->getPPMOutputRef();
   }
   else
     error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
@@ -245,7 +241,9 @@ void Tx::onDumpModel(int idx)
   // debug("[d] dump model %d\n", idx); 
   if(idx < MAX_MODEL)
   {
-    printf("Dump model %d\n",idx);
+    char c = (currentModel_ == &modelList_[idx])?'*':' ';
+    printf("Dump model %d %c\n",idx, c);
+
     modelList_[idx].dump();
   }
   else

@@ -18,12 +18,6 @@ ISR(ADC_vect)
 }
 #endif
 
-
-ISR(TIMER1_COMPA_vect)
-{
-  tx.onIrqTimerChange();
-}
-
 void loop()
 {
   tx.idle();
