@@ -144,5 +144,6 @@ void Command::setModelCmd(const char* param)
 void Command::resetCmd()
 {
   tx_->onReset();
+  printf("reset\n");
 }
 
