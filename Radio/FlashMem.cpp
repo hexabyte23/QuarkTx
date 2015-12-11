@@ -19,14 +19,19 @@ const char info_string_2[] PROGMEM = "Current mode 'settings'\n";
 const char info_string_3[] PROGMEM = "Current mode 'transmit'\n";
 const char info_string_4[] PROGMEM = "help command :\n"
          "h: help\n"
-         "m: toggle Tx mode between Transmit <-> Setting\n"
-         "l [0..8]: change current model\n"
-         "d [0..8]: dump model\n"
+         "m: toggle Tx mode\n"
+         "l [0..4]: change cur. model\n"
+         "d [0..4]: dump model\n"
          "i: toggle input update\n"
          "o: toggle output update\n"
-         "c: toggle calibrate analogic sensors\n"
-         "a: load current modelfrom EEPROM\n"
-         "v: save current model to EMPROM\n";
+         "a: load cur. modelfrom EEPROM\n"
+         "v: save cur. model to EMPROM\n"
+         "s i [chan] [val]: set cur. model servo min\n"
+         "s a [chan] [val]: set cur. model servo max\n"
+         "s t [chan] [val]: set cur. model servo trim\n"
+         "s r [chan] [val]: set cur. model servo revert\n"
+         "r: reset, clean all models\n"
+         ;
 const char info_string_5[] PROGMEM = "Current model saved to EEPROM\n";
 const char info_string_6[] PROGMEM = "Current model load from EEPROM\n";
 
@@ -35,7 +40,7 @@ const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_str
 
 
 // global functions
-#define MAX_FM_BUFFER 300
+#define MAX_FM_BUFFER 400
 static char fm_buffer[MAX_FM_BUFFER];
 
 void error(int idx, ...)

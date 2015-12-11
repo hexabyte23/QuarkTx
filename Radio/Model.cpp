@@ -5,10 +5,28 @@
 #include "config.h"
 #include "FlashMem.h"
 
+
+//////////////////////////////////////////////////////////////
+
+ServoCommande::ServoCommande()
+{
+  reset();
+}
+
 uint16_t ServoCommande::getValue(uint16_t rawInputValue)
 {
   return map(rawInputValue, 0, 1024, isRevert_?maxCurse_:minCurse_, isRevert_?minCurse_:maxCurse_) + trim_;
 }
+
+void ServoCommande::reset()
+{
+  maxCurse_ = PPM_MAX_VALUE;
+  minCurse_ = PPM_MIN_VALUE;
+  trim_ = 0;
+  isRevert_ = false; 
+}
+
+//////////////////////////////////////////////////////////////
 
 Model::Model()
 {
@@ -45,8 +63,6 @@ void Model::setRevertValue(uint8_t channel, bool value)
 
 void Model::dump()
 {
-  //debug("[d] dump model\n");
-
   Serial.println("Servos");
   Serial.println("# Min   Max     Trim   Rev");
   for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
@@ -92,5 +108,11 @@ void Model::loadFromEEPROM()
     channel_[idx].servo_.minCurse_ = data;
   }
 */
+}
+
+void Model::reset()
+{
+  for(int idx =0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+    channel_[idx].servo_.reset();
 }
 

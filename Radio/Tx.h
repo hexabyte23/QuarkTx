@@ -53,6 +53,7 @@ class Tx
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();
   void onCalibrateAnalogicSensors();
+  void onReset();
 
   // Functions
   void idle();

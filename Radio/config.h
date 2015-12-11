@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define VERSION "0.0.5" 
+#define VERSION "0.0.6" 
 #define SERIAL_SPEED 9600
 
 #define MAX_MODEL 4

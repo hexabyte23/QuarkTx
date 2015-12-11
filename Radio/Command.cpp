@@ -11,6 +11,8 @@ Command::Command()
 bool Command::setup(Tx *tx)
 {
   tx_ = tx;
+
+  tx_->getCurrentModel()->loadFromEEPROM();
   
   printf("Command\t\tOK\n");
   return true;
@@ -40,6 +42,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'a': loadModelsFromEEPROMCmd();break;
     case 'v': saveModelsToEEPROMCmd();break;
     case 's': setModelCmd(cmdStr+2);break;
+    case 'r': resetCmd();break;
     default: 
       printf("[e] Command '%s' unknown\n", cmdStr);
       break;
@@ -71,7 +74,10 @@ void Command::dumpModelCmd(const char *idxStr)
   if(strlen(idxStr) != 0)
     tx_->onDumpModel(atoi(idxStr));
   else
-    error(ERR_BAD_PARAM_IDX_EMPTY);
+  {
+    for(int idx=0; idx < MAX_MODEL; idx++)
+      tx_->onDumpModel(idx);
+  }
 }
 
 void Command::toggleDisplayInputUpdateCmd()
@@ -133,5 +139,10 @@ void Command::setModelCmd(const char* param)
       error(ERR_BAD_PARAM_IDX_EMPTY);
       break;
   }
+}
+
+void Command::resetCmd()
+{
+  tx_->onReset();
 }
 

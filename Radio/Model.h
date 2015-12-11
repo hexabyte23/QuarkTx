@@ -20,9 +20,10 @@ struct ServoCommande
   uint16_t trim_;   // in microsecs
   bool isRevert_;
 
-  ServoCommande(): maxCurse_(PPM_MAX_VALUE), minCurse_(PPM_MIN_VALUE), trim_(0), isRevert_(false) {}
+  ServoCommande();
 
   uint16_t getValue(uint16_t rawInputValue);
+  void reset();
 };
 
 struct OutputChannel
@@ -40,17 +41,18 @@ class Model
   Model();
 
   bool setup();
-
+  void reset();
+  void dump();
+  
   uint16_t getOutputValue(uint8_t channel, uint16_t rawInputValue);
   void setMinValue(uint8_t channel, int value); 
   void setMaxValue(uint8_t channel, int value);
   void setTrimValue(uint8_t channel, uint16_t value); 
   void setRevertValue(uint8_t channel, bool value);
-  
-  void dump();
-  
+
   void saveToEEPROM();
   void loadFromEEPROM();
+
 };
 
 #endif

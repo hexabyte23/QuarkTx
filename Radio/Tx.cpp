@@ -252,7 +252,12 @@ void Tx::onDumpModel(int idx)
 
 void Tx::onCalibrateAnalogicSensors()
 {
-  debug("[d] enter calibrate sensors loop\n");
+  //debug("[d] enter calibrate sensors loop\n");
 }
 
-
+void Tx::onReset()
+{
+  //debug("[d] reset\n");
+  for(int idx = 0; idx < MAX_MODEL; idx++)
+    modelList_[idx].reset();
+}
