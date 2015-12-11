@@ -261,6 +261,11 @@ void Tx::onLoadFromEEPROM()
   uint8_t i;
   
   EEPROM.get(0, i);
+  if(i >= MAX_MODEL)    // EEPROM is corrupted
+  {
+    i = 0;
+    error(ERR_EEPROM_DATA_CORRUPTED);
+  }
   currentModel_ = &modelList_[i];
   //debug("load %d\n", i);
   EEPROM.get(sizeof(uint8_t), modelList_);
