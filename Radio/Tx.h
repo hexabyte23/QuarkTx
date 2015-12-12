@@ -61,7 +61,7 @@ class Tx
   // Functions
   void idle();
   void calculatePPMOutput();
-  Model* getCurrentModel() {return currentModel_;}
+  Model* getCurrentModel() const {return currentModel_;}
   uint8_t getCurrentModelIndex();
 };
 

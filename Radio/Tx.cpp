@@ -132,18 +132,16 @@ bool Tx::setup()
 #ifdef GET_ADC_BY_IRQ
 void Tx::onIrqAdcChange()
 {
-  // Warning this is an Interrupt routine
-
   // Get the ADC channel causing the interrupt
   int c = ADMUX & ((1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0));
 
   // Get value, must read low first
-  analogicSensorValueTab_[c] = ADCL | (ADCH << 8);
+  analogicSensorInputValue_[c] = ADCL | (ADCH << 8);
 
   // Select next channel
   ADMUX &= B11111000;
   adcIrqChannel_++;
-  if(adcIrqChannel_ == 8)
+  if(adcIrqChannel_ == MAX_ADC_INPUT_CHANNEL)
     adcIrqChannel_ = 0;
   ADMUX |= adcIrqChannel_;
   
