@@ -337,6 +337,8 @@ void Tx::onReset()
   //debug("[d] reset\n");
   for(int idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
+    
+  toggleMode_ = tTransmit;
 }
 
 uint8_t Tx::getCurrentModelIndex()
@@ -346,6 +348,6 @@ uint8_t Tx::getCurrentModelIndex()
     if(currentModel_ == &modelList_[idx])
       return idx;
   }
-  return -1;
+  return 0;
 }
 
