@@ -19,8 +19,8 @@ class Tx
   volatile int analogicSensorInputValue_[MAX_ADC_INPUT_CHANNEL];
   bool digitalSensorInputValue_[MAX_DIG_INPUT_CHANNEL];
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
-  uint8_t  ppmWorkValue_[PPM_WORK_SIZE(MAX_PPM_OUTPUT_CHANNEL)];
-  Ppm ppmOut_;
+//  uint8_t  ppmWorkValue_[PPM_WORK_SIZE(MAX_PPM_OUTPUT_CHANNEL)];
+//  Ppm ppmOut_;
     
   enum {tTransmit, tSetting} toggleMode_;
   bool toggleDisplayInputUpdate_;
@@ -47,6 +47,7 @@ class Tx
 #ifdef GET_ADC_BY_IRQ
   void onIrqAdcChange();
 #endif
+  void onIrqTimerChange();
   void onChangeCurrentModel(int idx);
   void onDumpModel(int idx);
   void onToggleMode();

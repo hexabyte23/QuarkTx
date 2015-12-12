@@ -1,6 +1,8 @@
 #ifndef PPM_H
 #define PPM_H
 
+#if 0
+
 #include <inttypes.h>
 
 #define PPM_WORK_SIZE(channels) ((channels) + (((channels) + 1) * 4))
@@ -61,3 +63,6 @@ public:
 };
 
 #endif
+
+#endif
+

@@ -1,3 +1,5 @@
+#if 0
+
 #include <Arduino.h>
 #include "Timer.h"
 #include "Ppm.h"
@@ -146,3 +148,4 @@ void Ppm::isr()
 	}
 }
 
+#endif

@@ -1,6 +1,8 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#if 0
+
 #include <inttypes.h>
 
 class Timer
@@ -32,5 +34,7 @@ class Timer
 	    \param useOC1A Whether to toggle OC1A or OC1B.*/
 	static void setToggle(bool enable, bool useOC1A);
 };
+
+#endif
 
 #endif

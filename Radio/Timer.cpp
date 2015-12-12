@@ -1,3 +1,4 @@
+#if 0
 
 #include <Arduino.h>
 #include "Timer.h"
@@ -106,4 +107,4 @@ ISR(TIMER1_COMPB_vect)
 		OCI1BCallback_();
 }
 
-
+#endif
