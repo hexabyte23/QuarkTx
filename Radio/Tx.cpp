@@ -151,19 +151,24 @@ void Tx::calculatePPMOutputIdle()
 
 void Tx::ledBlink()
 {
-  unsigned long currentMillis = millis();
-
-  if(currentMillis - previousMillis_ >= LED_BLINK_PERIOD) 
+  if(toggleMode_ == tTransmit)
   {
-    previousMillis_ = currentMillis;
-
-    if (ledState_ == LOW) 
-      ledState_ = HIGH;
-    else
-      ledState_ = LOW;
-    
-    digitalWrite(LED_PIN, ledState_);
+    unsigned long currentMillis = millis();
+  
+    if(currentMillis - previousMillis_ >= LED_BLINK_PERIOD) 
+    {
+      previousMillis_ = currentMillis;
+  
+      if (ledState_ == LOW) 
+        ledState_ = HIGH;
+      else
+        ledState_ = LOW;
+      
+      digitalWrite(LED_PIN, ledState_);
+    }
   }
+  else
+    digitalWrite(LED_PIN, HIGH);
 }
 
 void Tx::displayInputUpdate()
