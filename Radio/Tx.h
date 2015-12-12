@@ -15,11 +15,14 @@ class Tx
   Model *currentModel_;
 
   // Input & output datas
-  volatile uint16_t analogicSensorInputValue_[MAX_ADC_INPUT_CHANNEL];
-  volatile uint16_t analogicSensorCalibMin_[MAX_ADC_INPUT_CHANNEL];
-  volatile uint16_t analogicSensorCalibMax_[MAX_ADC_INPUT_CHANNEL];
-  bool digitalSensorInputValue_[MAX_DIG_INPUT_CHANNEL];
+  volatile uint16_t analogicSensorInputValue_[MAX_INPUT_CHANNEL];
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+  uint16_t analogicSensorCalibMin_[MAX_INPUT_CHANNEL];
+  uint16_t analogicSensorCalibMax_[MAX_INPUT_CHANNEL];
+
+  // Channels mapping for switches
+  uint8_t digMapping_[MAX_DIG_INPUT_CHANNEL] = {11, 12};
+
 
   // toggles
   enum {tTransmit, tSetting} toggleMode_;

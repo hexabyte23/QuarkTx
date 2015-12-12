@@ -132,14 +132,16 @@ void Tx::idle()
 
 void Tx::calculatePPMOutputIdle()
 {
-    // Get analogic input from all sensors
+   // Get analogic input sensors
   for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     analogicSensorInputValue_[idx] = analogRead(A0 + idx);
 
-  for(uint8_t idx=0; idx < MAX_DIG_INPUT_CHANNEL; idx++)
-    digitalSensorInputValue_[idx] = digitalRead(idx);
+  // Get digital input sensors
+  uint8_t digIdx=0;
+  for(uint8_t idx=MAX_ADC_INPUT_CHANNEL; idx < MAX_INPUT_CHANNEL; idx++, digIdx++)
+    analogicSensorInputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?1023:0;
 
-  // convert analog value to to microseconds
+  // Convert analog value to to microseconds
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     ppmOutputValue_[idx] = currentModel_->getValue(idx, analogicSensorCalibMin_[idx], 
                                                         analogicSensorCalibMax_[idx], 
@@ -150,7 +152,7 @@ void Tx::displayInputUpdate()
 {
   Serial.print("<S\t");   // det inpout from synchrone way
 
-  for(uint8_t idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
   {
     Serial.print(analogicSensorInputValue_[idx], DISPLAY_BASE);
     Serial.print("\t");
@@ -210,7 +212,7 @@ void Tx::onChangeCurrentModel(int idx)
 void Tx::onDump()
 {
   // dump calibrate
-  info(INFO_CALIBRATE);
+  info(INFO_CALIBRATE, MAX_INPUT_CHANNEL);
   displayCalibrate(true);
   
   // dump models
@@ -231,7 +233,7 @@ void Tx::onToggleCalibrateAnalogicSensors()
 
 void Tx::displayCalibrate(bool displayOnly)
 {  
-  for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   {
     if(displayOnly == false)
     {
@@ -280,7 +282,7 @@ void Tx::onReset()
     modelList_[idx].reset();
 
   // reset calibration
-  for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   { 
     analogicSensorCalibMin_[idx] = 0xFFFF;
     analogicSensorCalibMax_[idx] = 0x0;

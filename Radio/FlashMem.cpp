@@ -42,7 +42,7 @@ const char info_string_9[] PROGMEM = "Set Max channel %d value %d\n";
 const char info_string_10[] PROGMEM = "Set Trim channel %d value %d\n";
 const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
 const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Trim   Rev\n";
-const char info_string_13[] PROGMEM = "Input channel calibration\n";
+const char info_string_13[] PROGMEM = "Input channels (%d) calibration\n";
 const char info_string_14[] PROGMEM = "Quark Tx v%s\nBooting...\n";
 
 // global error tab
