@@ -51,7 +51,8 @@ void Command::onNewCommand(const char* cmdStr)
 
 void Command::helpCmd()
 {
-  info(INFO_HELP_USAGE);
+  info(INFO_HELP_USAGE1);
+  info(INFO_HELP_USAGE2);
 }
 
 void Command::toggleTransmitModeCmd()

@@ -12,14 +12,15 @@
 #define INFO_SWITCH_MODE_SETTINGS     1
 #define INFO_CURRENT_MODE_TRANSMIT    2
 #define INFO_CURRENT_MODE_SETTINGS    3
-#define INFO_HELP_USAGE               4
-#define INFO_SAVE_TO_EEPROM           5
-#define INFO_LOAD_FROM_EEPROM         6
-#define INFO_SET_MIN_CHANNEL          7
-#define INFO_SET_MAX_CHANNEL          8
-#define INFO_SET_TRIM_CHANNEL         9
-#define INFO_SET_REVERT_CHANNEL       10
-#define INFO_DUMP_SERVO_HEADER        11
+#define INFO_HELP_USAGE1              4
+#define INFO_HELP_USAGE2              5
+#define INFO_SAVE_TO_EEPROM           6
+#define INFO_LOAD_FROM_EEPROM         7
+#define INFO_SET_MIN_CHANNEL          8
+#define INFO_SET_MAX_CHANNEL          9
+#define INFO_SET_TRIM_CHANNEL         10
+#define INFO_SET_REVERT_CHANNEL       11
+#define INFO_DUMP_SERVO_HEADER        12
 
 void error(int idx, ...);
 void info(int idx, ...);

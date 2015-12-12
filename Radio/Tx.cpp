@@ -164,7 +164,7 @@ void Tx::onIrqTimerChange()
   {
     // End pulse and calculate when to start the next pulse
     static byte currentChannelNumber = 0;
-    static unsigned int remainingTime = 0;
+    static uint16_t remainingTime = 0;
 
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SIGNAL);
