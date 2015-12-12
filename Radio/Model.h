@@ -15,14 +15,14 @@ struct Mixer
 
 struct ServoCommande
 {
-  uint16_t maxCurse_;    // in microsecs
-  uint16_t minCurse_;    // in microsecs
-  int16_t trim_;         // in microsecs
+  uint16_t maxOutCurse_;    // in microsecs
+  uint16_t minOutCurse_;    // in microsecs
+  int16_t trim_;            // in microsecs
   bool isRevert_;
 
   ServoCommande();
 
-  uint16_t getValue(uint16_t rawInputValue);
+  uint16_t getValue(uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue);
   void reset();
 };
 
@@ -44,7 +44,7 @@ class Model
   void reset();
   void dump();
   
-  uint16_t getOutputValue(uint8_t channel, uint16_t rawInputValue);
+  uint16_t getValue(uint8_t channel, uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue);
   void setMinValue(uint8_t channel, int value); 
   void setMaxValue(uint8_t channel, int value);
   void setTrimValue(uint8_t channel, uint16_t value); 

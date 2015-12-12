@@ -92,7 +92,7 @@ void Command::toggleDisplayOutputUpdateCmd()
 
 void Command::toggleCalibrateAnalogicSensorCmd()
 {
-  tx_->onCalibrateAnalogicSensors();
+  tx_->onToggleCalibrateAnalogicSensors();
 }
 
 void Command::loadModelsFromEEPROMCmd()

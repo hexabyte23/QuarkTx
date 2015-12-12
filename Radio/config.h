@@ -10,7 +10,7 @@
 #define MAX_SERIAL_INPUT_BUFFER 10
 #define MAX_ADC_INPUT_CHANNEL   4       // Gimbal + extra pot
 #define MAX_DIG_INPUT_CHANNEL   2       // Mecanical switches
-#define MAX_PPM_OUTPUT_CHANNEL  6
+#define MAX_PPM_OUTPUT_CHANNEL  4
 #define MAX_MIXER               8
 
 #define PPM_MIN_VALUE           1000

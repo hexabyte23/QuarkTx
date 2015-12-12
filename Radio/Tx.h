@@ -14,13 +14,18 @@ class Tx
   Model modelList_[MAX_MODEL];
   Model *currentModel_;
 
-  volatile int analogicSensorInputValue_[MAX_ADC_INPUT_CHANNEL];
+  // Input & output datas
+  volatile uint16_t analogicSensorInputValue_[MAX_ADC_INPUT_CHANNEL];
+  volatile uint16_t analogicSensorCalibMin_[MAX_ADC_INPUT_CHANNEL];
+  volatile uint16_t analogicSensorCalibMax_[MAX_ADC_INPUT_CHANNEL];
   bool digitalSensorInputValue_[MAX_DIG_INPUT_CHANNEL];
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
 
+  // toggles
   enum {tTransmit, tSetting} toggleMode_;
   bool toggleDisplayInputUpdate_;
   bool toggleDisplayOutputUpdate_;
+  bool toggleDisplayCalibrate_;
 
   
 #ifdef GET_ADC_BY_IRQ
@@ -32,6 +37,7 @@ class Tx
   void displayOutputUpdate();
   void setupOutputSignal();
   void setupInputSignal();
+  void displayCalibrate();
   
   public:
   
@@ -49,7 +55,7 @@ class Tx
   void onToggleMode();
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();
-  void onCalibrateAnalogicSensors();
+  void onToggleCalibrateAnalogicSensors();
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
   void onReset();

@@ -6,11 +6,13 @@ Tx::Tx()
 :currentModel_(&modelList_[0]),
 toggleMode_(tTransmit),
 toggleDisplayInputUpdate_(false),
-toggleDisplayOutputUpdate_(false)
+toggleDisplayOutputUpdate_(false),
+toggleDisplayCalibrate_(false)
 #ifdef GET_ADC_BY_IRQ
 ,adcIrqChannel_(0)
 #endif
 {
+  onReset();
 }
 
 void Tx::setupInputSignal()
@@ -194,22 +196,26 @@ void Tx::idle()
     displayInputUpdate();
   if(toggleDisplayOutputUpdate_)
     displayOutputUpdate();
+  if(toggleDisplayCalibrate_)
+    displayCalibrate();
 }
 
 void Tx::calculatePPMOutput()
 {
     // Get analogic input from all sensors
 #ifndef GET_ADC_BY_IRQ
-  for(int idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     analogicSensorInputValue_[idx] = analogRead(A0 + idx);
 #endif
 
-  for(int idx=0; idx < MAX_DIG_INPUT_CHANNEL; idx++)
+  for(uint8_t idx=0; idx < MAX_DIG_INPUT_CHANNEL; idx++)
     digitalSensorInputValue_[idx] = digitalRead(idx);
 
   // convert analog value to to microseconds
-  for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    ppmOutputValue_[idx] = currentModel_->getOutputValue(idx, analogicSensorInputValue_[idx]);
+  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+    ppmOutputValue_[idx] = currentModel_->getValue(idx, analogicSensorCalibMin_[idx], 
+                                                        analogicSensorCalibMax_[idx], 
+                                                        analogicSensorInputValue_[idx]);
 }
 
 void Tx::displayInputUpdate()
@@ -220,7 +226,7 @@ void Tx::displayInputUpdate()
       Serial.print("<S\t");   // det inpout from synchrone way
 #endif
 
-    for(int idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+    for(uint8_t idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     {
       Serial.print(analogicSensorInputValue_[idx], DISPLAY_BASE);
       Serial.print("\t");
@@ -237,7 +243,7 @@ void Tx::displayOutputUpdate()
 {
   Serial.print(">\t");
 
-  for(int idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     Serial.print((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0, DISPLAY_BASE);
     Serial.print("\t");
@@ -291,9 +297,28 @@ void Tx::onDumpModel(int idx)
     error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
 }
 
-void Tx::onCalibrateAnalogicSensors()
+void Tx::onToggleCalibrateAnalogicSensors()
 {
   //debug("[d] enter calibrate sensors loop\n");
+  toggleDisplayCalibrate_ = !toggleDisplayCalibrate_;
+}
+
+void Tx::displayCalibrate()
+{  
+  for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  {
+    if(analogicSensorCalibMin_[idx] > analogicSensorInputValue_[idx])
+      analogicSensorCalibMin_[idx] = analogicSensorInputValue_[idx];
+    if(analogicSensorCalibMax_[idx] < analogicSensorInputValue_[idx])
+      analogicSensorCalibMax_[idx] = analogicSensorInputValue_[idx];
+      
+    Serial.print("{");
+    Serial.print(analogicSensorCalibMin_[idx], DISPLAY_BASE);
+    Serial.print("\t");
+    Serial.print(analogicSensorCalibMax_[idx], DISPLAY_BASE);
+    Serial.print("}\t");
+  }
+  Serial.println();
 }
 
 void Tx::onLoadFromEEPROM()
@@ -322,15 +347,21 @@ void Tx::onSaveToEEPROM()
 void Tx::onReset()
 {
   //debug("[d] reset\n");
-  for(int idx = 0; idx < MAX_MODEL; idx++)
+  for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
     
+  for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  { 
+    analogicSensorCalibMin_[idx] = 0xFFFF;
+    analogicSensorCalibMax_[idx] = 0x0;
+  }
+  
   toggleMode_ = tTransmit;
 }
 
 uint8_t Tx::getCurrentModelIndex()
 {
-  for(int idx = 0; idx < MAX_MODEL; idx++)
+  for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
   {
     if(currentModel_ == &modelList_[idx])
       return idx;
