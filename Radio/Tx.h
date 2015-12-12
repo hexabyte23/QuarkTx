@@ -6,8 +6,6 @@
 #include "SerialLink.h"
 #include "Command.h"
 #include "Model.h"
-#include "Timer.h"
-#include "Ppm.h"
 
 class Tx
 {
@@ -19,9 +17,7 @@ class Tx
   volatile int analogicSensorInputValue_[MAX_ADC_INPUT_CHANNEL];
   bool digitalSensorInputValue_[MAX_DIG_INPUT_CHANNEL];
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
-//  uint8_t  ppmWorkValue_[PPM_WORK_SIZE(MAX_PPM_OUTPUT_CHANNEL)];
-//  Ppm ppmOut_;
-    
+
   enum {tTransmit, tSetting} toggleMode_;
   bool toggleDisplayInputUpdate_;
   bool toggleDisplayOutputUpdate_;

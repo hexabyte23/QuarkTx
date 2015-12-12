@@ -43,8 +43,6 @@ void SerialLink::idle()
   if(Serial.available() <= 0)
     return;
     
-  //debug("[d] enter serial\n");
-    
   while (Serial.available())
   {
     char c = (char)Serial.read();
@@ -78,8 +76,5 @@ void SerialLink::idle()
       }
     }
   }
-
-  //debug("[d] exit serial\n");
 }
-
 

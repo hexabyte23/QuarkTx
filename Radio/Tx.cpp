@@ -4,7 +4,6 @@
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
-//ppmOut_(MAX_PPM_OUTPUT_CHANNEL, ppmOutputValue_, ppmWorkValue_, MAX_PPM_OUTPUT_CHANNEL),
 toggleMode_(tTransmit),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false)
@@ -60,17 +59,6 @@ void Tx::setupInputSignal()
 
 void Tx::setupOutputSignal()
 {
-#if 0
-  Timer::setup();
-
-  ppmOut_.setup();
-
-  ppmOut_.setPulseLength(PPM_PULSE_LEN); // pulse length in microseconds
-  ppmOut_.setPauseLength(PPM_PAUSE_LEN); // length of pause after last channel in microseconds
-
-  ppmOut_.start(PPM_PIN, PPM_INVERT, PPM_DEBUG);
-#endif
-
   digitalWrite(PPM_PIN, !PPM_SIGNAL);  //set the PPM signal pin to the default state
   
   cli();
@@ -222,9 +210,6 @@ void Tx::calculatePPMOutput()
   // convert analog value to to microseconds
   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     ppmOutputValue_[idx] = currentModel_->getOutputValue(idx, analogicSensorInputValue_[idx]);
-
-//  if(toggleMode_ == tTransmit)
-//     ppmOut_.update();
 }
 
 void Tx::displayInputUpdate()
