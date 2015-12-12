@@ -1,9 +1,9 @@
 # QuarkTx
-Radio Control system based on Arduino nano
+Radio Control system based on Arduino Nano ATmega 328
 
 ## Gui
-Client app source code running on following system: WIN 10, OSX, Android, IOS
+Qt client source code running on following system: WIN 10, OSX, Android & IOS
 
 ## Radio
-Arduino source code
+Arduino Nano ATmega328 source code
 

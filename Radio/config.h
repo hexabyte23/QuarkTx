@@ -15,10 +15,10 @@
 
 #define PPM_MIN_VALUE           1000
 #define PPM_MAX_VALUE           2000
-#define PPM_INVERT              false   // false positive signal, true negative signal
-#define PPM_DEBUG               false   // /PPM signal speed / 256
-#define PPM_PULSE_LEN           448     // in microseconds
-#define PPM_PAUSE_LEN           10448   // in microseconds
+//#define PPM_INVERT              false   // false positive signal, true negative signal
+//#define PPM_DEBUG               false   // /PPM signal speed / 256
+//#define PPM_PULSE_LEN           448     // in microseconds
+//#define PPM_PAUSE_LEN           10448   // in microseconds
 
 #define PPM_SIGNAL              1       // 1 is positive, 0 is negative
 #define PPM_PULSE_LEN           300     // in microseconds
