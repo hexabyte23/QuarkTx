@@ -21,8 +21,11 @@ class Tx
   uint16_t analogicSensorCalibMax_[MAX_INPUT_CHANNEL];
 
   // Channels mapping for switches
-  uint8_t digMapping_[MAX_DIG_INPUT_CHANNEL] = {11, 12};
+  uint8_t digMapping_[MAX_DIG_INPUT_CHANNEL] = {2, 3};
 
+  // LED
+  int ledState_;
+  unsigned long previousMillis_;
 
   // toggles
   enum {tTransmit, tSetting} toggleMode_;
@@ -37,6 +40,7 @@ class Tx
   void setupOutputSignal();
   void displayCalibrate(bool displayOnly);
   void calculatePPMOutputIdle();
+  void ledBlink();
   
   public:
   

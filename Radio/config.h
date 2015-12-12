@@ -27,5 +27,6 @@
 
 #define PPM_PIN 10
 #define LED_PIN 13
+#define LED_BLINK_PERIOD        500    // millisec
 
 #endif

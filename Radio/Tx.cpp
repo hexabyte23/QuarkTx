@@ -5,6 +5,7 @@
 Tx::Tx()
 :currentModel_(&modelList_[0]),
 toggleMode_(tTransmit),
+ledState_(LOW),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
 toggleDisplayCalibrate_(false)
@@ -119,7 +120,7 @@ void Tx::onIrqTimerChange()
 void Tx::idle()
 {
   calculatePPMOutputIdle();
-  
+  ledBlink();
   serialLink_.idle();
 
   if(toggleDisplayInputUpdate_)
@@ -146,6 +147,23 @@ void Tx::calculatePPMOutputIdle()
     ppmOutputValue_[idx] = currentModel_->getValue(idx, analogicSensorCalibMin_[idx], 
                                                         analogicSensorCalibMax_[idx], 
                                                         analogicSensorInputValue_[idx]);
+}
+
+void Tx::ledBlink()
+{
+  unsigned long currentMillis = millis();
+
+  if(currentMillis - previousMillis_ >= LED_BLINK_PERIOD) 
+  {
+    previousMillis_ = currentMillis;
+
+    if (ledState_ == LOW) 
+      ledState_ = HIGH;
+    else
+      ledState_ = LOW;
+    
+    digitalWrite(LED_PIN, ledState_);
+  }
 }
 
 void Tx::displayInputUpdate()
