@@ -119,6 +119,8 @@ bool Tx::setup()
   ADCSRA |=B01000000;
 #endif
 
+  onLoadFromEEPROM();
+  
   printf("Tx\t\tOK\n");
   return ret1 | ret2;
 }
@@ -197,7 +199,7 @@ void Tx::idle()
   if(toggleDisplayOutputUpdate_)
     displayOutputUpdate();
   if(toggleDisplayCalibrate_)
-    displayCalibrate();
+    displayCalibrate(false);
 }
 
 void Tx::calculatePPMOutput()
@@ -283,18 +285,20 @@ void Tx::onChangeCurrentModel(int idx)
     error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
 }
 
-void Tx::onDumpModel(int idx)
+void Tx::onDump()
 {
-  // debug("[d] dump model %d\n", idx); 
-  if(idx < MAX_MODEL)
+  // dump calibrate
+  info(INFO_CALIBRATE);
+  displayCalibrate(true);
+  
+  // dump models
+  for(uint8_t idx=0; idx < MAX_MODEL; idx++)
   {
     char c = (currentModel_ == &modelList_[idx])?'*':' ';
-    printf("Dump model %d %c\n",idx, c);
-
+    printf("Model %d %c\n",idx, c);
+  
     modelList_[idx].dump();
   }
-  else
-    error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
 }
 
 void Tx::onToggleCalibrateAnalogicSensors()
@@ -303,14 +307,17 @@ void Tx::onToggleCalibrateAnalogicSensors()
   toggleDisplayCalibrate_ = !toggleDisplayCalibrate_;
 }
 
-void Tx::displayCalibrate()
+void Tx::displayCalibrate(bool displayOnly)
 {  
   for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
   {
-    if(analogicSensorCalibMin_[idx] > analogicSensorInputValue_[idx])
-      analogicSensorCalibMin_[idx] = analogicSensorInputValue_[idx];
-    if(analogicSensorCalibMax_[idx] < analogicSensorInputValue_[idx])
-      analogicSensorCalibMax_[idx] = analogicSensorInputValue_[idx];
+    if(displayOnly == false)
+    {
+      if(analogicSensorCalibMin_[idx] > analogicSensorInputValue_[idx])
+        analogicSensorCalibMin_[idx] = analogicSensorInputValue_[idx];
+      if(analogicSensorCalibMax_[idx] < analogicSensorInputValue_[idx])
+        analogicSensorCalibMax_[idx] = analogicSensorInputValue_[idx];
+    }
       
     Serial.print("{");
     Serial.print(analogicSensorCalibMin_[idx], DISPLAY_BASE);
@@ -346,10 +353,11 @@ void Tx::onSaveToEEPROM()
 
 void Tx::onReset()
 {
-  //debug("[d] reset\n");
+  // reset models 
   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
-    
+
+  // reset calibration
   for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
   { 
     analogicSensorCalibMin_[idx] = 0xFFFF;

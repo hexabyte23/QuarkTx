@@ -37,7 +37,7 @@ class Tx
   void displayOutputUpdate();
   void setupOutputSignal();
   void setupInputSignal();
-  void displayCalibrate();
+  void displayCalibrate(bool displayOnly);
   
   public:
   
@@ -51,7 +51,7 @@ class Tx
 #endif
   void onIrqTimerChange();
   void onChangeCurrentModel(int idx);
-  void onDumpModel(int idx);
+  void onDump();
   void onToggleMode();
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();

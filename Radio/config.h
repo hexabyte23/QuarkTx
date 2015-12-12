@@ -1,7 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define VERSION                 "0.0.8" 
+#define VERSION                 "0.0.9" 
 #define SERIAL_SPEED            9600
 
 #define DISPLAY_BASE            DEC     // DEC or HEX

@@ -19,7 +19,7 @@ const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";
 const char info_string_1[] PROGMEM = "Mode switched to 'settings'\n";
 const char info_string_2[] PROGMEM = "Current mode 'settings'\n";
 const char info_string_3[] PROGMEM = "Current mode 'transmit'\n";
-const char info_string_41[] PROGMEM = "help command :\n"
+const char info_string_4[] PROGMEM = "help command :\n"
          "h: help\n"
          "m: toggle Tx mode\n"
          "l [0..4]: change cur. model\n"
@@ -29,23 +29,25 @@ const char info_string_41[] PROGMEM = "help command :\n"
          "a: load cur. modelfrom EEPROM\n"
          "v: save cur. model to EEPROM\n"
          "c: toggle calibrate\n";
-const char info_string_42[] PROGMEM =          
+const char info_string_5[] PROGMEM =          
          "s i [chan] [val]: set cur. model servo min\n"
          "s a [chan] [val]: set cur. model servo max\n"
          "s t [chan] [val]: set cur. model servo trim\n"
          "s r [chan] [val]: set cur. model servo revert\n"
          "r: reset, clean all models\n";
-const char info_string_5[] PROGMEM = "Current model saved to EEPROM\n";
-const char info_string_6[] PROGMEM = "Current model load from EEPROM\n";
-const char info_string_7[] PROGMEM = "Set Min channel %d value %d\n";
-const char info_string_8[] PROGMEM = "Set Max channel %d value %d\n";
-const char info_string_9[] PROGMEM = "Set Trim channel %d value %d\n";
-const char info_string_10[] PROGMEM = "Set Revert channel %d value %d\n";
-const char info_string_11[] PROGMEM = "Servo\n# Min   Max     Trim   Rev\n";
+const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";
+const char info_string_7[] PROGMEM = "Current model load from EEPROM\n";
+const char info_string_8[] PROGMEM = "Set Min channel %d value %d\n";
+const char info_string_9[] PROGMEM = "Set Max channel %d value %d\n";
+const char info_string_10[] PROGMEM = "Set Trim channel %d value %d\n";
+const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
+const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Trim   Rev\n";
+const char info_string_13[] PROGMEM = "Input channel calibration\n";
 
 // global error tab
-const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_string_2, info_string_3, info_string_41, info_string_42, 
-                                          info_string_5, info_string_6, info_string_7, info_string_8, info_string_9, info_string_10, info_string_11};
+const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_string_2, info_string_3, info_string_4, info_string_5, 
+                                          info_string_6, info_string_7, info_string_8, info_string_9, info_string_10, info_string_11, 
+                                          info_string_12, info_string_13};
 
 
 // global functions
