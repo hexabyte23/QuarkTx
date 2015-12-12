@@ -1,3 +1,4 @@
+#include "FlashMem.h"
 #include "SerialLink.h"
 
 int serialWrite(char c, FILE *f)
@@ -19,7 +20,7 @@ bool SerialLink::setup(Command *cmd)
   // reroute printf() output to serial
   stdout = stderr = fdevopen(serialWrite, NULL);
 
-  printf("Quark Tx v%s\nBooting..\n", VERSION);
+  info(INFO_BOOTING_MESSAGE, VERSION);
     
   cmd_ = cmd;
     
