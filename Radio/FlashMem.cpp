@@ -28,7 +28,7 @@ const char info_string_4[] PROGMEM = "help command :\n"
          "o: toggle output update\n"
          "a: load cur. modelfrom EEPROM\n"
          "v: save cur. model to EEPROM\n"
-         "c: toggle calibrate\n";
+         "c: toggle calibrate input sensors\n";
 const char info_string_5[] PROGMEM =          
          "s i [chan] [val]: set cur. model servo min\n"
          "s a [chan] [val]: set cur. model servo max\n"

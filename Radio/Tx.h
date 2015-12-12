@@ -27,17 +27,13 @@ class Tx
   bool toggleDisplayOutputUpdate_;
   bool toggleDisplayCalibrate_;
 
-  
-#ifdef GET_ADC_BY_IRQ
-  volatile byte adcIrqChannel_;
-#endif
 
   // private functions
   void displayInputUpdate();
   void displayOutputUpdate();
   void setupOutputSignal();
-  void setupInputSignal();
   void displayCalibrate(bool displayOnly);
+  void calculatePPMOutputIdle();
   
   public:
   
@@ -46,9 +42,6 @@ class Tx
   bool setup();
 
   // Signals
-#ifdef GET_ADC_BY_IRQ
-  void onIrqAdcChange();
-#endif
   void onIrqTimerChange();
   void onChangeCurrentModel(int idx);
   void onDump();
@@ -62,7 +55,6 @@ class Tx
 
   // Functions
   void idle();
-  void calculatePPMOutput();
   Model* getCurrentModel() const {return currentModel_;}
   uint8_t getCurrentModelIndex();
 };

@@ -15,49 +15,6 @@ toggleDisplayCalibrate_(false)
   onReset();
 }
 
-void Tx::setupInputSignal()
-{
-#ifdef GET_ADC_BY_IRQ
-// Configure ADC for collecting data by interrupt way
-
-  cli();
-    
-  // clear ADLAR to right-adjust the result ADCL will contain lower 8 bits, ADCH upper 2 bits
-  ADMUX &= B11011111;
-   
-  // Set REFS1..0 to change reference voltage to the proper source (01)
-  ADMUX |= B01000000;
-  
-  // Clear MUX3..0 in preparation for setting the analog input
-  ADMUX &= B11110000;
-  
-  // Set MUX3..0 to read from A0 to A8
-  //ADMUX |= B00000000;
-  
-  // Set ADEN to enable the ADC.
-  // Note, this instruction takes 12 ADC clocks to execute
-  ADCSRA |= B10000000;
-  
-  // Set ADATE to enable auto-triggering.
-  //ADCSRA |= B00100000;
-  
-  // Clear ADTS2..0 to set trigger mode to free running.
-  // This means that as soon as an ADC has finished, the next will be
-  // immediately started.
-  //ADCSRB &= B11111000;
-  
-  // Set the Prescaler to 128 le lowes possile (16000KHz/128 = 125KHz)
-  // Above 200KHz 10-bit results are not reliable.
-  ADCSRA |= B00000111;
-  
-  // Set ADIE to enable the ADC interrupt.
-  // Without this, the internal interrupt will not trigger.
-  ADCSRA |= B00001000;
-
-  sei();
-#endif
-}
-
 
 void Tx::setupOutputSignal()
 {
@@ -108,44 +65,15 @@ bool Tx::setup()
   // Configure Timer for PPM signal generation
   setupOutputSignal();
 
-  setupInputSignal();
-
   // Serial setup() must always be the first module to initialize
   bool ret1 = serialLink_.setup(&command_);
   bool ret2 = command_.setup(this);
-
-#ifdef GET_ADC_BY_IRQ
-  // Kick off the first ADC to start the conversion
-  ADCSRA |=B01000000;
-#endif
 
   onLoadFromEEPROM();
   
   printf("Tx\t\tOK\n");
   return ret1 | ret2;
 }
-
-#ifdef GET_ADC_BY_IRQ
-void Tx::onIrqAdcChange()
-{
-  // Get the ADC channel causing the interrupt
-  int c = ADMUX & ((1 << MUX3) | (1 << MUX2) | (1 << MUX1) | (1 << MUX0));
-
-  // Get value, must read low first
-  analogicSensorInputValue_[c] = ADCL | (ADCH << 8);
-
-  // Select next channel
-  ADMUX &= B11111000;
-  adcIrqChannel_++;
-  if(adcIrqChannel_ == MAX_ADC_INPUT_CHANNEL)
-    adcIrqChannel_ = 0;
-  ADMUX |= adcIrqChannel_;
-  
-  // Set ADSC to start another conversion
-  ADCSRA |= B01000000;
-}
-#endif
-
 
 void Tx::onIrqTimerChange()
 {
@@ -190,7 +118,7 @@ void Tx::onIrqTimerChange()
 
 void Tx::idle()
 {
-  calculatePPMOutput();
+  calculatePPMOutputIdle();
   
   serialLink_.idle();
 
@@ -202,13 +130,11 @@ void Tx::idle()
     displayCalibrate(false);
 }
 
-void Tx::calculatePPMOutput()
+void Tx::calculatePPMOutputIdle()
 {
     // Get analogic input from all sensors
-#ifndef GET_ADC_BY_IRQ
   for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     analogicSensorInputValue_[idx] = analogRead(A0 + idx);
-#endif
 
   for(uint8_t idx=0; idx < MAX_DIG_INPUT_CHANNEL; idx++)
     digitalSensorInputValue_[idx] = digitalRead(idx);
@@ -222,18 +148,14 @@ void Tx::calculatePPMOutput()
 
 void Tx::displayInputUpdate()
 {
-#ifdef GET_ADC_BY_IRQ
-      Serial.print("<I\t");   // get input from Irq way
-#else
-      Serial.print("<S\t");   // det inpout from synchrone way
-#endif
+  Serial.print("<S\t");   // det inpout from synchrone way
 
-    for(uint8_t idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
-    {
-      Serial.print(analogicSensorInputValue_[idx], DISPLAY_BASE);
-      Serial.print("\t");
-    }
-    Serial.println();
+  for(uint8_t idx = 0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
+  {
+    Serial.print(analogicSensorInputValue_[idx], DISPLAY_BASE);
+    Serial.print("\t");
+  }
+  Serial.println();
 }
 
 void Tx::onToggleDisplayInputUpdate()

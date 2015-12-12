@@ -27,6 +27,4 @@
 #define PPM_PIN 10
 #define LED_PIN 13
 
-//#define GET_ADC_BY_IRQ
-
 #endif
