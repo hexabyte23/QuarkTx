@@ -18,7 +18,7 @@
 #define INFO_LOAD_FROM_EEPROM         7
 #define INFO_SET_MIN_CHANNEL          8
 #define INFO_SET_MAX_CHANNEL          9
-#define INFO_SET_TRIM_CHANNEL         10
+#define INFO_SET_NEUTRAL_CHANNEL      10
 #define INFO_SET_REVERT_CHANNEL       11
 #define INFO_DUMP_SERVO_HEADER        12
 #define INFO_CALIBRATE                13

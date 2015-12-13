@@ -14,14 +14,14 @@ ServoCommande::ServoCommande()
 
 uint16_t ServoCommande::getValue(uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue)
 {
-  return map(rawInputValue, minCalib, maxCalib, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + trim_;
+  return map(rawInputValue, minCalib, maxCalib, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
 }
 
 void ServoCommande::reset()
 {
   maxOutCurse_ = PPM_MAX_VALUE;
   minOutCurse_ = PPM_MIN_VALUE;
-  trim_ = 0;
+  neutral_ = 0;
   isRevert_ = false; 
 }
 
@@ -50,9 +50,9 @@ void Model::setMaxValue(uint8_t channel, int value)
   channel_[channel].servo_.maxOutCurse_ = value;
 }
 
-void Model::setTrimValue(uint8_t channel, uint16_t value)
+void Model::setNeutralValue(uint8_t channel, uint16_t value)
 {
-  channel_[channel].servo_.trim_ = value;
+  channel_[channel].servo_.neutral_ = value;
 }
 
 void Model::setRevertValue(uint8_t channel, bool value)
@@ -71,7 +71,7 @@ void Model::dump()
     Serial.print("\t");
     Serial.print(channel_[idx].servo_.maxOutCurse_, DISPLAY_BASE);
     Serial.print("\t");
-    Serial.print(channel_[idx].servo_.trim_, DISPLAY_BASE);
+    Serial.print(channel_[idx].servo_.neutral_, DISPLAY_BASE);
     Serial.print("\t");
     Serial.print(channel_[idx].servo_.isRevert_, DISPLAY_BASE);
     Serial.println();

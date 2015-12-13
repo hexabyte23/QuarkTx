@@ -32,14 +32,14 @@ const char info_string_4[] PROGMEM = "help command :\n"
 const char info_string_5[] PROGMEM =          
          "s i [chan] [val]: set cur. model servo min\n"
          "s a [chan] [val]: set cur. model servo max\n"
-         "s t [chan] [val]: set cur. model servo trim\n"
+         "s n [chan] [val]: set cur. model servo neutral\n"
          "s r [chan] [val]: set cur. model servo revert\n"
          "r: reset, clean all models\n";
 const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";
 const char info_string_7[] PROGMEM = "Current model load from EEPROM\n";
 const char info_string_8[] PROGMEM = "Set Min channel %d value %d\n";
 const char info_string_9[] PROGMEM = "Set Max channel %d value %d\n";
-const char info_string_10[] PROGMEM = "Set Trim channel %d value %d\n";
+const char info_string_10[] PROGMEM = "Set Neutral channel %d value %d\n";
 const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
 const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Trim   Rev\n";
 const char info_string_13[] PROGMEM = "Input channels (%d) calibration\n";

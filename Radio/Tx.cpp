@@ -142,7 +142,7 @@ void Tx::calculatePPMOutputIdle()
   for(uint8_t idx=MAX_ADC_INPUT_CHANNEL; idx < MAX_INPUT_CHANNEL; idx++, digIdx++)
     inputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?1023:0;
 
-  // Convert analog value to to microseconds
+  // Convert analog values to microseconds
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     ppmOutputValue_[idx] = currentModel_->getValue(idx, inputCalibrMin_[idx], 

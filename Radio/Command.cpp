@@ -120,9 +120,9 @@ void Command::setModelCmd(const char* param)
       tx_->getCurrentModel()->setMaxValue(c , v);
       info(INFO_SET_MAX_CHANNEL, c, v);
       break;
-    case 't':
-      tx_->getCurrentModel()->setTrimValue(c , v);
-      info(INFO_SET_TRIM_CHANNEL, c, v);
+    case 'n':
+      tx_->getCurrentModel()->setNeutralValue(c , v);
+      info(INFO_SET_NEUTRAL_CHANNEL, c, v);
       break;
     case 'r':
       tx_->getCurrentModel()->setRevertValue(c , v);
