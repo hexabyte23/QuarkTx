@@ -135,18 +135,20 @@ void Tx::calculatePPMOutputIdle()
 {
    // Get analogic input sensors
   for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
-    analogicSensorInputValue_[idx] = analogRead(A0 + idx);
+    inputValue_[idx] = analogRead(A0 + idx);
 
   // Get digital input sensors
   uint8_t digIdx=0;
   for(uint8_t idx=MAX_ADC_INPUT_CHANNEL; idx < MAX_INPUT_CHANNEL; idx++, digIdx++)
-    analogicSensorInputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?1023:0;
+    inputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?1023:0;
 
   // Convert analog value to to microseconds
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    ppmOutputValue_[idx] = currentModel_->getValue(idx, analogicSensorCalibMin_[idx], 
-                                                        analogicSensorCalibMax_[idx], 
-                                                        analogicSensorInputValue_[idx]);
+  {
+    ppmOutputValue_[idx] = currentModel_->getValue(idx, inputCalibrMin_[idx], 
+                                                        inputCalibrMax_[idx], 
+                                                        inputValue_[idx]);
+  }
 }
 
 void Tx::ledBlink()
@@ -177,7 +179,7 @@ void Tx::displayInputUpdate()
 
   for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
   {
-    Serial.print(analogicSensorInputValue_[idx], DISPLAY_BASE);
+    Serial.print(inputValue_[idx], DISPLAY_BASE);
     Serial.print("\t");
   }
   Serial.println();
@@ -260,16 +262,16 @@ void Tx::displayCalibrate(bool displayOnly)
   {
     if(displayOnly == false)
     {
-      if(analogicSensorCalibMin_[idx] > analogicSensorInputValue_[idx])
-        analogicSensorCalibMin_[idx] = analogicSensorInputValue_[idx];
-      if(analogicSensorCalibMax_[idx] < analogicSensorInputValue_[idx])
-        analogicSensorCalibMax_[idx] = analogicSensorInputValue_[idx];
+      if(inputCalibrMin_[idx] > inputValue_[idx])
+        inputCalibrMin_[idx] = inputValue_[idx];
+      if(inputCalibrMax_[idx] < inputValue_[idx])
+        inputCalibrMax_[idx] = inputValue_[idx];
     }
       
     Serial.print("{");
-    Serial.print(analogicSensorCalibMin_[idx], DISPLAY_BASE);
+    Serial.print(inputCalibrMin_[idx], DISPLAY_BASE);
     Serial.print("\t");
-    Serial.print(analogicSensorCalibMax_[idx], DISPLAY_BASE);
+    Serial.print(inputCalibrMax_[idx], DISPLAY_BASE);
     Serial.print("}\t");
   }
   Serial.println();
@@ -307,8 +309,8 @@ void Tx::onReset()
   // reset calibration
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   { 
-    analogicSensorCalibMin_[idx] = 0xFFFF;
-    analogicSensorCalibMax_[idx] = 0x0;
+    inputCalibrMin_[idx] = 0xFFFF;
+    inputCalibrMax_[idx] = 0x0;
   }
   
   toggleMode_ = tTransmit;
