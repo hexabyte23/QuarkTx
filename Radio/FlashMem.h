@@ -21,7 +21,7 @@
 #define INFO_SET_NEUTRAL_CHANNEL      10
 #define INFO_SET_REVERT_CHANNEL       11
 #define INFO_DUMP_SERVO_HEADER        12
-#define INFO_CALIBRATE                13
+#define INFO_SENSOR                   13
 #define INFO_BOOTING_MESSAGE          14
 
 void error(int idx, ...);

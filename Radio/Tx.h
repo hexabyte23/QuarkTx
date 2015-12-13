@@ -6,6 +6,7 @@
 #include "SerialLink.h"
 #include "Command.h"
 #include "Model.h"
+#include "Sensor.h"
 
 class Tx
 {
@@ -15,6 +16,10 @@ class Tx
   Model *currentModel_;
 
   // Input & output datas
+  Stick elevator_, aileron_, rudder_, throttle_;
+  Switch s1_, s2_;
+  BatteryMeter battery_;
+  Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
   uint16_t inputValue_[MAX_INPUT_CHANNEL];
   uint16_t inputCalibrMin_[MAX_INPUT_CHANNEL];
   uint16_t inputCalibrMax_[MAX_INPUT_CHANNEL];
@@ -32,14 +37,15 @@ class Tx
   enum {tTransmit, tSetting} toggleMode_;
   bool toggleDisplayInputUpdate_;
   bool toggleDisplayOutputUpdate_;
-  bool toggleDisplayCalibrate_;
+  bool toggleCalibrateSensor_;
 
 
   // private functions
   void displayInputUpdate();
   void displayOutputUpdate();
-  void setupOutputSignal();
-  void displayCalibrate(bool displayOnly);
+  void setupInputDevice();
+  void setupOutputDevice();
+  void calibrateSensor();
   void calculatePPMOutputIdle();
   void ledBlink();
   
@@ -56,7 +62,7 @@ class Tx
   void onToggleMode();
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();
-  void onToggleCalibrateAnalogicSensors();
+  void onToggleCalibrateSensor();
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
   void onReset();

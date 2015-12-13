@@ -7,17 +7,22 @@
 
 //////////////////////////////////////////////////////////////
 
-ServoCommande::ServoCommande()
+ServoCommand::ServoCommand()
 {
   reset();
 }
 
-uint16_t ServoCommande::getValue(uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue)
+uint16_t ServoCommand::getValue(uint16_t rawInputValue)
+{
+  return map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
+}
+
+uint16_t ServoCommand::getValue(uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue)
 {
   return map(rawInputValue, minCalib, maxCalib, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
 }
 
-void ServoCommande::reset()
+void ServoCommand::reset()
 {
   maxOutCurse_ = PPM_MAX_VALUE;
   minOutCurse_ = PPM_MIN_VALUE;
@@ -33,6 +38,11 @@ Model::Model()
 
 bool Model::setup()
 {
+}
+
+uint16_t Model::getValue(uint8_t channel, uint16_t rawInputValue)
+{
+  channel_[channel].servo_.getValue(rawInputValue);
 }
 
 uint16_t Model::getValue(uint8_t channel, uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue)

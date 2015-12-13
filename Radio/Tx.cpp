@@ -8,17 +8,25 @@ toggleMode_(tTransmit),
 ledState_(LOW),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
-toggleDisplayCalibrate_(false)
-#ifdef GET_ADC_BY_IRQ
-,adcIrqChannel_(0)
-#endif
+toggleCalibrateSensor_(false)
 {
   onReset();
 }
 
-
-void Tx::setupOutputSignal()
+void Tx::setupInputDevice()
 {
+  elevator_.setup(A0);
+  aileron_.setup(A1);
+  rudder_.setup(A2);
+  throttle_.setup(A3);
+  s1_.setup(2);
+  s2_.setup(3);
+}
+
+void Tx::setupOutputDevice()
+{
+  // PPM
+  pinMode(PPM_PIN, OUTPUT);
   digitalWrite(PPM_PIN, !PPM_SIGNAL);  //set the PPM signal pin to the default state
   
   cli();
@@ -34,11 +42,14 @@ void Tx::setupOutputSignal()
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
  
   sei();
+
+  // LED
+  pinMode(LED_PIN, OUTPUT);
 }
 
 bool Tx::setup()
 {
-  // Digital pins
+  // Extend battery duration
   pinMode(2, INPUT_PULLUP);
   pinMode(3, INPUT_PULLUP);
   pinMode(4, INPUT_PULLUP);
@@ -47,10 +58,10 @@ bool Tx::setup()
   pinMode(7, INPUT_PULLUP);
   pinMode(8, INPUT_PULLUP);
   pinMode(9, INPUT_PULLUP);
-  pinMode(PPM_PIN, OUTPUT);     // PPM
+  pinMode(10, INPUT_PULLUP);
   pinMode(11, INPUT_PULLUP);
   pinMode(12, INPUT_PULLUP);
-  pinMode(LED_PIN, OUTPUT);     // Led
+ 
 
   // Analog pins
   pinMode(A0, INPUT);           // gimbal 1
@@ -62,9 +73,13 @@ bool Tx::setup()
   pinMode(A5, INPUT);           
   digitalWrite(A5, HIGH);       // reserved for extra POT
   pinMode(A7, INPUT);           // Battery level
+
+
+  // Setup input sensors
+  setupInputDevice();
   
-  // Configure Timer for PPM signal generation
-  setupOutputSignal();
+  // Setup Timer for PPM signal generation
+  setupOutputDevice();
 
   // Serial setup() must always be the first module to initialize
   bool ret1 = serialLink_.setup(&command_);
@@ -127,10 +142,11 @@ void Tx::idle()
     displayInputUpdate();
   if(toggleDisplayOutputUpdate_)
     displayOutputUpdate();
-  if(toggleDisplayCalibrate_)
-    displayCalibrate(false);
+  if(toggleCalibrateSensor_)
+    calibrateSensor();
 }
 
+/*
 void Tx::calculatePPMOutputIdle()
 {
    // Get analogic input sensors
@@ -148,6 +164,20 @@ void Tx::calculatePPMOutputIdle()
     ppmOutputValue_[idx] = currentModel_->getValue(idx, inputCalibrMin_[idx], 
                                                         inputCalibrMax_[idx], 
                                                         inputValue_[idx]);
+  }
+}
+*/
+
+void Tx::calculatePPMOutputIdle()
+{
+   // Get input sensors values
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+    inputValue_[idx] = sensor_[idx]->getValue();
+
+  // Convert analog values to microseconds
+  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  {
+    ppmOutputValue_[idx] = currentModel_->getValue(idx, inputValue_[idx]);
   }
 }
 
@@ -237,8 +267,16 @@ void Tx::onChangeCurrentModel(int idx)
 void Tx::onDump()
 {
   // dump calibrate
-  info(INFO_CALIBRATE, MAX_INPUT_CHANNEL);
-  displayCalibrate(true);
+  info(INFO_SENSOR, MAX_INPUT_CHANNEL);
+  //calibrateSensor(true);
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+  {
+    Serial.print(idx, DISPLAY_BASE);
+    Serial.print(" ");
+    sensor_[idx]->dump();
+    Serial.println();
+  }
+  Serial.println();
   
   // dump models
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
@@ -250,13 +288,14 @@ void Tx::onDump()
   }
 }
 
-void Tx::onToggleCalibrateAnalogicSensors()
+void Tx::onToggleCalibrateSensor()
 {
   //debug("[d] enter calibrate sensors loop\n");
-  toggleDisplayCalibrate_ = !toggleDisplayCalibrate_;
+  toggleCalibrateSensor_ = !toggleCalibrateSensor_;
 }
 
-void Tx::displayCalibrate(bool displayOnly)
+/*
+void Tx::calibrateSensor(bool displayOnly)
 {  
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   {
@@ -272,6 +311,20 @@ void Tx::displayCalibrate(bool displayOnly)
     Serial.print(inputCalibrMin_[idx], DISPLAY_BASE);
     Serial.print("\t");
     Serial.print(inputCalibrMax_[idx], DISPLAY_BASE);
+    Serial.print("}\t");
+  }
+  Serial.println();
+}
+*/
+void Tx::calibrateSensor()
+{  
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+  {
+    sensor_[idx]->calibrate();
+    Serial.print("{");
+    Serial.print(sensor_[idx]->getMinCalibration(), DISPLAY_BASE);
+    Serial.print("\t");
+    Serial.print(sensor_[idx]->getMaxCalibration(), DISPLAY_BASE);
     Serial.print("}\t");
   }
   Serial.println();

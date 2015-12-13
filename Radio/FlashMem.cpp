@@ -41,8 +41,8 @@ const char info_string_8[] PROGMEM = "Set Min channel %d value %d\n";
 const char info_string_9[] PROGMEM = "Set Max channel %d value %d\n";
 const char info_string_10[] PROGMEM = "Set Neutral channel %d value %d\n";
 const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
-const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Trim   Rev\n";
-const char info_string_13[] PROGMEM = "Input channels (%d) calibration\n";
+const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Neutral Rev\n";
+const char info_string_13[] PROGMEM = "Sensors (%d)\n# Pin   Trim    Min   Max\n";
 const char info_string_14[] PROGMEM = "Quark Tx v%s\nBooting...\n";
 
 // global error tab
