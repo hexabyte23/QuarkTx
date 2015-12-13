@@ -140,7 +140,7 @@ void Tx::calculatePPMOutputIdle()
   // Get digital input sensors
   uint8_t digIdx=0;
   for(uint8_t idx=MAX_ADC_INPUT_CHANNEL; idx < MAX_INPUT_CHANNEL; idx++, digIdx++)
-    inputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?1023:0;
+    inputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?ADC_MAX_VALUE:ADC_MIN_VALUE;
 
   // Convert analog values to microseconds
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)

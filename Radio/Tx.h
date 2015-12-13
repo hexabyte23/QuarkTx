@@ -22,6 +22,7 @@ class Tx
 
   // Channels mapping for switches
   uint8_t digMapping_[MAX_DIG_INPUT_CHANNEL] = {2, 3};
+  
 
   // LED
   int ledState_;

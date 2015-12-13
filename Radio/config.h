@@ -6,13 +6,16 @@
 
 #define DISPLAY_BASE            DEC     // DEC or HEX
 
-#define MAX_MODEL               4
+#define MAX_MODEL               2
 #define MAX_SERIAL_INPUT_BUFFER 10
-#define MAX_ADC_INPUT_CHANNEL   4       // Gimbal + extra pot
-#define MAX_DIG_INPUT_CHANNEL   2       // Mecanical switches
+#define MAX_ADC_INPUT_CHANNEL   4       // Gimbals
+#define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
 #define MAX_PPM_OUTPUT_CHANNEL  6
 #define MAX_MIXER               8
+
+#define ADC_MIN_VALUE           0
+#define ADC_MAX_VALUE           1023
 
 #define PPM_MIN_VALUE           1000
 #define PPM_MAX_VALUE           2000
