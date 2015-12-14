@@ -8,7 +8,7 @@
 
 #define MAX_MODEL               2
 #define MAX_SERIAL_INPUT_BUFFER 10
-#define MAX_ADC_INPUT_CHANNEL   4       // Gimbals
+#define MAX_ADC_INPUT_CHANNEL   4       // Gimballs
 #define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
 #define MAX_PPM_OUTPUT_CHANNEL  6
@@ -31,5 +31,8 @@
 #define PPM_PIN 10
 #define LED_PIN 13
 #define LED_BLINK_PERIOD        500    // millisec
+
+#define BT_RX_PIN               8
+#define BT_TX_PIN               9
 
 #endif

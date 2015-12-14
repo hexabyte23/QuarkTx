@@ -77,7 +77,7 @@ void Switch::calibrate()
 
 uint16_t Switch::getValue()
 {
-  return map(digitalRead(pin_), calibrMin_, calibrMax_, PPM_MIN_VALUE, PPM_MAX_VALUE);
+  return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 
