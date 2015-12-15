@@ -1,6 +1,8 @@
 #include "Tx.h"
 #include "FlashMem.h"
+#include "Mesure.h"
 #include <EEPROM.h>
+
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
@@ -8,19 +10,30 @@ toggleMode_(tTransmit),
 ledState_(LOW),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
-toggleCalibrateSensor_(false)
+toggleCalibrateSensor_(false),
+BTSerie_(BT_RX_PIN, BT_TX_PIN)
 {
   onReset();
 }
 
 void Tx::setupInputDevice()
 {
+  const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
+  const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
+  const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
+  const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // 125 KHz
+
+  // set up the ADC
+  //ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+  //ADCSRA |= PS_64;    // set our own prescaler to 64 
+
   elevator_.setup(A0);
   aileron_.setup(A1);
   rudder_.setup(A2);
   throttle_.setup(A3);
   s1_.setup(2);
   s2_.setup(3);
+  battery_.setup(A7);
 }
 
 void Tx::setupOutputDevice()
@@ -45,6 +58,11 @@ void Tx::setupOutputDevice()
 
   // LED
   pinMode(LED_PIN, OUTPUT);
+
+  // Check BT module
+  pinMode(BT_RX_PIN, INPUT);  
+  pinMode(BT_TX_PIN, OUTPUT);  
+  BTSerie_.begin(9600);
 }
 
 bool Tx::setup()
@@ -61,7 +79,6 @@ bool Tx::setup()
   pinMode(10, INPUT_PULLUP);
   pinMode(11, INPUT_PULLUP);
   pinMode(12, INPUT_PULLUP);
- 
 
   // Analog pins
   pinMode(A0, INPUT);           // gimbal 1
@@ -74,14 +91,12 @@ bool Tx::setup()
   digitalWrite(A5, HIGH);       // reserved for extra POT
   pinMode(A7, INPUT);           // Battery level
 
-
   // Setup input sensors
   setupInputDevice();
   
   // Setup Timer for PPM signal generation
   setupOutputDevice();
 
-  // Serial setup() must always be the first module to initialize
   bool ret1 = serialLink_.setup(&command_);
   bool ret2 = command_.setup(this);
 
@@ -132,8 +147,12 @@ void Tx::onIrqTimerChange()
   }  
 }
 
+static Mesure mesure;
+
 void Tx::idle()
 {
+  //u1 = micros();
+  
   calculatePPMOutputIdle();
   ledBlink();
   serialLink_.idle();
@@ -144,11 +163,15 @@ void Tx::idle()
     displayOutputUpdate();
   if(toggleCalibrateSensor_)
     calibrateSensor();
+    
+  //u2 = micros();
+  //Serial.println(u2-u1);
 }
 
 /*
 void Tx::calculatePPMOutputIdle()
 {
+  mesure.p1();
    // Get analogic input sensors
   for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
     inputValue_[idx] = analogRead(A0 + idx);
@@ -157,7 +180,10 @@ void Tx::calculatePPMOutputIdle()
   uint8_t digIdx=0;
   for(uint8_t idx=MAX_ADC_INPUT_CHANNEL; idx < MAX_INPUT_CHANNEL; idx++, digIdx++)
     inputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?ADC_MAX_VALUE:ADC_MIN_VALUE;
+  // 456 462 568
 
+  mesure.p2();
+  mesure.displayAvg(500);
   // Convert analog values to microseconds
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
@@ -165,36 +191,41 @@ void Tx::calculatePPMOutputIdle()
                                                         inputCalibrMax_[idx], 
                                                         inputValue_[idx]);
   }
+  // 400 408 448
+
+  // 856 868 964
 }
 */
 
 void Tx::calculatePPMOutputIdle()
 {
+//  mesure.p1();
    // Get input sensors values
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     inputValue_[idx] = sensor_[idx]->getValue();
-
+  // 836 846 932
+  
   // Convert analog values to microseconds
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
     ppmOutputValue_[idx] = currentModel_->getValue(idx, inputValue_[idx]);
-  }
+  //360 369 408
+
+//  mesure.p2();
+//  mesure.displayAvg(500);
+  // 1196 1212 1300
 }
+
 
 void Tx::ledBlink()
 {
   if(toggleMode_ == tTransmit)
   {
-    unsigned long currentMillis = millis();
+    unsigned long cur = millis();
   
-    if(currentMillis - previousMillis_ >= LED_BLINK_PERIOD) 
+    if(cur - ledPrevMS_ >= LED_BLINK_PERIOD) 
     {
-      previousMillis_ = currentMillis;
-  
-      if (ledState_ == LOW) 
-        ledState_ = HIGH;
-      else
-        ledState_ = LOW;
+      ledPrevMS_ = cur;
+      ledState_ = (ledState_ == LOW)?HIGH:LOW;
       
       digitalWrite(LED_PIN, ledState_);
     }
@@ -358,14 +389,14 @@ void Tx::onReset()
   // reset models 
   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
-
+  /*
   // reset calibration
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   { 
     inputCalibrMin_[idx] = 0xFFFF;
     inputCalibrMax_[idx] = 0x0;
   }
-  
+  */
   toggleMode_ = tTransmit;
 }
 
@@ -378,4 +409,5 @@ uint8_t Tx::getCurrentModelIndex()
   }
   return 0;
 }
+
 

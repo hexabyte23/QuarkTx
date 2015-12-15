@@ -2,11 +2,13 @@
 #define TX_H
 
 #include <arduino.h>
+#include <SoftwareSerial.h>
 #include "config.h"
 #include "SerialLink.h"
 #include "Command.h"
 #include "Model.h"
 #include "Sensor.h"
+
 
 class Tx
 {
@@ -31,7 +33,10 @@ class Tx
 
   // LED
   int ledState_;
-  unsigned long previousMillis_;
+  unsigned long ledPrevMS_;
+
+  // BT
+  SoftwareSerial BTSerie_;
 
   // toggles
   enum {tTransmit, tSetting} toggleMode_;
