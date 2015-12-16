@@ -24,7 +24,7 @@ bool SerialLink::setup(Command *cmd)
     
   cmd_ = cmd;
     
-  printf("Serial\t\tOK\n");
+  info(INFO_SERIAL);
   return true;
 }
 
@@ -71,7 +71,7 @@ void SerialLink::idle()
         idxBuffer_++;
       else
       {
-        printf("[e] Command string '%s' too long\n", serialBuffer_);
+        error(ERR_STRING_TOO_LONG, serialBuffer_);
         idxBuffer_ = 0;
         break;
       }

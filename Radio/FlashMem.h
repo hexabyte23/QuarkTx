@@ -7,6 +7,7 @@
 #define ERR_BUFFER_OVERSIZE           3
 #define ERR_EEPROM_DATA_CORRUPTED     4
 #define ERR_COMMAND_UNKNOWN           5
+#define ERR_STRING_TOO_LONG           6
 
 #define INFO_SWITCH_MODE_TRANSMIT     0
 #define INFO_SWITCH_MODE_SETTINGS     1
@@ -23,6 +24,9 @@
 #define INFO_DUMP_SERVO_HEADER        12
 #define INFO_SENSOR                   13
 #define INFO_BOOTING_MESSAGE          14
+#define INFO_COMMAND                  15
+#define INFO_SERIAL                   16
+#define INFO_LOAD_MODEL               17
 
 void error(int idx, ...);
 void info(int idx, ...);

@@ -10,9 +10,10 @@ const char err_string_2[] PROGMEM = "[e] bad parameter: index empty\n";
 const char err_string_3[] PROGMEM = "[e] buffer oversize\n";
 const char err_string_4[] PROGMEM = "[e] EEPROM data is corrupted\n";
 const char err_string_5[] PROGMEM = "[e] Command '%s' unknown\n";
+const char err_string_6[] PROGMEM = "[e] Command string '%s' too long\n";
 
 // global error tab
-const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5};
+const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5, err_string_6};
 
 // Define all information messages
 const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";
@@ -44,15 +45,18 @@ const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
 const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Neutral Rev\n";
 const char info_string_13[] PROGMEM = "Sensors (%d)\n# Pin   Trim    Min   Max\n";
 const char info_string_14[] PROGMEM = "Quark Tx v%s\nBooting...\n";
+const char info_string_15[] PROGMEM = "Command\t\tOK\n";
+const char info_string_16[] PROGMEM = "Serial\t\tOK\n";
+const char info_string_17[] PROGMEM = "Load model %d\n";
 
 // global error tab
 const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_string_2, info_string_3, info_string_4, info_string_5, 
                                           info_string_6, info_string_7, info_string_8, info_string_9, info_string_10, info_string_11, 
-                                          info_string_12, info_string_13, info_string_14};
+                                          info_string_12, info_string_13, info_string_14, info_string_15, info_string_16, info_string_17};
 
 
 // global functions
-#define MAX_FM_BUFFER 400
+#define MAX_FM_BUFFER 240
 static char fm_buffer[MAX_FM_BUFFER];
 
 void error(int idx, ...)

@@ -93,6 +93,8 @@ bool Tx::setup()
 
   // Setup input sensors
   setupInputDevice();
+
+  rl_.setup(inputValue_, ppmOutputValue_);
   
   // Setup Timer for PPM signal generation
   setupOutputDevice();
@@ -151,9 +153,8 @@ static Mesure mesure;
 
 void Tx::idle()
 {
-  //u1 = micros();
-  
   calculatePPMOutputIdle();
+  rl_.evaluate();
   ledBlink();
   serialLink_.idle();
 
@@ -163,9 +164,6 @@ void Tx::idle()
     displayOutputUpdate();
   if(toggleCalibrateSensor_)
     calibrateSensor();
-    
-  //u2 = micros();
-  //Serial.println(u2-u1);
 }
 
 /*
@@ -288,7 +286,7 @@ void Tx::onChangeCurrentModel(int idx)
   //debug("[d] load model %d\n", idx);
   if(idx < MAX_MODEL)
   {
-    printf("Load model %d\n",idx);
+    info(INFO_LOAD_MODEL,idx);
     currentModel_ = &modelList_[idx];
   }
   else

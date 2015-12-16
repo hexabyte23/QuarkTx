@@ -12,7 +12,7 @@ bool Command::setup(Tx *tx)
 {
   tx_ = tx;
   
-  printf("Command\t\tOK\n");
+  info(INFO_COMMAND);
   return true;
 }
 
@@ -41,6 +41,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'v': saveModelsToEEPROMCmd();break;
     case 's': setModelCmd(cmdStr+2);break;
     case 'r': resetCmd();break;
+    //case 'u': break; // future use for unit testing
     default: 
       error(ERR_COMMAND_UNKNOWN, cmdStr);
       break;
