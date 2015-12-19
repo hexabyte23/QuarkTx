@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include "config.h"
+#include "Model.h"
 
 struct StreamBase
 {
@@ -45,11 +46,6 @@ struct OrOp : public OperatorBase
   virtual StreamBase *evaluate();
 };
 
-//
-//  o0=i0
-//  o1=i1|i2
-//  o2=mix(i1, i2, 0.5)|i3[1;0]
-
 class Rl
 {
   InputStream i1_, i2_, i3_, i4_, i5_, i6_;
@@ -57,12 +53,13 @@ class Rl
   OperatorBase *op_[MAX_PPM_OUTPUT_CHANNEL] = {&e1_, &e2_, &e3_, &e4_, &e5_, &e6_};
   uint16_t *inputValue_;
   uint16_t *outputValue_;
+  Model *currentModel_;
   
   public:
 
   Rl();
 
-  void setup(uint16_t *inputValue, uint16_t *outputValue);
+  void setup(uint16_t *inputValue, uint16_t *outputValue, Model *currentModel);
   void parse(const char *def);
   void idle();
 };

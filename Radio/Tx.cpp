@@ -99,7 +99,7 @@ bool Tx::setup()
   // Setup input sensors
   setupInputDevice();
 
-  rl_.setup(inputValue_, ppmOutputValue_);
+  rl_.setup(inputValue_, ppmOutputValue_, currentModel_);
   
   // Setup Timer for PPM signal generation
   setupOutputDevice();

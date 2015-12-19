@@ -14,10 +14,16 @@ Rl::Rl()
 { 
 }
 
-void Rl::setup(uint16_t *inputValue, uint16_t *outputValue)
+void Rl::setup(uint16_t *inputValue, uint16_t *outputValue, Model *currentModel)
 {
   inputValue_=inputValue;
   outputValue_=outputValue;
+  currentModel_ = currentModel;
+
+  //
+  //  o0=i0
+  //  o1=i1|i2
+  //  o2=mix(i1, i2, 0.5)|i3[1;0]
 
   i1_.setup(&inputValue_[0]);
   i2_.setup(&inputValue_[1]);
@@ -43,14 +49,8 @@ void Rl::idle()
   {
     if(op_[idx] != NULL)
     {
-      outputValue_[idx] = i1_.getValue();
-      //outputValue_[idx] = op_[idx]->evaluate()->getValue();
-      //Serial.print(op_[idx]->evaluate()->getValue());
-      //Serial.print(" ");
-      //Serial.print(inputValue_[idx]);
-      //Serial.print(" ");
+      outputValue_[idx] = currentModel_->getValue(idx, op_[idx]->evaluate()->getValue());
     }
   }
-  //Serial.println(" ");
 }
   
