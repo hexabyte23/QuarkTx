@@ -27,6 +27,7 @@
 #define INFO_COMMAND                  15
 #define INFO_SERIAL                   16
 #define INFO_LOAD_MODEL               17
+#define INFO_TX_READY                 18
 
 void error(int idx, ...);
 void info(int idx, ...);

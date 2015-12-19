@@ -3,14 +3,16 @@
 
 #include <arduino.h>
 
-struct Mesure
+class Mesure
 {
   uint32_t sum_, avg_, min_, max_, count_, p1_, p2_, loop_;
 
-  Mesure() {sum_ = avg_ = max_ = count_ = loop_ = 0L; min_ = 0xFFFFFFF0;}
+  public:
 
-  void p1() {p1_ = micros();}
-  void p2() 
+  Mesure() {sum_=avg_=max_=count_=loop_=0L;min_=0xFFFFFFF0;}
+
+  void start() {p1_ = micros();}
+  void stop() 
   {
     p2_ = micros();
     count_++;
@@ -23,6 +25,8 @@ struct Mesure
     if(max_ < delta)
       max_ = delta;
   }
+
+  uint32_t getAverage() {return avg_;}
 
   void displayAvg(int maxi)
   {

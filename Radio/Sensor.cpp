@@ -85,7 +85,8 @@ uint16_t Switch::getValue()
 
 void BatteryMeter::setup(uint8_t pin)
 {
-  
+  pin_ = pin;
+  pinMode(pin_, INPUT_PULLUP);
 }
 
 void BatteryMeter::calibrate()

@@ -54,7 +54,7 @@ class Tx
   void setupOutputDevice();
   void calibrateSensor();
   void calculatePPMOutputIdle();
-  void ledBlink();
+  void ledBlinkIdle();
   
   public:
   

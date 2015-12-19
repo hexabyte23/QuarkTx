@@ -3,6 +3,7 @@
 #include "Mesure.h"
 #include <EEPROM.h>
 
+static Mesure mesure;
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
@@ -67,6 +68,8 @@ void Tx::setupOutputDevice()
 
 bool Tx::setup()
 {
+  mesure.start();
+  
   // Extend battery duration
   pinMode(2, INPUT_PULLUP);
   pinMode(3, INPUT_PULLUP);
@@ -104,7 +107,9 @@ bool Tx::setup()
 
   onLoadFromEEPROM();
   
-  printf("Tx\t\tOK\n");
+  mesure.stop();
+  
+  info(INFO_TX_READY,mesure.getAverage());
   return ret1 | ret2;
 }
 
@@ -149,13 +154,11 @@ void Tx::onIrqTimerChange()
   }  
 }
 
-static Mesure mesure;
-
 void Tx::idle()
 {
   calculatePPMOutputIdle();
-  rl_.evaluate();
-  ledBlink();
+  rl_.idle();
+  ledBlinkIdle();
   serialLink_.idle();
 
   if(toggleDisplayInputUpdate_)
@@ -204,8 +207,8 @@ void Tx::calculatePPMOutputIdle()
   // 836 846 932
   
   // Convert analog values to microseconds
-  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    ppmOutputValue_[idx] = currentModel_->getValue(idx, inputValue_[idx]);
+//  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+//    ppmOutputValue_[idx] = currentModel_->getValue(idx, inputValue_[idx]);
   //360 369 408
 
 //  mesure.p2();
@@ -214,7 +217,7 @@ void Tx::calculatePPMOutputIdle()
 }
 
 
-void Tx::ledBlink()
+void Tx::ledBlinkIdle()
 {
   if(toggleMode_ == tTransmit)
   {
