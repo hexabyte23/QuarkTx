@@ -2,6 +2,8 @@
 #include "FlashMem.h"
 #include "Mesure.h"
 #include <EEPROM.h>
+#include <SPI.h>
+//#include <SD.h>
 
 static Mesure mesure;
 
