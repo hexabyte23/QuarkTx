@@ -18,11 +18,6 @@ uint16_t ServoCommand::getValue(uint16_t rawInputValue)
   return map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
 }
 
-uint16_t ServoCommand::getValue(uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue)
-{
-  return map(rawInputValue, minCalib, maxCalib, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
-}
-
 void ServoCommand::reset()
 {
   maxOutCurse_ = PPM_MAX_VALUE;
@@ -47,7 +42,7 @@ uint16_t ServoCommand::putToEEPROM(uint16_t addr)
 
 uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
 {
-  Serial.print(addr);
+//  Serial.print(addr);
   EEPROM.get(addr,maxOutCurse_);
   addr += sizeof(uint16_t);
   EEPROM.get(addr,minOutCurse_);
@@ -57,8 +52,8 @@ uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
   EEPROM.get(addr,isRevert_);
   addr += sizeof(bool);
 
-  Serial.print(" ");
-  Serial.println(addr);
+//  Serial.print(" ");
+//  Serial.println(addr);
   return addr;
 }
 
@@ -87,11 +82,6 @@ bool Model::setup()
 uint16_t Model::getValue(uint8_t channel, uint16_t rawInputValue)
 {
   channel_[channel].servo_.getValue(rawInputValue);
-}
-
-uint16_t Model::getValue(uint8_t channel, uint16_t minCalib, uint16_t maxCalib, uint16_t rawInputValue)
-{
-  channel_[channel].servo_.getValue(minCalib, maxCalib, rawInputValue);
 }
 
 void Model::setMinValue(uint8_t channel, int value)

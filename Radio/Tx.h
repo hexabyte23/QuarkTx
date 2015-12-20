@@ -25,13 +25,7 @@ class Tx
   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
   Rl rl_;
   uint16_t inputValue_[MAX_INPUT_CHANNEL];
-  //uint16_t inputCalibrMin_[MAX_INPUT_CHANNEL];
-  //uint16_t inputCalibrMax_[MAX_INPUT_CHANNEL];
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
-
-  // Channels mapping for switches
-  //uint8_t digMapping_[MAX_DIG_INPUT_CHANNEL] = {2, 3};
-  
 
   // LED
   int ledState_;
@@ -65,7 +59,7 @@ class Tx
   // Signals
   void onIrqTimerChange();
   void onChangeCurrentModel(int idx);
-  void onDump();
+  void onDump(const char* param);
   void onToggleMode();
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();

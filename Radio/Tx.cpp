@@ -63,9 +63,9 @@ void Tx::setupOutputDevice()
   pinMode(LED_PIN, OUTPUT);
 
   // Check BT module
-  pinMode(BT_RX_PIN, INPUT);  
-  pinMode(BT_TX_PIN, OUTPUT);  
-  BTSerie_.begin(9600);
+//  pinMode(BT_RX_PIN, INPUT);  
+//  pinMode(BT_TX_PIN, OUTPUT);  
+//  BTSerie_.begin(9600);
 }
 
 bool Tx::setup()
@@ -169,36 +169,9 @@ void Tx::idle()
     displayOutputUpdate();
   if(toggleCalibrateSensor_)
     calibrateSensor();
+
+  //BTSerie_.println("essai BT");
 }
-
-/*
-void Tx::calculatePPMOutputIdle()
-{
-  mesure.p1();
-   // Get analogic input sensors
-  for(uint8_t idx=0; idx < MAX_ADC_INPUT_CHANNEL; idx++)
-    inputValue_[idx] = analogRead(A0 + idx);
-
-  // Get digital input sensors
-  uint8_t digIdx=0;
-  for(uint8_t idx=MAX_ADC_INPUT_CHANNEL; idx < MAX_INPUT_CHANNEL; idx++, digIdx++)
-    inputValue_[idx] = digitalRead(digMapping_[digIdx])==HIGH?ADC_MAX_VALUE:ADC_MIN_VALUE;
-  // 456 462 568
-
-  mesure.p2();
-  mesure.displayAvg(500);
-  // Convert analog values to microseconds
-  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
-    ppmOutputValue_[idx] = currentModel_->getValue(idx, inputCalibrMin_[idx], 
-                                                        inputCalibrMax_[idx], 
-                                                        inputValue_[idx]);
-  }
-  // 400 408 448
-
-  // 856 868 964
-}
-*/
 
 void Tx::calculatePPMOutputIdle()
 {
@@ -288,7 +261,6 @@ void Tx::onToggleMode()
 
 void Tx::onChangeCurrentModel(int idx)
 {
-  //debug("[d] load model %d\n", idx);
   if(idx < MAX_MODEL)
   {
     info(INFO_LOAD_MODEL,idx);
@@ -298,27 +270,51 @@ void Tx::onChangeCurrentModel(int idx)
     error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
 }
 
-void Tx::onDump()
+void Tx::onDump(const char* param)
 {
-  // dump calibrate
-  info(INFO_SENSOR, MAX_INPUT_CHANNEL);
-  //calibrateSensor(true);
-  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+  if(param[0] == 'e')
   {
-    Serial.print(idx, DISPLAY_BASE);
-    Serial.print(" ");
-    sensor_[idx]->dump();
+    for(int idx=0, i=0; idx < 512; idx++,i++)
+    {
+      if(i == 0)
+      {
+        Serial.print(idx, HEX);
+        Serial.print("\t");
+      }
+      
+      Serial.print(EEPROM.read(idx), HEX);
+      Serial.print(" ");
+    
+      if(i == 15)
+      {
+        i = -1;
+        Serial.println();
+      }
+    }
     Serial.println();
   }
-  Serial.println();
-  
-  // dump models
-  for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+  else
   {
-    char c = (currentModel_ == &modelList_[idx])?'*':' ';
-    printf("Model %d %c\n",idx, c);
-  
-    modelList_[idx].dump();
+    // dump sensors
+    info(INFO_SENSOR, MAX_INPUT_CHANNEL);
+    //calibrateSensor(true);
+    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+    {
+      Serial.print(idx, DISPLAY_BASE);
+      Serial.print(" ");
+      sensor_[idx]->dump();
+      Serial.println();
+    }
+    Serial.println();
+    
+    // dump models
+    for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+    {
+      char c = (currentModel_ == &modelList_[idx])?'*':' ';
+      printf("Model %d %c\n",idx, c);
+    
+      modelList_[idx].dump();
+    }
   }
 }
 
@@ -328,28 +324,6 @@ void Tx::onToggleCalibrateSensor()
   toggleCalibrateSensor_ = !toggleCalibrateSensor_;
 }
 
-/*
-void Tx::calibrateSensor(bool displayOnly)
-{  
-  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-  {
-    if(displayOnly == false)
-    {
-      if(inputCalibrMin_[idx] > inputValue_[idx])
-        inputCalibrMin_[idx] = inputValue_[idx];
-      if(inputCalibrMax_[idx] < inputValue_[idx])
-        inputCalibrMax_[idx] = inputValue_[idx];
-    }
-      
-    Serial.print("{");
-    Serial.print(inputCalibrMin_[idx], DISPLAY_BASE);
-    Serial.print("\t");
-    Serial.print(inputCalibrMax_[idx], DISPLAY_BASE);
-    Serial.print("}\t");
-  }
-  Serial.println();
-}
-*/
 void Tx::calibrateSensor()
 {  
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
@@ -383,26 +357,6 @@ void Tx::onLoadFromEEPROM()
     addr = modelList_[idx].getFromEEPROM(addr);
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     addr = sensor_[idx]->getFromEEPROM(addr);
-    
-  Serial.println(addr);
-  for(int idx=0, i=0; idx < 256; idx++,i++)
-  {
-    if(i == 0)
-    {
-      Serial.print(idx, HEX);
-      Serial.print("\t");
-    }
-    
-    Serial.print(EEPROM.read(idx), HEX);
-    Serial.print(" ");
-  
-    if(i == 15)
-    {
-      i = -1;
-      Serial.println();
-    }
-  }
-  Serial.println();
 }
 
 void Tx::onSaveToEEPROM()
@@ -429,13 +383,7 @@ void Tx::onReset()
   // reset calibration
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     sensor_[idx]->reset();
-  /*
-  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-  { 
-    inputCalibrMin_[idx] = 0xFFFF;
-    inputCalibrMax_[idx] = 0x0;
-  }
-  */
+
   toggleMode_ = tTransmit;
 
   elevator_.setup(A0);

@@ -25,7 +25,7 @@ class Command
   void toggleDisplayInputUpdateCmd();
   void toggleDisplayOutputUpdateCmd();
   void changeCurrentModelCmd(const char* modelIdx);
-  void dumpCmd();
+  void dumpCmd(const char* param);
   void toggleCalibrateAnalogicSensorCmd();
   void loadModelsFromEEPROMCmd();
   void saveModelsToEEPROMCmd();

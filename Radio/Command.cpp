@@ -33,7 +33,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'h': helpCmd();break;
     case 'm': toggleTransmitModeCmd();break;
     case 'l': changeCurrentModelCmd(cmdStr+2);break;
-    case 'd': dumpCmd();break;
+    case 'd': dumpCmd(cmdStr+2);break;
     case 'i': toggleDisplayInputUpdateCmd();break;
     case 'o': toggleDisplayOutputUpdateCmd();break;
     case 'c': toggleCalibrateAnalogicSensorCmd();break;
@@ -68,10 +68,10 @@ void Command::changeCurrentModelCmd(const char *idxStr)
     error(ERR_BAD_PARAM_IDX_EMPTY);
 }
 
-void Command::dumpCmd()
+void Command::dumpCmd(const char* param)
 {
   printf("Dump\n"); 
-  tx_->onDump();
+  tx_->onDump(param);
 }
 
 void Command::toggleDisplayInputUpdateCmd()
