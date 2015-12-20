@@ -26,6 +26,9 @@ class Sensor
   virtual void setup(uint8_t pin) = 0;
   virtual void calibrate() = 0;
   virtual uint16_t getValue() = 0;
+  virtual uint16_t putToEEPROM(uint16_t addr);
+  virtual uint16_t getFromEEPROM(uint16_t addr);
+  virtual void reset();
 };
 
 class Stick : public Sensor

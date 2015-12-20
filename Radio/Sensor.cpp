@@ -1,14 +1,12 @@
+#include <arduino.h>
+#include <EEPROM.h>
 #include "config.h"
 #include "Sensor.h"
 #include "FlashMem.h"
-#include <arduino.h>
 
 Sensor::Sensor()
 {
-  pin_ = -1;
-  calibrMin_ = 0xFFFF;
-  calibrMax_ = 0;
-  trim_ = 0;
+  reset();
 }
 
 void Sensor::calibration(uint16_t val)
@@ -19,7 +17,34 @@ void Sensor::calibration(uint16_t val)
     calibrMax_ = val;
 }
 
+uint16_t Sensor::putToEEPROM(uint16_t addr)
+{
+  EEPROM.put(addr,pin_);
+  addr += sizeof(uint8_t);
+  EEPROM.put(addr,calibrMin_);
+  addr += sizeof(uint16_t);
+  EEPROM.put(addr,calibrMax_);
+  addr += sizeof(int16_t);
+  EEPROM.put(addr,trim_);
+  addr += sizeof(int);
+  
+  return addr;
+}
 
+uint16_t Sensor::getFromEEPROM(uint16_t addr)
+{
+  EEPROM.get(addr,pin_);
+  addr += sizeof(uint8_t);
+  EEPROM.get(addr,calibrMin_);
+  addr += sizeof(uint16_t);
+  EEPROM.get(addr,calibrMax_);
+  addr += sizeof(int16_t);
+  EEPROM.get(addr,trim_);
+  addr += sizeof(int);
+  
+  return addr;
+}
+  
 void Sensor::dump()
 {
   Serial.print(pin_, DISPLAY_BASE);
@@ -29,6 +54,14 @@ void Sensor::dump()
   Serial.print(calibrMin_, DISPLAY_BASE);
   Serial.print("\t");
   Serial.print(calibrMax_, DISPLAY_BASE);
+}
+
+void Sensor::reset()
+{
+  pin_ = -1;
+  calibrMin_ = 0xFFFF;
+  calibrMax_ = 0;
+  trim_ = 0;
 }
 
 ////////////////////////////////////////////////////////

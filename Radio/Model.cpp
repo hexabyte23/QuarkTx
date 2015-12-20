@@ -1,6 +1,7 @@
 #include "Model.h"
 
 #include <arduino.h>
+#include <EEPROM.h>
 #include "config.h"
 #include "FlashMem.h"
 
@@ -28,6 +29,49 @@ void ServoCommand::reset()
   minOutCurse_ = PPM_MIN_VALUE;
   neutral_ = 0;
   isRevert_ = false; 
+}
+
+uint16_t ServoCommand::putToEEPROM(uint16_t addr)
+{
+  EEPROM.put(addr,maxOutCurse_);
+  addr += sizeof(uint16_t);
+  EEPROM.put(addr,minOutCurse_);
+  addr += sizeof(uint16_t);
+  EEPROM.put(addr,neutral_);
+  addr += sizeof(int16_t);
+  EEPROM.put(addr,isRevert_);
+  addr += sizeof(bool);
+
+  return addr;
+}
+
+uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
+{
+  Serial.print(addr);
+  EEPROM.get(addr,maxOutCurse_);
+  addr += sizeof(uint16_t);
+  EEPROM.get(addr,minOutCurse_);
+  addr += sizeof(uint16_t);
+  EEPROM.get(addr,neutral_);
+  addr += sizeof(int16_t);
+  EEPROM.get(addr,isRevert_);
+  addr += sizeof(bool);
+
+  Serial.print(" ");
+  Serial.println(addr);
+  return addr;
+}
+
+//////////////////////////////////////////////////////////////
+
+uint16_t OutputChannel::putToEEPROM(uint16_t addr)
+{
+  return servo_.putToEEPROM(addr);
+}
+
+uint16_t OutputChannel::getFromEEPROM(uint16_t addr)
+{
+  return servo_.getFromEEPROM(addr);
 }
 
 //////////////////////////////////////////////////////////////
@@ -94,3 +138,22 @@ void Model::reset()
     channel_[idx].servo_.reset();
 }
 
+uint16_t Model::putToEEPROM(uint16_t addr)
+{
+  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  {
+    addr = channel_[idx].putToEEPROM(addr);
+  }
+
+  return addr;
+}
+
+uint16_t Model::getFromEEPROM(uint16_t addr)
+{
+  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+  {
+    addr = channel_[idx].getFromEEPROM(addr);
+  }
+
+  return addr;
+}

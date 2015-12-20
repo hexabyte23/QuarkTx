@@ -367,24 +367,57 @@ void Tx::calibrateSensor()
 void Tx::onLoadFromEEPROM()
 {
   uint8_t i;
+  uint16_t addr = 0L;
   
-  EEPROM.get(0, i);
+  EEPROM.get(addr, i);
   if(i >= MAX_MODEL)    // EEPROM is corrupted
   {
     i = 0;
     error(ERR_EEPROM_DATA_CORRUPTED);
   }
   currentModel_ = &modelList_[i];
-  //debug("load %d\n", i);
-  EEPROM.get(sizeof(uint8_t), modelList_);
+  addr += sizeof(uint8_t);
+  
+  //EEPROM.get(addr, modelList_);
+  for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+    addr = modelList_[idx].getFromEEPROM(addr);
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+    addr = sensor_[idx]->getFromEEPROM(addr);
+    
+  Serial.println(addr);
+  for(int idx=0, i=0; idx < 256; idx++,i++)
+  {
+    if(i == 0)
+    {
+      Serial.print(idx, HEX);
+      Serial.print("\t");
+    }
+    
+    Serial.print(EEPROM.read(idx), HEX);
+    Serial.print(" ");
+  
+    if(i == 15)
+    {
+      i = -1;
+      Serial.println();
+    }
+  }
+  Serial.println();
 }
 
 void Tx::onSaveToEEPROM()
 {
   uint8_t i = getCurrentModelIndex();
-  //debug("save %d\n", i);
-  EEPROM.put(0, i);
-  EEPROM.put(sizeof(uint8_t), modelList_);
+  uint16_t addr = 0L;
+    
+  EEPROM.put(addr, i);
+  addr += sizeof(uint8_t);
+  //EEPROM.put(addr, modelList_);
+  //addr += sizeof(modelList_);
+  for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+    addr = modelList_[idx].putToEEPROM(addr);
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+    addr = sensor_[idx]->putToEEPROM(addr);
 }
 
 void Tx::onReset()
@@ -392,8 +425,11 @@ void Tx::onReset()
   // reset models 
   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
-  /*
+    
   // reset calibration
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+    sensor_[idx]->reset();
+  /*
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   { 
     inputCalibrMin_[idx] = 0xFFFF;
@@ -401,6 +437,14 @@ void Tx::onReset()
   }
   */
   toggleMode_ = tTransmit;
+
+  elevator_.setup(A0);
+  aileron_.setup(A1);
+  rudder_.setup(A2);
+  throttle_.setup(A3);
+  s1_.setup(2);
+  s2_.setup(3);
+  battery_.setup(A7);
 }
 
 uint8_t Tx::getCurrentModelIndex()
