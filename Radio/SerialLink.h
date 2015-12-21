@@ -17,9 +17,7 @@ class SerialLink
   public:
 
   SerialLink();
-
   bool setup(Command *cmd);
-  
   void idle();
 };
 

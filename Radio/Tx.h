@@ -23,16 +23,17 @@ class Tx
   Switch s1_, s2_;
   BatteryMeter battery_;
   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
-  Rl rl_;
-  uint16_t inputValue_[MAX_INPUT_CHANNEL];
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+
+  // mixers, dual rate, expo...
+  Rl radioLanguage_;
 
   // LED
   int ledState_;
   unsigned long ledPrevMS_;
 
   // BT
-  SoftwareSerial BTSerie_;
+  //SoftwareSerial BTSerie_;
 
   // toggles
   enum {tTransmit, tSetting} toggleMode_;
@@ -47,7 +48,6 @@ class Tx
   void setupInputDevice();
   void setupOutputDevice();
   void calibrateSensor();
-  void calculatePPMOutputIdle();
   void ledBlinkIdle();
   
   public:

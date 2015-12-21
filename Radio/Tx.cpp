@@ -13,8 +13,8 @@ toggleMode_(tTransmit),
 ledState_(LOW),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
-toggleCalibrateSensor_(false),
-BTSerie_(BT_RX_PIN, BT_TX_PIN)
+toggleCalibrateSensor_(false)
+//BTSerie_(BT_RX_PIN, BT_TX_PIN)
 {
   onReset();
 }
@@ -72,7 +72,7 @@ bool Tx::setup()
 {
   mesure.start();
   
-  // Extend battery duration
+  // for battery extended duration put all unused pin off
   pinMode(2, INPUT_PULLUP);
   pinMode(3, INPUT_PULLUP);
   pinMode(4, INPUT_PULLUP);
@@ -99,7 +99,7 @@ bool Tx::setup()
   // Setup input sensors
   setupInputDevice();
 
-  rl_.setup(inputValue_, ppmOutputValue_, currentModel_);
+  radioLanguage_.setup(sensor_, ppmOutputValue_, currentModel_);
   
   // Setup Timer for PPM signal generation
   setupOutputDevice();
@@ -110,8 +110,8 @@ bool Tx::setup()
   onLoadFromEEPROM();
   
   mesure.stop();
-  
   info(INFO_TX_READY,mesure.getAverage());
+  
   return ret1 | ret2;
 }
 
@@ -158,8 +158,9 @@ void Tx::onIrqTimerChange()
 
 void Tx::idle()
 {
-  calculatePPMOutputIdle();
-  rl_.idle();
+//  mesure.start();
+
+  radioLanguage_.idle();
   ledBlinkIdle();
   serialLink_.idle();
 
@@ -170,27 +171,14 @@ void Tx::idle()
   if(toggleCalibrateSensor_)
     calibrateSensor();
 
+//  mesure.stop();
+//  mesure.displayAvg(500);
+// 1200 1218 1380
+
+  //delay(10); // max non visible delay from receiver
+  
   //BTSerie_.println("essai BT");
 }
-
-void Tx::calculatePPMOutputIdle()
-{
-//  mesure.p1();
-   // Get input sensors values
-  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-    inputValue_[idx] = sensor_[idx]->getValue();
-  // 836 846 932
-  
-  // Convert analog values to microseconds
-//  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-//    ppmOutputValue_[idx] = currentModel_->getValue(idx, inputValue_[idx]);
-  //360 369 408
-
-//  mesure.p2();
-//  mesure.displayAvg(500);
-  // 1196 1212 1300
-}
-
 
 void Tx::ledBlinkIdle()
 {
@@ -216,7 +204,7 @@ void Tx::displayInputUpdate()
 
   for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
   {
-    Serial.print(inputValue_[idx], DISPLAY_BASE);
+    Serial.print(sensor_[idx]->getValue(), DISPLAY_BASE);
     Serial.print("\t");
   }
   Serial.println();
