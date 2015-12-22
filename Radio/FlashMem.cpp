@@ -17,8 +17,8 @@ const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_strin
 
 // Define all information messages
 const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";
-const char info_string_1[] PROGMEM = "Mode switched to 'settings'\n";
-const char info_string_2[] PROGMEM = "Current mode 'settings'\n";
+const char info_string_1[] PROGMEM = "Mode switched to 'debug'\n";
+const char info_string_2[] PROGMEM = "Current mode 'debug'\n";
 const char info_string_3[] PROGMEM = "Current mode 'transmit'\n";
 const char info_string_4[] PROGMEM = "help command :\n"
          "h: help\n"

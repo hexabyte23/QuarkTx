@@ -9,6 +9,7 @@
 #include "Model.h"
 #include "Sensor.h"
 #include "Evaluator.h"
+#include "Mesure.h"
 
 
 class Tx
@@ -33,6 +34,8 @@ class Tx
   // mixers, dual rate, expo...
   Evaluator evaluator_;
 
+  Mesure mesure_;
+
   // LED
   int ledState_;
   unsigned long ledPrevMS_;
@@ -41,7 +44,7 @@ class Tx
   //SoftwareSerial BTSerie_;
 
   // toggles
-  enum {tTransmit, tSetting} toggleMode_;
+  enum {tTransmit, tDebug} toggleMode_;
   bool toggleDisplayInputUpdate_;
   bool toggleDisplayOutputUpdate_;
   bool toggleCalibrateSensor_;

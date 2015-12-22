@@ -1,11 +1,9 @@
 #include "Tx.h"
 #include "FlashMem.h"
-#include "Mesure.h"
 #include <EEPROM.h>
 #include <SPI.h>
 //#include <SD.h>
 
-static Mesure mesure;
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
@@ -78,7 +76,7 @@ void Tx::setupOutputDevice()
 
 bool Tx::setup()
 {
-  mesure.start();
+  mesure_.start();
   
   // for battery extended duration put all unused pin off
   pinMode(2, INPUT_PULLUP);
@@ -117,8 +115,8 @@ bool Tx::setup()
 
   onLoadFromEEPROM();
   
-  mesure.stop();
-  info(INFO_TX_READY,mesure.getAverage());
+  mesure_.stop();
+  info(INFO_TX_READY,mesure_.getAverage());
   
   return ret1 | ret2;
 }
@@ -161,7 +159,8 @@ void Tx::onIrqTimerChange()
 
 void Tx::idle()
 {
-//  mesure.start();
+  if(toggleMode_ == tDebug)
+    mesure_.start();
 
   evaluator_.idle();
   ledBlinkIdle();
@@ -174,13 +173,13 @@ void Tx::idle()
   if(toggleCalibrateSensor_)
     calibrateSensor();
 
-//  mesure.stop();
-//  mesure.displayAvg(500);
+  if(toggleMode_ == tDebug)
+  {
+    mesure_.stop();
+    mesure_.displayAvg(1000);
+  }
 // 1200 1218 1380
 
-  //delay(10); // max non visible delay from receiver
-  
-  //BTSerie_.println("essai BT");
 }
 
 void Tx::ledBlinkIdle()
@@ -240,11 +239,13 @@ void Tx::onToggleMode()
 {
   if(toggleMode_ == tTransmit)
   {
-     toggleMode_ = tSetting;
+     mesure_.reset();
+     toggleMode_ = tDebug;
      info(INFO_SWITCH_MODE_SETTINGS);
   }
   else
   {
+     mesure_.reset();
      toggleMode_ = tTransmit;
      info(INFO_SWITCH_MODE_TRANSMIT);
   }
