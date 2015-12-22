@@ -10,7 +10,7 @@
 #define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
 #define MAX_PPM_OUTPUT_CHANNEL  6
 #define MAX_MIXER               8
-#define PPM_SIGNAL              1       // 1 is positive, 0 is negative
+#define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
 #define PPM_PIN                 10
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
@@ -27,7 +27,7 @@
 #define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
 #define MAX_PPM_OUTPUT_CHANNEL  6
 #define MAX_MIXER               8
-#define PPM_SIGNAL              1       // 1 is positive, 0 is negative
+#define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
 #define PPM_PIN                 10
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
@@ -41,7 +41,7 @@
 
 // General definitions
 
-#define VERSION                 "0.0.11" 
+#define VERSION                 "0.0.12" 
 #define SERIAL_SPEED            9600
 
 #define DISPLAY_BASE            DEC     // DEC or HEX

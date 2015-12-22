@@ -18,7 +18,6 @@ bool Command::setup(Tx *tx)
 
 void Command::onNewCommand(const char* cmdStr)
 {
-  //debug("[d] Command '%s'\n", cmdStr);
   if(cmdStr[0] == 0)
     return; // just ignore
         
@@ -62,8 +61,7 @@ void Command::toggleTransmitModeCmd()
 }
 
 void Command::changeCurrentModelCmd(const char *idxStr)
-{
-  //debug("[d] load model %s\n", idxStr);  
+{  
   if(strlen(idxStr) != 0)
     tx_->onChangeCurrentModel(atoi(idxStr));
   else

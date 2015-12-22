@@ -17,7 +17,6 @@ class SensorExp: public Expression
   
 public:
   void setup(Sensor *sensor) {sensor_ = sensor; }
-  
   virtual uint16_t evaluate() {sensor_->getValue();}
 };
 
@@ -27,7 +26,6 @@ class AddExp : public Expression
 
 public:
   void setup(Expression *left, Expression *right);
-  
   virtual uint16_t evaluate();
 };
 
@@ -37,7 +35,6 @@ class SubExp : public Expression
 
 public:
   void setup(Expression *left, Expression *right);
-  
   virtual uint16_t evaluate();
 };
 
@@ -48,7 +45,6 @@ class MixExp : public Expression
 
 public:
   void setup(Expression *fromChannel, float rate);
-  
   virtual uint16_t evaluate();
 };
 
@@ -60,7 +56,6 @@ class LimitExp : public Expression
 
 public:
   void setup(Expression *expr, int min, int max);
-
   virtual uint16_t evaluate();
 };
 

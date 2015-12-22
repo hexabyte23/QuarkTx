@@ -45,7 +45,7 @@ void Tx::setupOutputDevice()
 {
   // PPM
   pinMode(PPM_PIN, OUTPUT);
-  digitalWrite(PPM_PIN, !PPM_SIGNAL);  //set the PPM signal pin to the default state
+  digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
   
   cli();
   
@@ -130,7 +130,7 @@ void Tx::onIrqTimerChange()
   {  
     // Start pulse
     if(toggleMode_ == tTransmit)
-      digitalWrite(PPM_PIN, PPM_SIGNAL);
+      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
       
     OCR1A = PPM_PULSE_LEN*2;
     irqState_ = false;
@@ -139,7 +139,7 @@ void Tx::onIrqTimerChange()
   {
     // End pulse, calculate when to start the next pulse
     if(toggleMode_ == tTransmit)
-      digitalWrite(PPM_PIN, !PPM_SIGNAL);
+      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
     irqState_ = true;
 
     if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
