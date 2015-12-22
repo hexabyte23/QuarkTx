@@ -11,7 +11,8 @@ toggleMode_(tTransmit),
 ledState_(LOW),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
-toggleCalibrateSensor_(false)
+toggleCalibrateSensor_(false),
+toggleSimulation_(false)
 //BTSerie_(BT_RX_PIN, BT_TX_PIN)
 {
   onReset();
@@ -239,15 +240,17 @@ void Tx::onToggleMode()
 {
   if(toggleMode_ == tTransmit)
   {
-     mesure_.reset();
-     toggleMode_ = tDebug;
-     info(INFO_SWITCH_MODE_SETTINGS);
+    toggleMode_ = tDebug;
+    info(INFO_SWITCH_MODE_SETTINGS);
+    
+    mesure_.reset();
   }
   else
   {
-     mesure_.reset();
-     toggleMode_ = tTransmit;
-     info(INFO_SWITCH_MODE_TRANSMIT);
+    toggleMode_ = tTransmit;
+    info(INFO_SWITCH_MODE_TRANSMIT);
+    
+    mesure_.reset();
   }
 }
 
@@ -391,10 +394,35 @@ uint8_t Tx::getCurrentModelIndex()
   return 0;
 }
 
+void Tx::onToggleSimulation()
+{
+  if(toggleMode_ == tTransmit)
+  {
+    printf("[e] failed, switch in debug mode first\n");
+    return;
+  }
+  
+  toggleSimulation_ = !toggleSimulation_;
+  mesure_.reset();
 
-void Tx::onSimulateSensor(uint8_t channel, uint16_t value)
+  if(toggleSimulation_)
+  {
+    printf("Simulation on\n");
+    for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
+      sensor_[idx]->setSimulation(true);
+  }
+  else
+  {
+    printf("Simulation off\n");
+    for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
+      sensor_[idx]->setSimulation(false);
+  }
+}
+
+void Tx::onSetSimulateSensorValue(uint8_t channel, uint16_t value)
 {
   debug("simu %d %d\n", channel, value);
-  sensor_[channel]->setSimulateValue(value);
+
+  sensor_[channel]->setSimulateValue(value); 
 }
 

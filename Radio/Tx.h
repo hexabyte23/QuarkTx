@@ -48,6 +48,7 @@ class Tx
   bool toggleDisplayInputUpdate_;
   bool toggleDisplayOutputUpdate_;
   bool toggleCalibrateSensor_;
+  bool toggleSimulation_;
 
   // Private functions
   void displayInputUpdate();
@@ -76,10 +77,11 @@ class Tx
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();
   void onToggleCalibrateSensor();
+  void onToggleSimulation();
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
   void onReset();
-  void onSimulateSensor(uint8_t chan, uint16_t value);
+  void onSetSimulateSensorValue(uint8_t chan, uint16_t value);
 
   // Functions
   void idle();

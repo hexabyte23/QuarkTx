@@ -30,7 +30,8 @@ class Command
   void loadModelsFromEEPROMCmd();
   void saveModelsToEEPROMCmd();
   void setModelCmd(const char* param);
-  void simulateSensorCmd(const char* param);
+  void toggleSimulation();
+  void setSimulateSensorValueCmd(const char* param);
   void resetCmd();
 };
 
