@@ -36,6 +36,9 @@ const char info_string_5[] PROGMEM =
          "s n [chan] [val]: set cur. model servo neutral\n"
          "s r [chan] [val]: set cur. model servo revert\n"
          "r: reset, clean all models\n";
+const char info_string_19[] PROGMEM =
+         "u: [sensorID] [val] set simulate value\n"
+         "w: toggle to simulation\n";
 const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";
 const char info_string_7[] PROGMEM = "Current model load from EEPROM\n";
 const char info_string_8[] PROGMEM = "Set Min channel %d value %d\n";
@@ -54,7 +57,7 @@ const char info_string_18[] PROGMEM = "Tx\tOK\t%d µs\n";
 const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_string_2, info_string_3, info_string_4, info_string_5, 
                                           info_string_6, info_string_7, info_string_8, info_string_9, info_string_10, info_string_11, 
                                           info_string_12, info_string_13, info_string_14, info_string_15, info_string_16, info_string_17,
-                                          info_string_18};
+                                          info_string_18, info_string_19};
 
 
 // global functions

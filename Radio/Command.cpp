@@ -53,6 +53,7 @@ void Command::helpCmd()
 {
   info(INFO_HELP_USAGE1);
   info(INFO_HELP_USAGE2);
+  info(INFO_HELP_USAGE3);
 }
 
 void Command::toggleTransmitModeCmd()

@@ -41,6 +41,17 @@ public:
   virtual uint16_t evaluate();
 };
 
+class MixExp : public Expression
+{
+  Expression *fromChannel_;
+  float rate_;
+
+public:
+  void setup(Expression *fromChannel, float rate);
+  
+  virtual uint16_t evaluate();
+};
+
 class LimitExp : public Expression
 {
   Expression *expr_;

@@ -40,6 +40,19 @@ uint16_t LimitExp::evaluate()
 
 //////////////////////////////////////////////////////////////////////////
 
+void MixExp::setup(Expression *fromChannel, float rate)
+{
+  fromChannel_ = fromChannel;
+  rate_ = rate;
+}
+
+uint16_t MixExp::evaluate()
+{
+  return fromChannel_->evaluate() * rate_;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 Evaluator::Evaluator()
 {
 }
