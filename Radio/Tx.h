@@ -8,7 +8,7 @@
 #include "Command.h"
 #include "Model.h"
 #include "Sensor.h"
-#include "Rl.h"
+#include "Evaluator.h"
 
 
 class Tx
@@ -20,13 +20,18 @@ class Tx
 
   // Input & output datas
   Stick elevator_, aileron_, rudder_, throttle_;
-  Switch s1_, s2_;
   BatteryMeter battery_;
+#ifdef TERRATOP
+  Switch s1_, s2_, s3_;
+  Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_, &s3_};
+#else
+  Switch s1_, s2_;
   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
+#endif
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
 
   // mixers, dual rate, expo...
-  Rl radioLanguage_;
+  Evaluator evaluator_;
 
   // LED
   int ledState_;
@@ -41,14 +46,18 @@ class Tx
   bool toggleDisplayOutputUpdate_;
   bool toggleCalibrateSensor_;
 
-
-  // private functions
+  // Private functions
   void displayInputUpdate();
   void displayOutputUpdate();
   void setupInputDevice();
   void setupOutputDevice();
   void calibrateSensor();
   void ledBlinkIdle();
+
+  // Irq
+  volatile boolean irqState_;
+  volatile byte irqCurrentChannelNumber_;
+  volatile uint16_t irqRemainingTime_;
   
   public:
   
@@ -67,6 +76,7 @@ class Tx
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
   void onReset();
+  void onSimulateSensor(uint8_t chan, uint16_t value);
 
   // Functions
   void idle();

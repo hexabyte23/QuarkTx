@@ -23,14 +23,14 @@ const char info_string_3[] PROGMEM = "Current mode 'transmit'\n";
 const char info_string_4[] PROGMEM = "help command :\n"
          "h: help\n"
          "m: toggle Tx mode\n"
-         "l [0..4]: change cur. model\n"
-         "d [0..4]: dump model\n"
-         "i: toggle input update\n"
-         "o: toggle output update\n"
-         "a: load cur. modelfrom EEPROM\n"
-         "v: save cur. model to EEPROM\n"
-         "c: toggle calibrate input sensors\n";
-const char info_string_5[] PROGMEM =          
+         "l [0..2]: change cur. model\n"
+         "d [0..2]: dump model\n"
+         "i: toggle displ. input update\n"
+         "o: toggle displ. output update\n"
+         "a: load cur. model from EEPROM\n"
+         "v: save cur. model to EEPROM\n";
+const char info_string_5[] PROGMEM =
+         "c: toggle calibrate sensors\n"     
          "s i [chan] [val]: set cur. model servo min\n"
          "s a [chan] [val]: set cur. model servo max\n"
          "s n [chan] [val]: set cur. model servo neutral\n"
@@ -42,8 +42,8 @@ const char info_string_8[] PROGMEM = "Set Min channel %d value %d\n";
 const char info_string_9[] PROGMEM = "Set Max channel %d value %d\n";
 const char info_string_10[] PROGMEM = "Set Neutral channel %d value %d\n";
 const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
-const char info_string_12[] PROGMEM = "Servo\n# Min   Max     Neutral Rev\n";
-const char info_string_13[] PROGMEM = "Sensors (%d)\n# Pin   Trim    Min     Max\n";
+const char info_string_12[] PROGMEM = "Servo\n# Min   Max   Neutral   Rev\n";
+const char info_string_13[] PROGMEM = "Sensors (%d)\n# Pin   Trim    Min     Max    Simu\n";
 const char info_string_14[] PROGMEM = "Quark Tx v%s\nBooting...\n";
 const char info_string_15[] PROGMEM = "Command\tOK\n";
 const char info_string_16[] PROGMEM = "Serial\tOK\n";

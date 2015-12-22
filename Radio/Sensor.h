@@ -11,6 +11,8 @@ class Sensor
   uint16_t calibrMin_;
   uint16_t calibrMax_;
   int trim_;
+  uint16_t simuVal_;
+  bool isSimu_;
 
   void calibration(uint16_t val);
   
@@ -20,6 +22,8 @@ class Sensor
 
   uint16_t getMinCalibration() {return calibrMin_;}
   uint16_t getMaxCalibration() {return calibrMax_;}
+  void setSimulateValue(uint16_t simuVal) {simuVal_ = simuVal;}
+  void setSimulation(bool isSimu) {isSimu_ = isSimu;}
   
   virtual void dump();
 

@@ -34,8 +34,11 @@ void Tx::setupInputDevice()
   aileron_.setup(A1);
   rudder_.setup(A2);
   throttle_.setup(A3);
-  s1_.setup(2);
-  s2_.setup(3);
+  s1_.setup(SWITCH1_PIN);
+  s2_.setup(SWITCH2_PIN);
+#ifdef TERRATOP
+  s3_.setup(SWITCH3_PIN);
+#endif
   battery_.setup(A7);
 }
 
@@ -56,7 +59,12 @@ void Tx::setupOutputDevice()
   TCCR1B |= (1 << CS11);    // 8 prescaler: 0,5 microseconds at 16mhz
  
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
- 
+
+  // init irq variables
+  irqState_ = true;
+  irqCurrentChannelNumber_ = 0;
+  irqRemainingTime_ = 0;
+  
   sei();
 
   // LED
@@ -99,7 +107,7 @@ bool Tx::setup()
   // Setup input sensors
   setupInputDevice();
 
-  radioLanguage_.setup(sensor_, ppmOutputValue_, currentModel_);
+  evaluator_.setup(sensor_, ppmOutputValue_, currentModel_);
   
   // Setup Timer for PPM signal generation
   setupOutputDevice();
@@ -116,42 +124,37 @@ bool Tx::setup()
 }
 
 void Tx::onIrqTimerChange()
-{
-  static boolean state = true;
-  
+{  
   TCNT1 = 0;
   
-  if(state) 
+  if(irqState_) 
   {  
     // Start pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SIGNAL);
       
     OCR1A = PPM_PULSE_LEN*2;
-    state = false;
+    irqState_ = false;
   }
   else
   {
-    // End pulse and calculate when to start the next pulse
-    static byte currentChannelNumber = 0;
-    static uint16_t remainingTime = 0;
-
+    // End pulse, calculate when to start the next pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SIGNAL);
-    state = true;
+    irqState_ = true;
 
-    if(currentChannelNumber >= MAX_PPM_OUTPUT_CHANNEL)
+    if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
     {
-      currentChannelNumber = 0;
-      remainingTime += PPM_PULSE_LEN;
-      OCR1A = (PPM_FRAME_LEN - remainingTime)*2;
-      remainingTime = 0;
+      irqCurrentChannelNumber_ = 0;
+      irqRemainingTime_ += PPM_PULSE_LEN;
+      OCR1A = (PPM_FRAME_LEN - irqRemainingTime_)*2;
+      irqRemainingTime_ = 0;
     }
     else
     {
-      OCR1A = (ppmOutputValue_[currentChannelNumber] - PPM_PULSE_LEN)*2;
-      remainingTime += ppmOutputValue_[currentChannelNumber];
-      currentChannelNumber++;
+      OCR1A = (ppmOutputValue_[irqCurrentChannelNumber_] - PPM_PULSE_LEN)*2;
+      irqRemainingTime_ += ppmOutputValue_[irqCurrentChannelNumber_];
+      irqCurrentChannelNumber_++;
     }     
   }  
 }
@@ -160,7 +163,7 @@ void Tx::idle()
 {
 //  mesure.start();
 
-  radioLanguage_.idle();
+  evaluator_.idle();
   ledBlinkIdle();
   serialLink_.idle();
 
@@ -262,7 +265,7 @@ void Tx::onDump(const char* param)
 {
   if(param[0] == 'e')
   {
-    for(int idx=0, i=0; idx < 512; idx++,i++)
+    for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
     {
       if(i == 0)
       {
@@ -374,13 +377,7 @@ void Tx::onReset()
 
   toggleMode_ = tTransmit;
 
-  elevator_.setup(A0);
-  aileron_.setup(A1);
-  rudder_.setup(A2);
-  throttle_.setup(A3);
-  s1_.setup(2);
-  s2_.setup(3);
-  battery_.setup(A7);
+  setupInputDevice();
 }
 
 uint8_t Tx::getCurrentModelIndex()
@@ -393,4 +390,10 @@ uint8_t Tx::getCurrentModelIndex()
   return 0;
 }
 
+
+void Tx::onSimulateSensor(uint8_t channel, uint16_t value)
+{
+  debug("simu %d %d\n", channel, value);
+  sensor_[channel]->setSimulateValue(value);
+}
 

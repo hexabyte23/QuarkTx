@@ -41,7 +41,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'v': saveModelsToEEPROMCmd();break;
     case 's': setModelCmd(cmdStr+2);break;
     case 'r': resetCmd();break;
-    //case 'u': break; // future use for unit testing
+    case 'u': simulateSensorCmd(cmdStr+2);break;
     default: 
       error(ERR_COMMAND_UNKNOWN, cmdStr);
       break;
@@ -139,5 +139,18 @@ void Command::resetCmd()
 {
   tx_->onReset();
   printf("Reset\n");
+}
+
+void Command::simulateSensorCmd(const char* param)
+{
+  uint8_t c = atoi(param);
+  if(c > MAX_INPUT_CHANNEL-1)
+  {
+    error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
+    return;
+  }
+  uint16_t v = atoi(param+2);
+  
+  tx_->onSimulateSensor(c, v);
 }
 

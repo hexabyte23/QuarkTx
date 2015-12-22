@@ -54,6 +54,8 @@ void Sensor::dump()
   Serial.print(calibrMin_, DISPLAY_BASE);
   Serial.print("\t");
   Serial.print(calibrMax_, DISPLAY_BASE);
+  Serial.print("\t");
+  Serial.print(simuVal_, DISPLAY_BASE);
 }
 
 void Sensor::reset()
@@ -62,6 +64,8 @@ void Sensor::reset()
   calibrMin_ = 0xFFFF;
   calibrMax_ = 0;
   trim_ = 0;
+  simuVal_ = 0;
+  isSimu_ = false;
 }
 
 ////////////////////////////////////////////////////////
@@ -83,7 +87,10 @@ void Stick::calibrate()
 
 uint16_t Stick::getValue()
 {
-  return map(analogRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+  if(isSimu_)
+    return simuVal_;
+  else
+    return map(analogRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 ////////////////////////////////////////////////////////
@@ -105,12 +112,16 @@ void Switch::setup(uint8_t pin)
 
 void Switch::calibrate()
 {
+  //Serial.print(pin_);
   calibration(digitalRead(pin_));
 }
 
 uint16_t Switch::getValue()
 {
-  return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+  if(isSimu_)
+    return simuVal_;
+  else
+    return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 
@@ -129,6 +140,9 @@ void BatteryMeter::calibrate()
 
 uint16_t BatteryMeter::getValue()
 {
-  return 0;
+  if(isSimu_)
+    return simuVal_;
+  else
+    return 0;
 }
 
