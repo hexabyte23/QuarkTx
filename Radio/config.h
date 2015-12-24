@@ -3,7 +3,7 @@
 
 // General definitions
 
-#define VERSION                 "0.0.12" 
+#define VERSION                 "0.0.13" 
 #define SERIAL_SPEED            9600
 
 #define DISPLAY_BASE            DEC     // DEC or HEX
@@ -14,8 +14,8 @@
 #define ADC_MIN_VALUE           0
 #define ADC_MAX_VALUE           1023
 
-#define PPM_MIN_VALUE           1000
-#define PPM_MAX_VALUE           2000
+#define PPM_MIN_VALUE           500
+#define PPM_MAX_VALUE           1500
 
 #define TX_MODE                 1       // mode 1 : left stick operates elevator & rudder, right stick operates throttle & ailerons
                                         // mode 2 : left stick operates throttle & rudder, right stick operates elevator & ailerons
@@ -42,8 +42,8 @@
 
 #define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
 #define PPM_PIN                 10
-#define PPM_PULSE_LEN           300     // in microseconds
-#define PPM_FRAME_LEN           22500   // in microseconds
+#define PPM_INTER_CHANNEL_TIME  500
+#define PPM_INTER_FRAME_TIME    4000
 
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
@@ -63,8 +63,8 @@
 
 #define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
 #define PPM_PIN                 10
-#define PPM_PULSE_LEN           300     // in microseconds
-#define PPM_FRAME_LEN           22500   // in microseconds
+#define PPM_INTER_CHANNEL_TIME  500
+#define PPM_INTER_FRAME_TIME    4000
 
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3

@@ -54,7 +54,7 @@ void Tx::setupOutputDevice()
   OCR1A = 100;              // compare match register, initial value
 
   TCCR1B |= (1 << WGM12);   // turn on CTC mode
-  TCCR1B |= (1 << CS11);    // 8 prescaler: 0,5 microseconds at 16mhz
+  TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0,5 microseconds at 16mhz
  
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
@@ -127,18 +127,19 @@ bool Tx::setup()
 void Tx::onIrqTimerChange()
 {  
   TCNT1 = 0;
-  
+
   if(irqStartPulse_) 
   {  
+    // Raising edge
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
-      
-    OCR1A = PPM_PULSE_LEN*2;
+
+    OCR1A = ppmOutputValue_[irqCurrentChannelNumber_++]*2;
     irqStartPulse_ = false;
   }
   else
   {
-    // End pulse, calculate when to start the next pulse
+    // Falling edge, calculate when to start the next pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
     irqStartPulse_ = true;
@@ -146,17 +147,11 @@ void Tx::onIrqTimerChange()
     if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
     {
       irqCurrentChannelNumber_ = 0;
-      irqRemainingTime_ += PPM_PULSE_LEN;
-      OCR1A = (PPM_FRAME_LEN - irqRemainingTime_)*2;
-      irqRemainingTime_ = 0;
+      OCR1A = PPM_INTER_FRAME_TIME*2;
     }
     else
-    {
-      OCR1A = (ppmOutputValue_[irqCurrentChannelNumber_] - PPM_PULSE_LEN)*2;
-      irqRemainingTime_ += ppmOutputValue_[irqCurrentChannelNumber_];
-      irqCurrentChannelNumber_++;
-    }     
-  }  
+      OCR1A = PPM_INTER_CHANNEL_TIME*2;
+  }
 }
 
 void Tx::idle()
