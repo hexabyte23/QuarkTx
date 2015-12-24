@@ -61,7 +61,6 @@ void Tx::setupOutputDevice()
   // init irq variables
   irqStartPulse_ = true;
   irqCurrentChannelNumber_ = 0;
-  irqRemainingTime_ = 0;
   
   sei();
 
@@ -125,12 +124,19 @@ bool Tx::setup()
 }
 
 void Tx::onIrqTimerChange()
-{  
+{
+  /*
+   * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint (as they can sent more than 8 channels) like this code,
+   * but just care about 2 times:
+   * The minimum time (PPM_INTER_CHANNEL_TIME) between 2 channels pulses, 
+   * and the minimum time (PPM_INTER_FRAME_TIME) between 2 PPM frames
+   */
+ 
   TCNT1 = 0;
 
   if(irqStartPulse_) 
   {  
-    // Raising edge
+    // Raising edge of a channel pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
 
@@ -139,11 +145,13 @@ void Tx::onIrqTimerChange()
   }
   else
   {
-    // Falling edge, calculate when to start the next pulse
+    // Falling edge of a channel pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
     irqStartPulse_ = true;
 
+    // Calculate when the next pulse will start 
+    // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
     if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
     {
       irqCurrentChannelNumber_ = 0;

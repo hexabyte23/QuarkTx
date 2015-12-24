@@ -31,7 +31,7 @@ class Tx
 #endif
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
 
-  // mixers, dual rate, expo...
+  // For mixers, dual rate, expo...
   Evaluator evaluator_;
 
   Mesure mesure_;
@@ -63,7 +63,6 @@ class Tx
   // Irq
   volatile boolean irqStartPulse_;
   volatile byte irqCurrentChannelNumber_;
-  volatile uint16_t irqRemainingTime_;
   
   public:
   
