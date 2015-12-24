@@ -20,16 +20,16 @@ class Sensor
 
   Sensor();
 
-  uint16_t getMinCalibration() {return calibrMin_;}
-  uint16_t getMaxCalibration() {return calibrMax_;}
+  uint16_t getMinCalibration() const {return calibrMin_;}
+  uint16_t getMaxCalibration() const {return calibrMax_;}
   void setSimulateValue(uint16_t simuVal) {simuVal_ = simuVal;}
   void setSimulation(bool isSimu) {isSimu_ = isSimu;}
   
-  virtual void dump();
+  virtual void dump() const;
 
   virtual void setup(uint8_t pin) = 0;
   virtual void calibrate() = 0;
-  virtual uint16_t getValue() = 0;
+  virtual uint16_t getValue() const = 0;
   virtual uint16_t putToEEPROM(uint16_t addr);
   virtual uint16_t getFromEEPROM(uint16_t addr);
   virtual void reset();
@@ -43,7 +43,7 @@ class Stick : public Sensor
 
   virtual void setup(uint8_t pin);
   virtual void calibrate();
-  virtual uint16_t getValue();
+  virtual uint16_t getValue() const;
 };
 
 class Switch : public Sensor
@@ -56,7 +56,7 @@ class Switch : public Sensor
   
   virtual void setup(uint8_t pin);
   virtual void calibrate();
-  virtual uint16_t getValue();
+  virtual uint16_t getValue() const;
 };
 
 class BatteryMeter : public Sensor
@@ -67,7 +67,7 @@ class BatteryMeter : public Sensor
 
   virtual void setup(uint8_t pin);
   virtual void calibrate();
-  virtual uint16_t getValue();
+  virtual uint16_t getValue() const;
 };
 
 class Gyroscope : public Sensor
@@ -78,6 +78,6 @@ class Gyroscope : public Sensor
   
   virtual void setup(uint8_t pin);
   virtual void calibrate();
-  virtual uint16_t getValue();
+  virtual uint16_t getValue() const;
 };
 #endif

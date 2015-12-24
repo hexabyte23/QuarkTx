@@ -45,7 +45,7 @@ uint16_t Sensor::getFromEEPROM(uint16_t addr)
   return addr;
 }
   
-void Sensor::dump()
+void Sensor::dump() const
 {
   Serial.print(pin_, DISPLAY_BASE);
   Serial.print("\t");
@@ -85,7 +85,7 @@ void Stick::calibrate()
   calibration(analogRead(pin_));
 }
 
-uint16_t Stick::getValue()
+uint16_t Stick::getValue() const
 {
   if(isSimu_)
     return simuVal_;
@@ -116,7 +116,7 @@ void Switch::calibrate()
   calibration(digitalRead(pin_));
 }
 
-uint16_t Switch::getValue()
+uint16_t Switch::getValue() const
 {
   if(isSimu_)
     return simuVal_;
@@ -138,7 +138,7 @@ void BatteryMeter::calibrate()
   
 }
 
-uint16_t BatteryMeter::getValue()
+uint16_t BatteryMeter::getValue() const
 {
   if(isSimu_)
     return simuVal_;

@@ -8,55 +8,83 @@
 class Expression
 {
 public:
-  virtual uint16_t evaluate() = 0;
+  virtual uint16_t evaluate() const = 0;
 };
 
 class SensorExp: public Expression
 {
-  Sensor *sensor_;
+  const Sensor *sensor_;
   
 public:
-  void setup(Sensor *sensor) {sensor_ = sensor; }
-  virtual uint16_t evaluate() {sensor_->getValue();}
+  void setup(const Sensor *sensor) {sensor_ = sensor; }
+  virtual uint16_t evaluate() const {sensor_->getValue();}
 };
 
 class AddExp : public Expression
 {
-  Expression *left_, *right_;
+  const Expression *left_, *right_;
 
 public:
-  void setup(Expression *left, Expression *right);
-  virtual uint16_t evaluate();
+  void setup(const Expression *left, const Expression *right);
+  virtual uint16_t evaluate() const;
+};
+
+class GreaterExp : public Expression
+{
+  const Expression *left_, *right_;
+
+public:
+  void setup(const Expression *left, const Expression *right);
+  virtual uint16_t evaluate() const;
+};
+
+class LowerExp : public Expression
+{
+  const Expression *left_, *right_;
+
+public:
+  void setup(const Expression *left, const Expression *right);
+  virtual uint16_t evaluate() const;
+};
+
+class IfExp : public Expression
+{
+  const Expression *test_, *succeed_, *fail_;
+
+public:
+  void setup(const Expression *test, const Expression *succeed, const Expression *fail);
+  virtual uint16_t evaluate() const;
 };
 
 class SubExp : public Expression
 {
-  Expression *left_, *right_;
+  const Expression *left_, *right_;
 
 public:
-  void setup(Expression *left, Expression *right);
-  virtual uint16_t evaluate();
+  void setup(const Expression *left, const Expression *right);
+  virtual uint16_t evaluate() const;
 };
 
 class MixExp : public Expression
 {
-  Expression *fromChannel_;
+  const Expression *fromChannel_;
   float rate_;
 
 public:
-  void setup(Expression *fromChannel, float rate);
-  virtual uint16_t evaluate();
+  void setup(const Expression *fromChannel, float rate);
+  virtual uint16_t evaluate() const;
 };
 
+// Dual rate and Negative expression
 class LimitExp : public Expression
 {
-  Expression *expr_;
+  const Expression *expr_;
   int min_;
   int max_;
 
 public:
-  void setup(Expression *expr, int min, int max);
-  virtual uint16_t evaluate();
+  void setup(const Expression *expr, int min, int max);
+  virtual uint16_t evaluate() const;
 };
 
 class Evaluator
@@ -67,7 +95,6 @@ class Evaluator
   SensorExp in4_;
   SensorExp in5_;
   SensorExp in6_;
-  SensorExp in7_;
     
   LimitExp l1_;
   LimitExp l2_;
@@ -77,15 +104,16 @@ class Evaluator
   Sensor **sensor_;
   uint16_t *outputValue_;
   Model *currentModel_;
-
   Expression *expression_[MAX_PPM_OUTPUT_CHANNEL] = {&in1_, &in2_, &in3_, &in4_, &a1_};
+
+  Expression *parseExp(const char *str);
   
 public:
 
   Evaluator();
   void setup(Sensor **sensor, uint16_t *outputValue, Model *currentModel);
   void idle();
-  bool parse(uint8_t outChannelID, const char *string);
+  bool parse(uint8_t outChannelID, const char *expStr);
   uint16_t evaluate();
 };
 
