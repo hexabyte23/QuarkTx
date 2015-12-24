@@ -29,7 +29,7 @@ class Mesure
 
   uint32_t getAverage() {return avg_;}
 
-  void displayAvg(int maxLoop);
+  void displayStat(int maxLoop);
   void reset();
 };
 

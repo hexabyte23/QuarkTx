@@ -41,7 +41,9 @@ class Tx
   unsigned long ledPrevMS_;
 
   // BT
-  //SoftwareSerial BTSerie_;
+#ifdef BLUETOOTH
+  SoftwareSerial *BTSerial_;
+#endif
 
   // toggles
   enum {tTransmit, tDebug} toggleMode_;
@@ -59,7 +61,7 @@ class Tx
   void ledBlinkIdle();
 
   // Irq
-  volatile boolean irqState_;
+  volatile boolean irqStartPulse_;
   volatile byte irqCurrentChannelNumber_;
   volatile uint16_t irqRemainingTime_;
   

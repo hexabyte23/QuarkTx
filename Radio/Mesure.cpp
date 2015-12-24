@@ -1,12 +1,12 @@
 #include "Mesure.h"
-
+#include "MemoryFree.h"
 
 Mesure::Mesure() 
 {
   reset();
 }
 
-void Mesure::displayAvg(int maxLoop)
+void Mesure::displayStat(int maxLoop)
 {
   if(loop_++ > maxLoop)
   {
@@ -15,7 +15,9 @@ void Mesure::displayAvg(int maxLoop)
     Serial.print(" ");
     Serial.print(avg_);
     Serial.print(" ");
-    Serial.println(max_);
+    Serial.print(max_);
+    Serial.print(" ");
+    Serial.println(freeMemory());
   }
 }
 

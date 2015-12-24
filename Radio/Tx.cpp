@@ -13,7 +13,6 @@ toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
 toggleCalibrateSensor_(false),
 toggleSimulation_(false)
-//BTSerie_(BT_RX_PIN, BT_TX_PIN)
 {
   onReset();
 }
@@ -60,7 +59,7 @@ void Tx::setupOutputDevice()
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
   // init irq variables
-  irqState_ = true;
+  irqStartPulse_ = true;
   irqCurrentChannelNumber_ = 0;
   irqRemainingTime_ = 0;
   
@@ -70,9 +69,12 @@ void Tx::setupOutputDevice()
   pinMode(LED_PIN, OUTPUT);
 
   // Check BT module
-//  pinMode(BT_RX_PIN, INPUT);  
-//  pinMode(BT_TX_PIN, OUTPUT);  
-//  BTSerie_.begin(9600);
+ #ifdef BLUETOOTH
+  pinMode(BT_RX_PIN, INPUT);  
+  pinMode(BT_TX_PIN, OUTPUT);
+  BTSerial_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
+  BTSerial_->begin(SERIAL_SPEED);
+#endif
 }
 
 bool Tx::setup()
@@ -126,21 +128,20 @@ void Tx::onIrqTimerChange()
 {  
   TCNT1 = 0;
   
-  if(irqState_) 
+  if(irqStartPulse_) 
   {  
-    // Start pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
       
     OCR1A = PPM_PULSE_LEN*2;
-    irqState_ = false;
+    irqStartPulse_ = false;
   }
   else
   {
     // End pulse, calculate when to start the next pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
-    irqState_ = true;
+    irqStartPulse_ = true;
 
     if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
     {
@@ -177,10 +178,9 @@ void Tx::idle()
   if(toggleMode_ == tDebug)
   {
     mesure_.stop();
-    mesure_.displayAvg(1000);
+    mesure_.displayStat(1000);
   }
 // 1200 1218 1380
-
 }
 
 void Tx::ledBlinkIdle()
