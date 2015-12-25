@@ -1,8 +1,27 @@
-#include "Tx.h"
-#include "FlashMem.h"
+/*
+Tx.cpp - QuarkTx
+Copyright (c) 2015 Thierry & Betrand WILMOT.  All rights reserved.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 #include <EEPROM.h>
 //#include <SPI.h>
 //#include <SD.h>
+#include "Tx.h"
+#include "FlashMem.h"
 
 
 Tx::Tx()
@@ -66,15 +85,6 @@ void Tx::setupOutputDevice()
 
   // LED
   pinMode(LED_PIN, OUTPUT);
-
-  // Setup BT module
- #ifdef BLUETOOTH
-  pinMode(BT_RX_PIN, INPUT);  
-  pinMode(BT_TX_PIN, OUTPUT);
-  BTSerial_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
-  BTSerial_->begin(SERIAL_SPEED);
-  info(INFO_BT_READY);
-#endif
 }
 
 bool Tx::setup()
