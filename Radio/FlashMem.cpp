@@ -52,12 +52,13 @@ const char info_string_15[] PROGMEM = "Command\tOK\n";
 const char info_string_16[] PROGMEM = "Serial\tOK\n";
 const char info_string_17[] PROGMEM = "Load model %d\n";
 const char info_string_18[] PROGMEM = "Tx\tOK\t%d µs\n";
+const char info_string_20[] PROGMEM = "Bluetooth\tOK\t\n";
 
 // global error tab
 const char* const infoMsgTab[] PROGMEM = {info_string_0, info_string_1, info_string_2, info_string_3, info_string_4, info_string_5, 
                                           info_string_6, info_string_7, info_string_8, info_string_9, info_string_10, info_string_11, 
                                           info_string_12, info_string_13, info_string_14, info_string_15, info_string_16, info_string_17,
-                                          info_string_18, info_string_19};
+                                          info_string_18, info_string_19, info_string_20};
 
 
 // global functions
