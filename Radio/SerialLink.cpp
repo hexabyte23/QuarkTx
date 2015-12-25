@@ -43,7 +43,7 @@ bool SerialLink::setup(Command *cmd)
   // reroute printf() output to serial
   stdout = stderr = fdevopen(serialWrite, NULL);
 
-  info(INFO_BOOTING_MESSAGE, VERSION);
+  info(INFO_BOOTING_MESSAGE, QUARKTX_VERSION);
     
   info(INFO_SERIAL);
 
