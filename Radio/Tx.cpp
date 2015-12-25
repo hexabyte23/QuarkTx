@@ -1,7 +1,7 @@
 #include "Tx.h"
 #include "FlashMem.h"
 #include <EEPROM.h>
-#include <SPI.h>
+//#include <SPI.h>
 //#include <SD.h>
 
 
@@ -44,14 +44,14 @@ void Tx::setupOutputDevice()
 {
   // PPM
   pinMode(PPM_PIN, OUTPUT);
-  digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
+  digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
   
   cli();
   
   TCCR1A = 0;               // set entire TCCR1 register to 0
   TCCR1B = 0;
   
-  OCR1A = 100;              // compare match register, initial value
+  OCR1A = PPM_INTER_FRAME_TIME;  // compare match register, initial value
 
   TCCR1B |= (1 << WGM12);   // turn on CTC mode
   TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0,5 microseconds at 16mhz
@@ -67,12 +67,13 @@ void Tx::setupOutputDevice()
   // LED
   pinMode(LED_PIN, OUTPUT);
 
-  // Check BT module
+  // Setup BT module
  #ifdef BLUETOOTH
   pinMode(BT_RX_PIN, INPUT);  
   pinMode(BT_TX_PIN, OUTPUT);
   BTSerial_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
   BTSerial_->begin(SERIAL_SPEED);
+  info(INFO_BT_READY);
 #endif
 }
 
@@ -126,10 +127,10 @@ bool Tx::setup()
 void Tx::onIrqTimerChange()
 {
   /*
-   * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint (as they can sent more than 8 channels) like this code,
+   * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint (as HF modules can now sent more than 8 channels)
    * but just care about 2 times:
-   * The minimum time (PPM_INTER_CHANNEL_TIME) between 2 channels pulses, 
-   * and the minimum time (PPM_INTER_FRAME_TIME) between 2 PPM frames
+   * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME), 
+   * and the minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
    */
  
   TCNT1 = 0;
@@ -138,16 +139,17 @@ void Tx::onIrqTimerChange()
   {  
     // Raising edge of a channel pulse
     if(toggleMode_ == tTransmit)
-      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
+      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
-    OCR1A = ppmOutputValue_[irqCurrentChannelNumber_++]*2;
+    OCR1A = ppmOutputValue_[irqCurrentChannelNumber_]*2;
+    irqCurrentChannelNumber_++;
     irqStartPulse_ = false;
   }
   else
   {
     // Falling edge of a channel pulse
     if(toggleMode_ == tTransmit)
-      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
+      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
     irqStartPulse_ = true;
 
     // Calculate when the next pulse will start 

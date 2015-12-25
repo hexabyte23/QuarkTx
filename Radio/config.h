@@ -64,7 +64,7 @@
 #define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
 #define PPM_PIN                 10
 #define PPM_INTER_CHANNEL_TIME  500
-#define PPM_INTER_FRAME_TIME    4000
+#define PPM_INTER_FRAME_TIME    4500
 
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
