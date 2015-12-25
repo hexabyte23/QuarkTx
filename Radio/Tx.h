@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define TX_H
 
 #include <arduino.h>
-#include <SoftwareSerial.h>
 #include "config.h"
 #include "SerialLink.h"
 #include "Command.h"
