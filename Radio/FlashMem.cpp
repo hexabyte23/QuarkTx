@@ -32,9 +32,11 @@ const char err_string_3[] PROGMEM = "[e] buffer oversize\n";
 const char err_string_4[] PROGMEM = "[e] EEPROM data is corrupted\n";
 const char err_string_5[] PROGMEM = "[e] Command '%s' unknown\n";
 const char err_string_6[] PROGMEM = "[e] Command string '%s' too long\n";
+const char err_string_7[] PROGMEM = "[e] failed, switch in debug mode first\n";
 
 // global error tab
-const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5, err_string_6};
+const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5, 
+                                           err_string_6, err_string_7};
 
 // Define all information messages
 const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";
@@ -58,7 +60,7 @@ const char info_string_5[] PROGMEM =
          "s r [chan] [val]: set cur. model servo revert\n"
          "r: reset, clean all models\n";
 const char info_string_19[] PROGMEM =
-         "u: [sensorID] [val] set simulate value\n"
+         "u [sensorID] [val]: set simulate value\n"
          "w: toggle to simulation\n";
 const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";
 const char info_string_7[] PROGMEM = "Current model load from EEPROM\n";
@@ -101,7 +103,6 @@ void info(int idx, ...)
   va_list args;
 
   const char* ptr = (char*)pgm_read_word(&infoMsgTab[idx]);
-  //Serial.print(strlen_P(ptr), DEC);
   if(strlen_P(ptr) < MAX_FM_BUFFER)
   {
     strcpy_P(fm_buffer, ptr);

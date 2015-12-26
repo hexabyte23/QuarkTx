@@ -20,23 +20,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef SERIALLINK_H
 #define SERIALLINK_H
 
-#include "Config.h"
+#include "config.h"
 #include "Command.h"
+#include "Streaming.h"
+
+// forward decl
+class Stream;
 
 class SerialLink
 {
   char serialBuffer_[MAX_SERIAL_INPUT_BUFFER+2];
   uint8_t idxBuffer_; 
   Command *cmd_;
-  
-#ifdef BLUETOOTH
-  SoftwareSerial *BTSerial_;
-#endif
 
   void clearSerialBuffer();
   void displayPrompt();
 
   public:
+  static Stream *currentStream_;
 
   SerialLink();
   bool setup(Command *cmd);

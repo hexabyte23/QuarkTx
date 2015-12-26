@@ -18,14 +18,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <arduino.h>
+#include <stream.h>
 #include "FlashMem.h"
 #include "SerialLink.h"
+#include "Streaming.h"
+#ifdef BLUETOOTH
+#include <SoftwareSerial.h>
+#endif
 
+Stream *SerialLink::currentStream_ = NULL;
 
 int serialWrite(char c, FILE *f)
 {
-  Serial.write(c);
-  return 0;
+  return SerialLink::currentStream_->write(c);
 }
 
 SerialLink::SerialLink()
@@ -37,22 +42,23 @@ SerialLink::SerialLink()
 bool SerialLink::setup(Command *cmd)
 {
   cmd_ = cmd;
-  
-  Serial.begin(SERIAL_SPEED);
 
-  // reroute printf() output to serial
-  stdout = stderr = fdevopen(serialWrite, NULL);
-
-  info(INFO_BOOTING_MESSAGE, QUARKTX_VERSION);
-    
-  info(INFO_SERIAL);
-
-  // Setup BT module
- #ifdef BLUETOOTH
+#ifdef BLUETOOTH
   pinMode(BT_RX_PIN, INPUT);  
   pinMode(BT_TX_PIN, OUTPUT);
-  BTSerial_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
-  BTSerial_->begin(SERIAL_SPEED);
+  currentStream_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
+  ((SoftwareSerial*)currentStream_)->begin(SERIAL_SPEED);
+#else
+  currentStream_ = &Serial;
+  Serial.begin(SERIAL_SPEED);
+#endif
+
+  // reroute printf() output to currentStream_
+  stdout = stderr = fdevopen(serialWrite, NULL);
+
+  info(INFO_BOOTING_MESSAGE, QUARKTX_VERSION);   
+  info(INFO_SERIAL);
+#ifdef BLUETOOTH
   info(INFO_BT_READY);
 #endif
 
@@ -67,17 +73,17 @@ void SerialLink::clearSerialBuffer()
 
 void SerialLink::displayPrompt()
 {
-  printf(">\n");
+  Serial << ">" << endl;
 }
 
 void SerialLink::idle()
 {
-  if(Serial.available() <= 0)
+  if(currentStream_->available() <= 0)
     return;
     
-  while (Serial.available())
+  while (currentStream_->available())
   {
-    char c = (char)Serial.read();
+    char c = (char)currentStream_->read();
     //debug("[d] '%d'",c);
     if (c == '\n')
     {
@@ -87,7 +93,7 @@ void SerialLink::idle()
       if(cmd_ != NULL)
       {
         //debug(" %d Sent\n", idxBuffer_);
-        Serial.println(serialBuffer_);
+        currentStream_->println(serialBuffer_);
         cmd_->onNewCommand(serialBuffer_);
         idxBuffer_ = 0;
         displayPrompt();

@@ -23,18 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <inttypes.h>
 #include "config.h"
 
-struct Mixer
-{
-  int fromChannel_;
-  int toChannel_;
-  float rate_;
-};
-
 struct ServoCommand
 {
-  uint16_t maxOutCurse_;    // in microsecs
-  uint16_t minOutCurse_;    // in microsecs
-  int16_t neutral_;         // in microsecs
+  uint16_t maxOutCurse_;    // in microsec
+  uint16_t minOutCurse_;    // in microsec
+  int16_t neutral_;         // in microsec
   bool isRevert_;
 
   ServoCommand();
@@ -55,7 +48,6 @@ struct OutputChannel
 
 class Model
 {
-  //Mixer mixer_[MAX_MIXER];
   OutputChannel channel_[MAX_PPM_OUTPUT_CHANNEL];
 
   public:

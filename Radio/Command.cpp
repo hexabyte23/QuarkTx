@@ -18,6 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <arduino.h>
+#include "SerialLink.h"
 #include "Command.h"
 #include "Tx.h"
 #include "FlashMem.h"
@@ -89,7 +90,7 @@ void Command::changeCurrentModelCmd(const char *idxStr)
 
 void Command::dumpCmd(const char* param)
 {
-  printf("Dump\n"); 
+  STDOUT << "Dump" << endl;
   tx_->onDump(param);
 }
 
@@ -157,7 +158,7 @@ void Command::setModelCmd(const char* param)
 void Command::resetCmd()
 {
   tx_->onReset();
-  printf("Reset\n");
+  STDOUT << "Reset" << endl;
 }
 
 void Command::toggleSimulation()
@@ -173,8 +174,8 @@ void Command::setSimulateSensorValueCmd(const char* param)
     error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
     return;
   }
-  uint16_t v = atoi(param+2);
   
+  uint16_t v = atoi(param+2);
   tx_->onSetSimulateSensorValue(c, v);
 }
 

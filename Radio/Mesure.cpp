@@ -17,6 +17,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "SerialLink.h"
 #include "Mesure.h"
 #include "MemoryFree.h"
 
@@ -30,13 +31,7 @@ void Mesure::displayStat(int maxLoop)
   if(loop_++ > maxLoop)
   {
     loop_ = 0;
-    Serial.print(min_);
-    Serial.print(" ");
-    Serial.print(avg_);
-    Serial.print(" ");
-    Serial.print(max_);
-    Serial.print(" ");
-    Serial.println(freeMemory());
+    STDOUT << min_ << " " << avg_ << " " << max_ << " " << freeMemory() << endl;
   }
 }
 

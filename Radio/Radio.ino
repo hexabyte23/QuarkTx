@@ -17,6 +17,7 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "SerialLink.h"
 #include "Tx.h"
 
 Tx tx;
@@ -24,9 +25,9 @@ Tx tx;
 void setup()
 {
   if(tx.setup() == true)
-    printf("Ready.\n>\n");
+    STDOUT << "Ready.\n>" << endl;
   else
-    printf("Failed.\n");
+    STDOUT << "Failed.\n" << endl;
 }
 
 ISR(TIMER1_COMPA_vect)

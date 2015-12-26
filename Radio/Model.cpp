@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <arduino.h>
 #include <EEPROM.h>
 #include "Model.h"
-#include "config.h"
+#include "SerialLink.h"
 #include "FlashMem.h"
 
 
@@ -60,7 +60,6 @@ uint16_t ServoCommand::putToEEPROM(uint16_t addr)
 
 uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
 {
-//  Serial.print(addr);
   EEPROM.get(addr,maxOutCurse_);
   addr += sizeof(uint16_t);
   EEPROM.get(addr,minOutCurse_);
@@ -70,8 +69,6 @@ uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
   EEPROM.get(addr,isRevert_);
   addr += sizeof(bool);
 
-//  Serial.print(" ");
-//  Serial.println(addr);
   return addr;
 }
 
@@ -127,16 +124,10 @@ void Model::dump()
   info(INFO_DUMP_SERVO_HEADER);
   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
-    Serial.print(idx);
-    Serial.print(" ");
-    Serial.print(channel_[idx].servo_.minOutCurse_, DISPLAY_BASE);
-    Serial.print("\t");
-    Serial.print(channel_[idx].servo_.maxOutCurse_, DISPLAY_BASE);
-    Serial.print("\t");
-    Serial.print(channel_[idx].servo_.neutral_, DISPLAY_BASE);
-    Serial.print("\t");
-    Serial.print(channel_[idx].servo_.isRevert_, DISPLAY_BASE);
-    Serial.println();
+    STDOUT << idx << " " << channel_[idx].servo_.minOutCurse_ << "\t" << 
+                            channel_[idx].servo_.maxOutCurse_ << "\t" <<
+                            channel_[idx].servo_.neutral_ << "\t" <<
+                            channel_[idx].servo_.isRevert_ << endl;
   }
 }
 
@@ -149,9 +140,7 @@ void Model::reset()
 uint16_t Model::putToEEPROM(uint16_t addr)
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
     addr = channel_[idx].putToEEPROM(addr);
-  }
 
   return addr;
 }
@@ -159,9 +148,7 @@ uint16_t Model::putToEEPROM(uint16_t addr)
 uint16_t Model::getFromEEPROM(uint16_t addr)
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
     addr = channel_[idx].getFromEEPROM(addr);
-  }
 
   return addr;
 }

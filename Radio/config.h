@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.0.13" 
+#define QUARKTX_VERSION         "0.0.14" 
 #define SERIAL_SPEED            9600
 
 #define DISPLAY_BASE            DEC     // DEC or HEX
@@ -77,7 +77,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
 #define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
-#define MAX_PPM_OUTPUT_CHANNEL  6
+#define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti module
 #define MAX_MIXER               8
 
 #define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
@@ -96,5 +96,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
+#define STDOUT *SerialLink::currentStream_
 
 #endif

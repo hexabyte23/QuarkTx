@@ -19,7 +19,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <arduino.h>
 #include <EEPROM.h>
-#include "config.h"
+#include "SerialLink.h"
 #include "Sensor.h"
 #include "FlashMem.h"
 
@@ -66,15 +66,7 @@ uint16_t Sensor::getFromEEPROM(uint16_t addr)
   
 void Sensor::dump() const
 {
-  Serial.print(pin_, DISPLAY_BASE);
-  Serial.print("\t");
-  Serial.print(trim_, DISPLAY_BASE);
-  Serial.print("\t");
-  Serial.print(calibrMin_, DISPLAY_BASE);
-  Serial.print("\t");
-  Serial.print(calibrMax_, DISPLAY_BASE);
-  Serial.print("\t");
-  Serial.print(simuVal_, DISPLAY_BASE);
+  STDOUT << pin_ << "\t" << trim_ << "\t" << calibrMin_ << "\t" << calibrMax_ << "\t" << simuVal_;
 }
 
 void Sensor::reset()
@@ -131,7 +123,6 @@ void Switch::setup(uint8_t pin)
 
 void Switch::calibrate()
 {
-  //Serial.print(pin_);
   calibration(digitalRead(pin_));
 }
 

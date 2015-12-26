@@ -99,4 +99,5 @@ class Gyroscope : public Sensor
   virtual void calibrate();
   virtual uint16_t getValue() const;
 };
+
 #endif

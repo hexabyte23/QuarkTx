@@ -18,6 +18,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <EEPROM.h>
+#include "Config.h"
+#include "SerialLink.h"
 #include "Tx.h"
 #include "FlashMem.h"
 
@@ -135,17 +137,17 @@ bool Tx::setup()
 void Tx::onIrqTimerChange()
 {
   /*
-   * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint (as HF modules can now sent more than 8 channels)
-   * but just care about 2 times:
-   * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME), 
-   * and the minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
+   * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint 
+   * (as HF modules can now sent more than 8 channels) but just care about 2 times:
+   * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME) 
+   * The minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
    */
  
   TCNT1 = 0;
 
   if(irqStartPulse_) 
   {  
-    // Raising edge of a channel pulse
+    // Falling edge of a channel pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
@@ -155,7 +157,7 @@ void Tx::onIrqTimerChange()
   }
   else
   {
-    // Falling edge of a channel pulse
+    // Raising edge of a channel pulse
     if(toggleMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
     irqStartPulse_ = true;
@@ -216,14 +218,12 @@ void Tx::ledBlinkIdle()
 
 void Tx::displayInputUpdate()
 {
-  Serial.print("<S\t");   // det inpout from synchrone way
-
+  STDOUT << "<\t";
+  
   for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
-  {
-    Serial.print(sensor_[idx]->getValue(), DISPLAY_BASE);
-    Serial.print("\t");
-  }
-  Serial.println();
+    STDOUT << sensor_[idx]->getValue() << "\t";
+
+  STDOUT << endl;
 }
 
 void Tx::onToggleDisplayInputUpdate()
@@ -233,15 +233,12 @@ void Tx::onToggleDisplayInputUpdate()
 
 void Tx::displayOutputUpdate()
 {
-  Serial.print(">\t");
+  STDOUT << ">\t";
 
   for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
-    Serial.print((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0, DISPLAY_BASE);
-    Serial.print("\t");
-  }
+    STDOUT << ((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0) << "\t";
 
-  Serial.println();
+  STDOUT << endl;
 }
 
 void Tx::onToggleDisplayOutputUpdate()
@@ -285,41 +282,36 @@ void Tx::onDump(const char* param)
     for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
     {
       if(i == 0)
-      {
-        Serial.print(idx, HEX);
-        Serial.print("\t");
-      }
+        STDOUT << _HEX(idx) << "\t";
       
-      Serial.print(EEPROM.read(idx), HEX);
-      Serial.print(" ");
+      STDOUT << _HEX(EEPROM.read(idx)) << " ";
     
       if(i == 15)
       {
         i = -1;
-        Serial.println();
+        STDOUT << endl;
       }
     }
-    Serial.println();
+    STDOUT << endl;
   }
   else
   {
     // dump sensors
     info(INFO_SENSOR, MAX_INPUT_CHANNEL);
-    //calibrateSensor(true);
+
     for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     {
-      Serial.print(idx, DISPLAY_BASE);
-      Serial.print(" ");
+      STDOUT << idx << " ";
       sensor_[idx]->dump();
-      Serial.println();
+      STDOUT << endl;
     }
-    Serial.println();
+    STDOUT << endl;
     
     // dump models
     for(uint8_t idx=0; idx < MAX_MODEL; idx++)
     {
       char c = (currentModel_ == &modelList_[idx])?'*':' ';
-      printf("Model %d %c\n",idx, c);
+      STDOUT << "Model " << idx << " " << c << endl;
     
       modelList_[idx].dump();
     }
@@ -328,7 +320,6 @@ void Tx::onDump(const char* param)
 
 void Tx::onToggleCalibrateSensor()
 {
-  //debug("[d] enter calibrate sensors loop\n");
   toggleCalibrateSensor_ = !toggleCalibrateSensor_;
 }
 
@@ -337,13 +328,10 @@ void Tx::calibrateSensor()
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   {
     sensor_[idx]->calibrate();
-    Serial.print("{");
-    Serial.print(sensor_[idx]->getMinCalibration(), DISPLAY_BASE);
-    Serial.print("\t");
-    Serial.print(sensor_[idx]->getMaxCalibration(), DISPLAY_BASE);
-    Serial.print("}\t");
+
+    STDOUT << "{" << sensor_[idx]->getMinCalibration() << "\t" << sensor_[idx]->getMaxCalibration() << "}\t";
   }
-  Serial.println();
+  STDOUT << endl;
 }
 
 void Tx::onLoadFromEEPROM()
@@ -360,7 +348,6 @@ void Tx::onLoadFromEEPROM()
   currentModel_ = &modelList_[i];
   addr += sizeof(uint8_t);
   
-  //EEPROM.get(addr, modelList_);
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
     addr = modelList_[idx].getFromEEPROM(addr);
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
@@ -374,8 +361,7 @@ void Tx::onSaveToEEPROM()
     
   EEPROM.put(addr, i);
   addr += sizeof(uint8_t);
-  //EEPROM.put(addr, modelList_);
-  //addr += sizeof(modelList_);
+
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
     addr = modelList_[idx].putToEEPROM(addr);
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
@@ -411,7 +397,7 @@ void Tx::onToggleSimulation()
 {
   if(toggleMode_ == tTransmit)
   {
-    printf("[e] failed, switch in debug mode first\n");
+    error(ERR_DEBUG_FIRST);
     return;
   }
   
@@ -420,13 +406,13 @@ void Tx::onToggleSimulation()
 
   if(toggleSimulation_)
   {
-    printf("Simulation on\n");
+    STDOUT << "Simulation on" << endl;
     for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->setSimulation(true);
   }
   else
   {
-    printf("Simulation off\n");
+    STDOUT << "Simulation off" << endl;
     for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->setSimulation(false);
   }
@@ -434,8 +420,6 @@ void Tx::onToggleSimulation()
 
 void Tx::onSetSimulateSensorValue(uint8_t channel, uint16_t value)
 {
-  debug("simu %d %d\n", channel, value);
-
   sensor_[channel]->setSimulateValue(value); 
 }
 
