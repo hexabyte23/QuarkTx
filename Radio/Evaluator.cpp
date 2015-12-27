@@ -122,17 +122,26 @@ void Evaluator::setup(Sensor **sensor, uint16_t *outputValue, Model *currentMode
   outputValue_ = outputValue;
   currentModel_ = currentModel;
 
-  in1_.setup(sensor_[0]);
-  in2_.setup(sensor_[1]);
-  in3_.setup(sensor_[2]);
-  in4_.setup(sensor_[3]);
-  in5_.setup(sensor_[4]);
-  in6_.setup(sensor_[5]);
+  for(int8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
+  {
+    inputTab[idx] = new SensorExp;
+    inputTab[idx]->setup(sensor_[idx]);
+  }
 
-  // o5 = i5[0;512] + i6[512;0]
-  l1_.setup(&in5_, 0, 512);
-  l2_.setup(&in6_, 512, 0);
+  // hard coded expression
+  expression_[0] = inputTab[0]; // o1 = i1
+  expression_[1] = inputTab[1]; // o2 = i2
+  expression_[2] = inputTab[2]; // o3 = i3
+  expression_[3] = inputTab[3]; // o4 = i4
+  
+  l1_.setup(inputTab[4], 0, 512);
+  l2_.setup(inputTab[5], 512, 0);
   a1_.setup(&l1_, &l2_);
+  expression_[4] = &a1_;        // o5 = i5[0;512] + i6[512;0]
+
+#ifdef TERRATOP
+  expression_[5] = inputTab[6]; // o6 = i7
+#endif
 }
 
 Expression *Evaluator::parseExp(const char *str)

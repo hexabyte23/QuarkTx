@@ -108,13 +108,6 @@ public:
 
 class Evaluator
 {
-  SensorExp in1_;
-  SensorExp in2_;
-  SensorExp in3_;
-  SensorExp in4_;
-  SensorExp in5_;
-  SensorExp in6_;
-    
   LimitExp l1_;
   LimitExp l2_;
 
@@ -123,7 +116,8 @@ class Evaluator
   Sensor **sensor_;
   uint16_t *outputValue_;
   Model *currentModel_;
-  Expression *expression_[MAX_PPM_OUTPUT_CHANNEL] = {&in1_, &in2_, &in3_, &in4_, &a1_};
+  Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
+  SensorExp *inputTab[MAX_INPUT_CHANNEL];
 
   Expression *parseExp(const char *str);
   
