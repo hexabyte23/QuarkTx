@@ -50,7 +50,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 //#define TERRATOP                // Define the hardware you want to test
-//#define BLUETOOTH               // uncomment if BT is wired
+#define BLUETOOTH               // uncomment if BT is wired
 
 #ifdef TERRATOP
 

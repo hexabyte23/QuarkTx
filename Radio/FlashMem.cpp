@@ -71,10 +71,10 @@ const char info_string_11[] PROGMEM = "Set Revert channel %d value %d\n";
 const char info_string_12[] PROGMEM = "Servo\n# Min   Max   Neutral   Rev\n";
 const char info_string_13[] PROGMEM = "Sensors (%d)\n# Pin   Trim    Min     Max    Simu\n";
 const char info_string_14[] PROGMEM = "Quark Tx v%s\nBooting...\n";
-const char info_string_15[] PROGMEM = "Command\tOK\n";
-const char info_string_16[] PROGMEM = "Serial\tOK\n";
+const char info_string_15[] PROGMEM = "Command\t\tOK\n";
+const char info_string_16[] PROGMEM = "Serial\t\tOK\n";
 const char info_string_17[] PROGMEM = "Load model %d\n";
-const char info_string_18[] PROGMEM = "Tx\tOK\t%d µs\n";
+const char info_string_18[] PROGMEM = "Tx\t\tOK\t%d µs\n";
 const char info_string_20[] PROGMEM = "Bluetooth\tOK\t\n";
 
 // global error tab
