@@ -18,6 +18,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "Evaluator.h"
+#include "FlashMem.h"
+#include "SerialLink.h"
 
 void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
 {
@@ -116,52 +118,109 @@ Evaluator::Evaluator()
 {
 }
 
-void Evaluator::setup(Sensor **sensor, uint16_t *outputValue, Model *currentModel)
+void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel)
 {
-  sensor_ = sensor;
-  outputValue_ = outputValue;
+  sensorRef_ = sensorRef;
+  outputValueRef_ = outputValueRef;
   currentModel_ = currentModel;
 
   for(int8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
   {
     inputTab[idx] = new SensorExp;
-    inputTab[idx]->setup(sensor_[idx]);
+    inputTab[idx]->setup(sensorRef_[idx]);
   }
-
-  // hard coded expression
-  expression_[0] = inputTab[0]; // o1 = i1
-  expression_[1] = inputTab[1]; // o2 = i2
-  expression_[2] = inputTab[2]; // o3 = i3
-  expression_[3] = inputTab[3]; // o4 = i4
-  
-  l1_.setup(inputTab[4], 0, 512);
-  l2_.setup(inputTab[5], 512, 0);
-  a1_.setup(&l1_, &l2_);
-  expression_[4] = &a1_;        // o5 = i5[0;512] + i6[512;0]
-
-#ifdef TERRATOP
-  expression_[5] = inputTab[6]; // o6 = i7
-#endif
 }
 
-Expression *Evaluator::parseExp(const char *str)
+int getNextNumeric(char* text, char delim, int &value)
 {
-  Expression *ret = NULL;
-  int lastInput = -1;
+  char buf[4];
+  int i = 0;
   
-  int len = strlen(str);
-  for(int idx=0; idx < len; idx++)
+  while(text[i] != 0 && text[i] != delim && i < 4)
   {
-    switch(str[idx])
+    buf[i] = text[i];
+    i++;
+  }
+  
+  buf[i] = 0;
+  value = atoi(buf);
+
+  return i+1;
+}
+
+Expression *Evaluator::parseExp(const char *str, int &len)
+{
+  char *ps = (char*)str;
+  Expression *leftExp = NULL;
+  //STDOUT << "[d] str=" << str << " len=" << strlen(str) << endl;
+  
+  while(*ps != 0)
+  {
+    switch(ps[0])
     {
       case 'i': 
         {
-          lastInput = atoi(str+1);
+          int c = ps[1] - '0';
+          if(c > MAX_INPUT_CHANNEL)
+          {
+            error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL);
+            return NULL;
+          }
+          leftExp = inputTab[c];
+          ps += 2;
+          len += 2;
+          //STDOUT << "[d] i=" << c << " next car='" << *ps << "'" << endl;
         }
         break;
-      case '+': break;
+      case '+':
+        {
+            // check if previous expression is not NULL
+            if(leftExp == NULL)
+            {
+              error(ERR_LEFT_OP_EMPTY, '+');
+              return NULL;
+            }
+            ps++;
+            len++;
+
+            int rightLen = 0;
+            Expression *rightExp = parseExp(ps, rightLen);
+
+            AddExp *expr = new AddExp;
+            expr->setup(leftExp, rightExp);
+            leftExp = expr;
+            ps += rightLen;
+            len += rightLen;
+            //STDOUT << "[d] + " << (int)&leftExp << " " << (int)&rightExp << endl;
+        }
+        break;
       case '-': break;
-      case '[': break;
+      case '[':
+        {
+          // check if previous expression is not NULL (expected ixx)
+          if(leftExp == NULL)
+          {
+            error(ERR_LEFT_OP_EMPTY, '[');
+            return NULL;
+          }
+          
+          ps++;
+          len++;
+          int _min, _max;
+
+          int lenNum = getNextNumeric(ps, ';', _min);
+          ps += lenNum;
+          len += lenNum;
+          lenNum = getNextNumeric(ps, ']', _max);;
+          ps += lenNum;
+          len += lenNum;
+
+          LimitExp *expr = new LimitExp;
+          expr->setup(leftExp, _min, _max );
+          leftExp = expr;
+          //STDOUT << "[d] [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
+        }
+        break;
       case '>': break;
       case '<': break;
       case '?': break;
@@ -169,12 +228,13 @@ Expression *Evaluator::parseExp(const char *str)
     }
   }
 
-  return ret;
+  return leftExp;
 }
 
-bool Evaluator::parse(uint8_t outChannelID, const char *str)
+bool Evaluator::setupOutputChannel(uint8_t outChannelID, const char *str)
 {
-  expression_[outChannelID] = parseExp(str);
+  int i = 0;
+  expression_[outChannelID] = parseExp(str, i);
 }
 
 void Evaluator::idle()
@@ -182,9 +242,9 @@ void Evaluator::idle()
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     if(expression_[idx] != NULL)
-      outputValue_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate());
+      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate());
     else
-      outputValue_[idx] = PPM_MIN_VALUE;
+      outputValueRef_[idx] = PPM_MIN_VALUE;
   }
 }
 

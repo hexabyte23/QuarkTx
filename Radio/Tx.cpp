@@ -61,7 +61,7 @@ void Tx::setupInputDevice()
 
 void Tx::setupOutputDevice()
 {
-  // PPM
+  // PPM for RF module
   pinMode(PPM_PIN, OUTPUT);
   digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
   
@@ -117,8 +117,6 @@ bool Tx::setup()
 
   // Setup input sensors
   setupInputDevice();
-
-  evaluator_.setup(sensor_, ppmOutputValue_, currentModel_);
   
   // Setup Timer for PPM signal generation
   setupOutputDevice();
@@ -127,6 +125,16 @@ bool Tx::setup()
   bool ret2 = command_.setup(this);
 
   onLoadFromEEPROM();
+
+  evaluator_.setup(sensor_, ppmOutputValue_, currentModel_);
+  evaluator_.setupOutputChannel(0, "i0");
+  evaluator_.setupOutputChannel(1, "i1");
+  evaluator_.setupOutputChannel(2, "i2");
+  evaluator_.setupOutputChannel(3, "i3");
+  evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
+ #ifdef TERRATOP
+  evaluator_.setupOutputChannel(5, "i6[100;200]");
+#endif
   
   mesure_.stop();
   info(INFO_TX_READY,mesure_.getAverage());

@@ -33,10 +33,11 @@ const char err_string_4[] PROGMEM = "[e] EEPROM data is corrupted\n";
 const char err_string_5[] PROGMEM = "[e] Command '%s' unknown\n";
 const char err_string_6[] PROGMEM = "[e] Command string '%s' too long\n";
 const char err_string_7[] PROGMEM = "[e] failed, switch in debug mode first\n";
+const char err_string_8[] PROGMEM = "[e] eval operator %c: left operand empty";
 
 // global error tab
 const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5, 
-                                           err_string_6, err_string_7};
+                                           err_string_6, err_string_7, err_string_8};
 
 // Define all information messages
 const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";

@@ -113,20 +113,20 @@ class Evaluator
 
   AddExp a1_;
     
-  Sensor **sensor_;
-  uint16_t *outputValue_;
+  Sensor **sensorRef_;
+  uint16_t *outputValueRef_;
   Model *currentModel_;
   Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
   SensorExp *inputTab[MAX_INPUT_CHANNEL];
 
-  Expression *parseExp(const char *str);
+  Expression *parseExp(const char *str, int &len);
   
 public:
 
   Evaluator();
-  void setup(Sensor **sensor, uint16_t *outputValue, Model *currentModel);
+  void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
+  bool setupOutputChannel(uint8_t outChannelID, const char *expStr);
   void idle();
-  bool parse(uint8_t outChannelID, const char *expStr);
   uint16_t evaluate();
 };
 

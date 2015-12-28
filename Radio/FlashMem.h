@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ERR_COMMAND_UNKNOWN           5
 #define ERR_STRING_TOO_LONG           6
 #define ERR_DEBUG_FIRST               7
+#define ERR_LEFT_OP_EMPTY             8
 
 #define INFO_SWITCH_MODE_TRANSMIT     0
 #define INFO_SWITCH_MODE_SETTINGS     1
