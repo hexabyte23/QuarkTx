@@ -42,27 +42,30 @@ const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_strin
 // Define all information messages
 const char info_string_0[] PROGMEM = "Mode switched to 'transmit'\n";
 const char info_string_1[] PROGMEM = "Mode switched to 'debug'\n";
-const char info_string_2[] PROGMEM = "Current mode 'debug'\n";
-const char info_string_3[] PROGMEM = "Current mode 'transmit'\n";
+const char info_string_2[] PROGMEM = "\n";
+const char info_string_3[] PROGMEM = "\n";
 const char info_string_4[] PROGMEM = "help command :\n"
          "h: help\n"
-         "m: toggle Tx mode\n"
-         "l [0..2]: change cur. model\n"
+         "m: toggle Tx mode (transmit or debug)\n"
+         "l [0..2]: load cur. model\n"
          "d [0..2]: dump model\n"
-         "i: toggle displ. input update\n"
-         "o: toggle displ. output update\n"
+         "i: toggle disp. input sensors update\n"
+         "o: toggle disp. output PPM update\n"
          "a: load cur. model from EEPROM\n"
-         "v: save cur. model to EEPROM\n";
+         ;
 const char info_string_5[] PROGMEM =
-         "c: toggle calibrate sensors\n"     
+          "v: save cur. model to EEPROM\n"
+         "c: toggle sensors calibration\n"     
          "s i [chan] [val]: set cur. model servo min\n"
          "s a [chan] [val]: set cur. model servo max\n"
          "s n [chan] [val]: set cur. model servo neutral\n"
          "s r [chan] [val]: set cur. model servo revert\n"
-         "r: reset, clean all models\n";
+         ;
 const char info_string_19[] PROGMEM =
+         "r: reset, clean all models\n"
          "u [sensorID] [val]: set simulate value\n"
-         "w: toggle to simulation\n";
+         "w: toggle to simulation\n"
+         ;
 const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";
 const char info_string_7[] PROGMEM = "Current model load from EEPROM\n";
 const char info_string_8[] PROGMEM = "Set Min channel %d value %d\n";

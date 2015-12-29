@@ -106,22 +106,15 @@ public:
 // Dual rate and Negative expression
 class LimitExp : public Expression
 {
-  const Expression *expr_;
-  int min_;
-  int max_;
+  const Expression *expr_, *min_, *max_;
 
 public:
-  void setup(const Expression *expr, int min, int max);
+  void setup(const Expression *expr, const Expression *min, const Expression *max);
   virtual uint16_t evaluate() const;
 };
 
 class Evaluator
-{
-  LimitExp l1_;
-  LimitExp l2_;
-
-  AddExp a1_;
-    
+{    
   Sensor **sensorRef_;
   uint16_t *outputValueRef_;
   Model *currentModel_;

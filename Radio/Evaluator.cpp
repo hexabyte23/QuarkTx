@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Evaluator.h"
 #include "FlashMem.h"
 #include "SerialLink.h"
+#include "MemoryFree.h"
 
 void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
 {
@@ -87,7 +88,8 @@ uint16_t SubExp::evaluate() const
 
 //////////////////////////////////////////////////////////////////////////
 
-void LimitExp::setup(const Expression *expr, int min, int max)
+//void LimitExp::setup(const Expression *expr, int min, int max)
+void LimitExp::setup(const Expression *expr, const Expression *min, const Expression *max)
 {
   expr_ = expr;
   min_ = min;
@@ -96,7 +98,7 @@ void LimitExp::setup(const Expression *expr, int min, int max)
 
 uint16_t LimitExp::evaluate() const
 {
-  return map(expr_->evaluate(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_, max_);
+  return map(expr_->evaluate(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate(), max_->evaluate());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,19 +133,19 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
   }
 }
 
-int getNextNumeric(char* &text, char delim)
+int getNextNumeric(char *&text)
 {
-  char buf[] = {0,0,0,0};
+  char buf[] = {0,0,0,0,0}; // 4 digits + \0
   char *p = &buf[0];
   int i = 0;
   int ret;
-  //STDOUT << "getNextNumeric(text='" << text << "' delim='" << delim << "') " << sizeof(buf) << endl;
+  //STDOUT << "gnn(" << text << ")" << endl;
   
   while(1)
   {
     if(*text == 0) break;
-    if(*text == delim) break;
-    if(i == sizeof(buf)) break;
+    if(*text - '0' > 9) break; // read until digit
+    if(i == sizeof(buf)-1) break;
     
     *p = *text;
     //STDOUT << *p;
@@ -153,10 +155,11 @@ int getNextNumeric(char* &text, char delim)
   }
   
   ret = atoi(buf);
+  
   if(*text != 0)
     text++;
   
-  //STDOUT << "exit getNextNumeric val=" << value << " next car='" << _HEX(*text) << "'" << endl;
+  //STDOUT << "exit gnn " << ret << " '" << *text << "'(" << _HEX(*text) << ")" << endl;
 
   return ret;
 }
@@ -164,11 +167,11 @@ int getNextNumeric(char* &text, char delim)
 Expression *Evaluator::parseExp(char *&ps)
 {
   Expression *leftExp = NULL;
-  STDOUT << "[d] parseExp(str=" << ps << ", len=" << strlen(ps) << ")" << endl;
+  //STDOUT << "[d] parseExp(str=" << ps << ", len=" << strlen(ps) << ")" << endl;
   
   while(*ps != 0)
   {
-    STDOUT << "enter loop ps='" << *ps << "'" << endl;
+    //STDOUT << "enter loop ps='" << *ps << "'" << endl;
     
     switch(ps[0])
     {
@@ -182,7 +185,8 @@ Expression *Evaluator::parseExp(char *&ps)
           }
           leftExp = inputTab[c];
           ps += 2;
-          STDOUT << "[d] op i=" << c << " next car='" << *ps << "'" << endl;
+          
+          //STDOUT << "[d] op i=" << c << " next car='" << *ps << "'" << endl;
         }
         break;
       case '+':
@@ -201,7 +205,7 @@ Expression *Evaluator::parseExp(char *&ps)
             expr->setup(leftExp, rightExp);
             leftExp = expr;
 
-            STDOUT << "[d] op + " << (int)&leftExp << " " << (int)&rightExp << endl;
+            //STDOUT << "[d] op + " << (int)&leftExp << " " << (int)&rightExp << endl;
         }
         break;
       case '-': 
@@ -220,7 +224,7 @@ Expression *Evaluator::parseExp(char *&ps)
             expr->setup(leftExp, rightExp);
             leftExp = expr;
 
-            STDOUT << "[d] op - " << (int)&leftExp << " " << (int)&rightExp << endl;
+            //STDOUT << "[d] op - " << (int)&leftExp << " " << (int)&rightExp << endl;
         }
         break;
       case '[':
@@ -234,33 +238,49 @@ Expression *Evaluator::parseExp(char *&ps)
           
           ps++;
 
-          int _min = getNextNumeric(ps, ';');
-          int _max = getNextNumeric(ps, ']');
+          Expression *_min = parseExp(ps);
+          Expression *_max = parseExp(ps);          
 
           LimitExp *expr = new LimitExp;
           expr->setup(leftExp, _min, _max );
           leftExp = expr;
           
-          STDOUT << "[d] op [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
+          //STDOUT << "[d] op [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
         }
         break;
       case '>': break;
       case '<': break;
       case '?': break;
       case '(': break;
+      default:
+      {
+        // check if numeric
+        if(ps[0] - '0' <= 9)
+        {
+          //STDOUT << "Numeric" << endl;
+
+          int constant = getNextNumeric(ps);
+          ConstantInputExp *expr = new ConstantInputExp;
+          expr->setup(constant);
+          return expr;
+        }
+      }
+      break;
     }
   }
 
-  STDOUT << "exit parseExp()" << endl;
+  //STDOUT << "exit parseExp()" << endl;
   return leftExp;
 }
 
 bool Evaluator::setupOutputChannel(uint8_t outChannelID, const char *str)
 {
-  char *buf = new char[strlen(str)];
+  char buff[100];
+  char *buf = &buff[0];
   strcpy(buf, str);
   expression_[outChannelID] = parseExp(buf);
-  delete buf;
+
+  //STDOUT << freeMemory() << endl;
 }
 
 void Evaluator::idle()
