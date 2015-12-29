@@ -42,14 +42,18 @@ class Sensor
   uint16_t getMinCalibration() const {return calibrMin_;}
   uint16_t getMaxCalibration() const {return calibrMax_;}
   void setSimulateValue(uint16_t simuVal) {simuVal_ = simuVal;}
+  uint16_t getSimulateValue() const {return simuVal_;}
   void setSimulation(bool isSimu) {isSimu_ = isSimu;}
+  bool isSimulation() const {return isSimu_;}
+  void setTrim(int trim) {trim_ = trim;}
+  int getTrim() const {return trim_;}
   
   virtual void dump() const;
 
   virtual void setup(uint8_t pin) = 0;
   virtual void calibrate() = 0;
   virtual uint16_t getValue() const = 0;
-  virtual uint16_t putToEEPROM(uint16_t addr);
+  virtual uint16_t putToEEPROM(uint16_t addr) const;
   virtual uint16_t getFromEEPROM(uint16_t addr);
   virtual void reset();
 };
