@@ -330,9 +330,10 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
   }
 }
 
-int getNextNumeric(char *&text)
+int getNextNumeric(char *&text, int &iVal, float &fVal)
 {
-  char buf[] = {0,0,0,0,0}; // 4 digits + \0
+  int type = 0; // 0 = interger, 1 = float
+  char buf[] = {0,0,0,0,0,0,0}; // 6 digits + \0
   char *p = &buf[0];
   int i = 0;
   int ret;
@@ -341,7 +342,10 @@ int getNextNumeric(char *&text)
   while(1)
   {
     if(*text == 0) break;
-    if(*text - '0' > 9) break; // read until digit
+    if(*text == '.')
+      type = 1;
+    else if(*text - '0' > 9)
+        break; // read until digit
     if(i == sizeof(buf)-1) break;
     
     *p = *text;
@@ -350,15 +354,18 @@ int getNextNumeric(char *&text)
     text++;
     i++;
   }
-  
-  ret = atoi(buf);
+
+  if(type == 0)
+    iVal = atoi(buf);
+  else
+    fVal = atof(buf);  
   
   if(*text != 0)
     text++;
   
   //STDOUT << "exit gnn " << ret << " '" << *text << "'(" << _HEX(*text) << ")" << endl;
 
-  return ret;
+  return type;
 }
 
 Expression *Evaluator::parseExp(char *&ps)
@@ -502,10 +509,23 @@ Expression *Evaluator::parseExp(char *&ps)
         {
           //STDOUT << "Numeric" << endl;
 
-          int integer = getNextNumeric(ps);
-          IntegerExp *expr = new IntegerExp;
-          expr->setup(integer);
-          return expr;
+          int iData;
+          float fData;
+          int type = getNextNumeric(ps, iData, fData);
+          //STDOUT << type << " " << iData << " " << fData << endl;
+          
+          if(type == 0)
+          {
+            IntegerExp *expr = new IntegerExp;
+            expr->setup(iData);
+            return expr;
+          }
+          else
+          {
+            FloatExp *expr = new FloatExp;
+            expr->setup(fData);
+            return expr;
+          }
         }
       }
       break;
