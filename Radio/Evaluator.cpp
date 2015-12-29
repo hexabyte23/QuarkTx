@@ -397,7 +397,9 @@ Expression *Evaluator::parseExp(char *&ps)
             ps++;
 
             Expression *rightExp = parseExp(ps);
-
+            if(rightExp == NULL)
+              return NULL;
+              
             AddExp *expr = new AddExp;
             expr->setup(leftExp, rightExp);
             leftExp = expr;
@@ -416,7 +418,9 @@ Expression *Evaluator::parseExp(char *&ps)
             ps++;
 
             Expression *rightExp = parseExp(ps);
-
+            if(rightExp == NULL)
+              return NULL;
+              
             SubExp *expr = new SubExp;
             expr->setup(leftExp, rightExp);
             leftExp = expr;
@@ -435,6 +439,8 @@ Expression *Evaluator::parseExp(char *&ps)
             ps++;
 
             Expression *rightExp = parseExp(ps);
+            if(rightExp == NULL)
+              return NULL;
 
             MulExp *expr = new MulExp;
             expr->setup(leftExp, rightExp);
@@ -455,8 +461,12 @@ Expression *Evaluator::parseExp(char *&ps)
           ps++;
 
           Expression *_min = parseExp(ps);
+          if(_min == NULL)
+            return NULL;
           Expression *_max = parseExp(ps);          
-
+          if(_max == NULL)
+            return NULL;
+            
           LimitExp *expr = new LimitExp;
           expr->setup(leftExp, _min, _max );
           leftExp = expr;
@@ -464,8 +474,25 @@ Expression *Evaluator::parseExp(char *&ps)
           //STDOUT << "[d] op [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
         }
         break;
-      case '>': break;
-      case '<': break;
+      case 'T':
+        {
+          ps++;
+          // True constant
+          BoolExp *expr = new BoolExp;
+          expr->setup(true);
+          return expr;
+        }
+        break;
+      case 'F':
+        {
+          ps++;
+          // False constant
+          BoolExp *expr = new BoolExp;
+          expr->setup(false);
+          return expr;
+        }
+        break;
+        break;
       case '?': break;
       case '(': break;
       default:
@@ -475,9 +502,9 @@ Expression *Evaluator::parseExp(char *&ps)
         {
           //STDOUT << "Numeric" << endl;
 
-          int constant = getNextNumeric(ps);
+          int integer = getNextNumeric(ps);
           IntegerExp *expr = new IntegerExp;
-          expr->setup(constant);
+          expr->setup(integer);
           return expr;
         }
       }

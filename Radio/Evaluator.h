@@ -73,7 +73,18 @@ class FloatExp: public Expression
   Variant data_;
   
 public:
+  FloatExp() : data_((float)0.0) {}
   void setup(float data) {data_.fData_ = data; }
+  virtual Variant evaluate() const {return data_;}
+};
+
+class BoolExp: public Expression
+{
+  Variant data_;
+  
+public:
+  BoolExp() : data_(false) {}
+  void setup(bool data) {data_.bData_ = data; }
   virtual Variant evaluate() const {return data_;}
 };
 
