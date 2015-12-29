@@ -24,10 +24,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Sensor.h"
 #include "Model.h"
 
+struct Variant
+{
+  enum Type {tNone, tInteger, tFloat, tBool} type_;
+  uint16_t iData_;
+  float fData_;
+  bool bData_;
+  
+  Variant(uint16_t iData) : iData_(iData), type_(tInteger) {}
+  Variant(float fData) : fData_(fData), type_(tFloat) {}
+  Variant(bool bData) : bData_(bData), type_(tBool) {}
+
+  friend Variant operator < (const Variant &l, const Variant &r);
+  friend Variant operator > (const Variant &l, const Variant &r);
+  friend Variant operator + (const Variant &l, const Variant &r);
+  friend Variant operator - (const Variant &l, const Variant &r);
+  friend Variant operator * (const Variant &l, const Variant &r);
+  friend Variant operator == (const Variant &l, const Variant &r);
+};
+
 class Expression
 {
 public:
-  virtual uint16_t evaluate() const = 0;
+  virtual Variant evaluate() const = 0;
 };
 
 class SensorInputExp: public Expression
@@ -36,16 +55,26 @@ class SensorInputExp: public Expression
   
 public:
   void setup(const Sensor *sensor) {sensor_ = sensor; }
-  virtual uint16_t evaluate() const {return sensor_->getValue();}
+  virtual Variant evaluate() const {Variant v (sensor_->getValue()); return v;}
 };
 
-class ConstantInputExp: public Expression
+class IntegerExp: public Expression
 {
-  uint16_t data_;
+  Variant data_;
   
 public:
-  void setup(uint16_t data) {data_ = data; }
-  virtual uint16_t evaluate() const {return data_;}
+  IntegerExp() : data_((uint16_t)0) {}
+  void setup(uint16_t data) {data_.iData_ = data; }
+  virtual Variant evaluate() const {return data_;}
+};
+
+class FloatExp: public Expression
+{
+  Variant data_;
+  
+public:
+  void setup(float data) {data_.fData_ = data; }
+  virtual Variant evaluate() const {return data_;}
 };
 
 class AddExp : public Expression
@@ -54,7 +83,7 @@ class AddExp : public Expression
 
 public:
   void setup(const Expression *left, const Expression *right);
-  virtual uint16_t evaluate() const;
+  virtual Variant evaluate() const;
 };
 
 class GreaterExp : public Expression
@@ -63,7 +92,7 @@ class GreaterExp : public Expression
 
 public:
   void setup(const Expression *left, const Expression *right);
-  virtual uint16_t evaluate() const;
+  virtual Variant evaluate() const;
 };
 
 class LowerExp : public Expression
@@ -72,7 +101,7 @@ class LowerExp : public Expression
 
 public:
   void setup(const Expression *left, const Expression *right);
-  virtual uint16_t evaluate() const;
+  virtual Variant evaluate() const;
 };
 
 class IfExp : public Expression
@@ -81,7 +110,7 @@ class IfExp : public Expression
 
 public:
   void setup(const Expression *test, const Expression *succeed, const Expression *fail);
-  virtual uint16_t evaluate() const;
+  virtual Variant evaluate() const;
 };
 
 class SubExp : public Expression
@@ -90,17 +119,16 @@ class SubExp : public Expression
 
 public:
   void setup(const Expression *left, const Expression *right);
-  virtual uint16_t evaluate() const;
+  virtual Variant evaluate() const;
 };
 
-class MixExp : public Expression
+class MulExp : public Expression
 {
-  const Expression *fromChannel_;
-  float rate_;
+  const Expression *exp1_, *exp2_;
 
 public:
-  void setup(const Expression *fromChannel, float rate);
-  virtual uint16_t evaluate() const;
+  void setup(const Expression *exp1, const Expression *exp2);
+  virtual Variant evaluate() const;
 };
 
 // Dual rate and Negative expression
@@ -110,7 +138,7 @@ class LimitExp : public Expression
 
 public:
   void setup(const Expression *expr, const Expression *min, const Expression *max);
-  virtual uint16_t evaluate() const;
+  virtual Variant evaluate() const;
 };
 
 class Evaluator

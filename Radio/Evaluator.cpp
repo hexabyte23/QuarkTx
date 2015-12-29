@@ -22,6 +22,203 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "SerialLink.h"
 #include "MemoryFree.h"
 
+
+Variant operator < (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ < r.iData_;
+          case Variant::tFloat: return l.iData_ < r.fData_;
+          case Variant::tBool: return l.iData_ < r.bData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ < r.iData_;
+          case Variant::tFloat: return l.fData_ < r.fData_;
+          case Variant::tBool: return l.fData_ < r.bData_;
+        }
+      }
+      break;
+    case Variant::tBool:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.bData_ < r.iData_;
+          case Variant::tFloat: return l.bData_ < r.fData_;
+          case Variant::tBool: return l.bData_ < r.bData_;
+        }
+      }
+      break;
+  }
+
+  return false;
+}
+
+Variant operator > (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ > r.iData_;
+          case Variant::tFloat: return l.iData_ > r.fData_;
+          case Variant::tBool: return l.iData_ > r.bData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ > r.iData_;
+          case Variant::tFloat: return l.fData_ > r.fData_;
+          case Variant::tBool: return l.fData_ > r.bData_;
+        }
+      }
+      break;
+    case Variant::tBool:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.bData_ > r.iData_;
+          case Variant::tFloat: return l.bData_ > r.fData_;
+          case Variant::tBool: return l.bData_ > r.bData_;
+        }
+      }
+      break;
+  }
+
+  return false;
+}
+
+Variant operator + (const Variant &l, const Variant &r)
+{  
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ + r.iData_;
+          case Variant::tFloat: return l.iData_ + r.fData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ + r.iData_;
+          case Variant::tFloat: return l.fData_ + r.fData_;
+        }
+      }
+      break;
+  }
+
+  return (uint16_t)0;
+}
+
+Variant operator - (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ - r.iData_;
+          case Variant::tFloat: return l.iData_ - r.fData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ - r.iData_;
+          case Variant::tFloat: return l.fData_ - r.fData_;
+        }
+      }
+      break;
+  }
+
+  return (uint16_t)0;
+}
+
+Variant operator * (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ * r.iData_;
+          case Variant::tFloat: return l.iData_ * r.fData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ * r.iData_;
+          case Variant::tFloat: return l.fData_ * r.fData_;
+        }
+      }
+      break;
+  }
+
+  return (uint16_t)0;
+}
+
+Variant operator == (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ == r.iData_;
+          case Variant::tFloat: return l.iData_ == r.fData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ == r.iData_;
+          case Variant::tFloat: return l.fData_ == r.fData_;
+        }
+      }
+      break;
+    case Variant::tBool:
+      {
+        switch (r.type_)
+        {
+          case Variant::tBool: return l.bData_ == r.bData_;
+        }
+      }
+      break;
+  }
+
+  return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
 {
   test_ = test;
@@ -29,9 +226,9 @@ void IfExp::setup(const Expression *test, const Expression *succeed, const Expre
   fail_ = fail;
 }
 
-uint16_t IfExp::evaluate() const
+Variant IfExp::evaluate() const
 {
-  return test_->evaluate()?succeed_->evaluate():fail_->evaluate();
+  return (test_->evaluate().bData_)?succeed_->evaluate():fail_->evaluate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -42,7 +239,7 @@ void LowerExp::setup(const Expression *left, const Expression *right)
   right_ = right;
 }
 
-uint16_t LowerExp::evaluate() const
+Variant LowerExp::evaluate() const
 {
   return left_->evaluate() < right_->evaluate();
 }
@@ -55,7 +252,7 @@ void GreaterExp::setup(const Expression *left, const Expression *right)
   right_ = right;
 }
 
-uint16_t GreaterExp::evaluate() const
+Variant GreaterExp::evaluate() const
 {
   return left_->evaluate() > right_->evaluate();
 }
@@ -68,7 +265,7 @@ void AddExp::setup(const Expression *left, const Expression *right)
   right_ = right;
 }
 
-uint16_t AddExp::evaluate() const
+Variant AddExp::evaluate() const
 {
   return left_->evaluate() + right_->evaluate();
 }
@@ -81,14 +278,13 @@ void SubExp::setup(const Expression *left, const Expression *right)
   right_ = right;
 }
 
-uint16_t SubExp::evaluate() const
+Variant SubExp::evaluate() const
 {
-  return left_->evaluate() + right_->evaluate();
+  return left_->evaluate() - right_->evaluate();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-//void LimitExp::setup(const Expression *expr, int min, int max)
 void LimitExp::setup(const Expression *expr, const Expression *min, const Expression *max)
 {
   expr_ = expr;
@@ -96,22 +292,23 @@ void LimitExp::setup(const Expression *expr, const Expression *min, const Expres
   max_ = max;
 }
 
-uint16_t LimitExp::evaluate() const
+Variant LimitExp::evaluate() const
 {
-  return map(expr_->evaluate(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate(), max_->evaluate());
+  Variant ret((uint16_t)map(expr_->evaluate().iData_, ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().iData_, max_->evaluate().iData_));
+  return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void MixExp::setup(const Expression *fromChannel, float rate)
+void MulExp::setup(const Expression *exp1, const Expression *exp2)
 {
-  fromChannel_ = fromChannel;
-  rate_ = rate;
+  exp1_ = exp1;
+  exp2_ = exp2;
 }
 
-uint16_t MixExp::evaluate() const
+Variant MulExp::evaluate() const
 {
-  return fromChannel_->evaluate() * rate_;
+  return exp1_->evaluate() * exp2_->evaluate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -227,6 +424,25 @@ Expression *Evaluator::parseExp(char *&ps)
             //STDOUT << "[d] op - " << (int)&leftExp << " " << (int)&rightExp << endl;
         }
         break;
+      case '*': 
+        {
+            // check if previous expression is not NULL
+            if(leftExp == NULL)
+            {
+              error(ERR_LEFT_OP_EMPTY, '*');
+              return NULL;
+            }
+            ps++;
+
+            Expression *rightExp = parseExp(ps);
+
+            MulExp *expr = new MulExp;
+            expr->setup(leftExp, rightExp);
+            leftExp = expr;
+
+            //STDOUT << "[d] op * " << (int)&leftExp << " " << (int)&rightExp << endl;
+        }
+        break;
       case '[':
         {
           // check if previous expression is not NULL (expected ixx)
@@ -260,7 +476,7 @@ Expression *Evaluator::parseExp(char *&ps)
           //STDOUT << "Numeric" << endl;
 
           int constant = getNextNumeric(ps);
-          ConstantInputExp *expr = new ConstantInputExp;
+          IntegerExp *expr = new IntegerExp;
           expr->setup(constant);
           return expr;
         }
@@ -288,7 +504,7 @@ void Evaluator::idle()
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     if(expression_[idx] != NULL)
-      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate());
+      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().iData_);
     else
       outputValueRef_[idx] = PPM_MIN_VALUE;
   }

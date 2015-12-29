@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Tx::Tx()
 :currentModel_(&modelList_[0]),
-toggleMode_(tTransmit),
+toggleTxMode_(tTransmit),
 ledState_(LOW),
 toggleDisplayInputUpdate_(false),
 toggleDisplayOutputUpdate_(false),
@@ -131,7 +131,7 @@ bool Tx::setup()
   evaluator_.setupOutputChannel(3, "i3");
   evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
 #ifdef TERRATOP
-  evaluator_.setupOutputChannel(5, "i6[1023;0]");
+  evaluator_.setupOutputChannel(5, "i6[512;0]*2");
 #endif
   
   mesure_.stop();
@@ -154,7 +154,7 @@ void Tx::onIrqTimerChange()
   if(irqStartPulse_) 
   {  
     // Falling edge of a channel pulse
-    if(toggleMode_ == tTransmit)
+    if(toggleTxMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
     OCR1A = ppmOutputValue_[irqCurrentChannelNumber_]*2;
@@ -164,7 +164,7 @@ void Tx::onIrqTimerChange()
   else
   {
     // Raising edge of a channel pulse
-    if(toggleMode_ == tTransmit)
+    if(toggleTxMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
     irqStartPulse_ = true;
 
@@ -182,7 +182,7 @@ void Tx::onIrqTimerChange()
 
 void Tx::idle()
 {
-  if(toggleMode_ == tDebug)
+  if(toggleTxMode_ == tDebug)
     mesure_.start();
 
   evaluator_.idle();
@@ -196,7 +196,7 @@ void Tx::idle()
   if(toggleCalibrateSensor_)
     calibrateSensor();
 
-  if(toggleMode_ == tDebug)
+  if(toggleTxMode_ == tDebug)
   {
     mesure_.stop();
     mesure_.displayStat(1000);
@@ -206,7 +206,7 @@ void Tx::idle()
 
 void Tx::ledBlinkIdle()
 {
-  if(toggleMode_ == tTransmit)
+  if(toggleTxMode_ == tTransmit)
   {
     unsigned long cur = millis();
   
@@ -242,7 +242,7 @@ void Tx::displayOutputUpdate()
   STDOUT << ">\t";
 
   for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    STDOUT << ((toggleMode_ == tTransmit)?ppmOutputValue_[idx]:0) << "\t";
+    STDOUT << ppmOutputValue_[idx] << "\t";
 
   STDOUT << endl;
 }
@@ -254,16 +254,16 @@ void Tx::onToggleDisplayOutputUpdate()
 
 void Tx::onToggleMode()
 {
-  if(toggleMode_ == tTransmit)
+  if(toggleTxMode_ == tTransmit)
   {
-    toggleMode_ = tDebug;
+    toggleTxMode_ = tDebug;
     info(INFO_SWITCH_MODE_SETTINGS);
     
     mesure_.reset();
   }
   else
   {
-    toggleMode_ = tTransmit;
+    toggleTxMode_ = tTransmit;
     info(INFO_SWITCH_MODE_TRANSMIT);
     
     mesure_.reset();
@@ -384,7 +384,7 @@ void Tx::onReset()
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     sensor_[idx]->reset();
 
-  toggleMode_ = tTransmit;
+  toggleTxMode_ = tTransmit;
 
   setupInputDevice();
 }
@@ -401,7 +401,7 @@ uint8_t Tx::getCurrentModelIndex()
 
 void Tx::onToggleSimulation()
 {
-  if(toggleMode_ == tTransmit)
+  if(toggleTxMode_ == tTransmit)
   {
     error(ERR_DEBUG_FIRST);
     return;

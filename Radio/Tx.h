@@ -59,7 +59,7 @@ class Tx
   unsigned long ledPrevMS_;
 
   // toggles
-  enum {tTransmit, tDebug} toggleMode_;
+  enum {tTransmit, tDebug} toggleTxMode_;
   bool toggleDisplayInputUpdate_;
   bool toggleDisplayOutputUpdate_;
   bool toggleCalibrateSensor_;
