@@ -90,7 +90,7 @@ void Command::changeCurrentModelCmd(const char *idxStr)
 
 void Command::dumpCmd(const char* param)
 {
-  STDOUT << "Dump" << endl;
+  info(INFO_DUMP_CMD);
   tx_->onDump(param);
 }
 
@@ -158,7 +158,7 @@ void Command::setModelCmd(const char* param)
 void Command::resetCmd()
 {
   tx_->onReset();
-  STDOUT << "Reset" << endl;
+  info(INFO_RESET_CMD);
 }
 
 void Command::toggleSimulation()

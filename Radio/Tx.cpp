@@ -38,10 +38,10 @@ toggleSimulation_(false)
 
 void Tx::setupInputDevice()
 {
-  const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
-  const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
-  const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
-  const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // 125 KHz
+  //const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
+  //const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
+  //const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
+  //const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // 125 KHz
 
   // set up the ADC
   //ADCSRA &= ~PS_128;  // remove bits set by Arduino library

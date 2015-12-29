@@ -51,6 +51,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INFO_TX_READY                 18
 #define INFO_HELP_USAGE3              19
 #define INFO_BT_READY                 20
+#define INFO_RESET_CMD                21
+#define INFO_DUMP_CMD                 22
 
 void error(int idx, ...);
 void info(int idx, ...);
