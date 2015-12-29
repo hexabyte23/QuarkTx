@@ -126,36 +126,50 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
 
   for(int8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
   {
-    inputTab[idx] = new SensorExp;
+    inputTab[idx] = new SensorInputExp;
     inputTab[idx]->setup(sensorRef_[idx]);
   }
 }
 
-int getNextNumeric(char* text, char delim, int &value)
+int getNextNumeric(char* &text, char delim)
 {
-  char buf[4];
+  char buf[] = {0,0,0,0};
+  char *p = &buf[0];
   int i = 0;
+  int ret;
+  //STDOUT << "getNextNumeric(text='" << text << "' delim='" << delim << "') " << sizeof(buf) << endl;
   
-  while(text[i] != 0 && text[i] != delim && i < 4)
+  while(1)
   {
-    buf[i] = text[i];
+    if(*text == 0) break;
+    if(*text == delim) break;
+    if(i == sizeof(buf)) break;
+    
+    *p = *text;
+    //STDOUT << *p;
+    p++;
+    text++;
     i++;
   }
   
-  buf[i] = 0;
-  value = atoi(buf);
+  ret = atoi(buf);
+  if(*text != 0)
+    text++;
+  
+  //STDOUT << "exit getNextNumeric val=" << value << " next car='" << _HEX(*text) << "'" << endl;
 
-  return i+1;
+  return ret;
 }
 
-Expression *Evaluator::parseExp(const char *str, int &len)
+Expression *Evaluator::parseExp(char *&ps)
 {
-  char *ps = (char*)str;
   Expression *leftExp = NULL;
-  //STDOUT << "[d] str=" << str << " len=" << strlen(str) << endl;
+  STDOUT << "[d] parseExp(str=" << ps << ", len=" << strlen(ps) << ")" << endl;
   
   while(*ps != 0)
   {
+    STDOUT << "enter loop ps='" << *ps << "'" << endl;
+    
     switch(ps[0])
     {
       case 'i': 
@@ -168,8 +182,7 @@ Expression *Evaluator::parseExp(const char *str, int &len)
           }
           leftExp = inputTab[c];
           ps += 2;
-          len += 2;
-          //STDOUT << "[d] i=" << c << " next car='" << *ps << "'" << endl;
+          STDOUT << "[d] op i=" << c << " next car='" << *ps << "'" << endl;
         }
         break;
       case '+':
@@ -181,20 +194,35 @@ Expression *Evaluator::parseExp(const char *str, int &len)
               return NULL;
             }
             ps++;
-            len++;
 
-            int rightLen = 0;
-            Expression *rightExp = parseExp(ps, rightLen);
+            Expression *rightExp = parseExp(ps);
 
             AddExp *expr = new AddExp;
             expr->setup(leftExp, rightExp);
             leftExp = expr;
-            ps += rightLen;
-            len += rightLen;
-            //STDOUT << "[d] + " << (int)&leftExp << " " << (int)&rightExp << endl;
+
+            STDOUT << "[d] op + " << (int)&leftExp << " " << (int)&rightExp << endl;
         }
         break;
-      case '-': break;
+      case '-': 
+        {
+            // check if previous expression is not NULL
+            if(leftExp == NULL)
+            {
+              error(ERR_LEFT_OP_EMPTY, '-');
+              return NULL;
+            }
+            ps++;
+
+            Expression *rightExp = parseExp(ps);
+
+            SubExp *expr = new SubExp;
+            expr->setup(leftExp, rightExp);
+            leftExp = expr;
+
+            STDOUT << "[d] op - " << (int)&leftExp << " " << (int)&rightExp << endl;
+        }
+        break;
       case '[':
         {
           // check if previous expression is not NULL (expected ixx)
@@ -205,20 +233,15 @@ Expression *Evaluator::parseExp(const char *str, int &len)
           }
           
           ps++;
-          len++;
-          int _min, _max;
 
-          int lenNum = getNextNumeric(ps, ';', _min);
-          ps += lenNum;
-          len += lenNum;
-          lenNum = getNextNumeric(ps, ']', _max);;
-          ps += lenNum;
-          len += lenNum;
+          int _min = getNextNumeric(ps, ';');
+          int _max = getNextNumeric(ps, ']');
 
           LimitExp *expr = new LimitExp;
           expr->setup(leftExp, _min, _max );
           leftExp = expr;
-          //STDOUT << "[d] [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
+          
+          STDOUT << "[d] op [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
         }
         break;
       case '>': break;
@@ -228,13 +251,16 @@ Expression *Evaluator::parseExp(const char *str, int &len)
     }
   }
 
+  STDOUT << "exit parseExp()" << endl;
   return leftExp;
 }
 
 bool Evaluator::setupOutputChannel(uint8_t outChannelID, const char *str)
 {
-  int i = 0;
-  expression_[outChannelID] = parseExp(str, i);
+  char *buf = new char[strlen(str)];
+  strcpy(buf, str);
+  expression_[outChannelID] = parseExp(buf);
+  delete buf;
 }
 
 void Evaluator::idle()

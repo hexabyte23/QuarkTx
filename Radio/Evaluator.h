@@ -30,13 +30,22 @@ public:
   virtual uint16_t evaluate() const = 0;
 };
 
-class SensorExp: public Expression
+class SensorInputExp: public Expression
 {
   const Sensor *sensor_;
   
 public:
   void setup(const Sensor *sensor) {sensor_ = sensor; }
-  virtual uint16_t evaluate() const {sensor_->getValue();}
+  virtual uint16_t evaluate() const {return sensor_->getValue();}
+};
+
+class ConstantInputExp: public Expression
+{
+  uint16_t data_;
+  
+public:
+  void setup(uint16_t data) {data_ = data; }
+  virtual uint16_t evaluate() const {return data_;}
 };
 
 class AddExp : public Expression
@@ -117,9 +126,9 @@ class Evaluator
   uint16_t *outputValueRef_;
   Model *currentModel_;
   Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
-  SensorExp *inputTab[MAX_INPUT_CHANNEL];
+  SensorInputExp *inputTab[MAX_INPUT_CHANNEL];
 
-  Expression *parseExp(const char *str, int &len);
+  Expression *parseExp(char *&str);
   
 public:
 
