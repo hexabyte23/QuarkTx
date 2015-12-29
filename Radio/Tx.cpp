@@ -109,11 +109,9 @@ bool Tx::setup()
   pinMode(A1, INPUT);           // gimbal 2
   pinMode(A2, INPUT);           // gimbal 3
   pinMode(A3, INPUT);           // gimbal 4
-  pinMode(A4, INPUT);           
-  digitalWrite(A4, HIGH);       // reserved for extra POT
-  pinMode(A5, INPUT);           
-  digitalWrite(A5, HIGH);       // reserved for extra POT
-  pinMode(A7, INPUT);           // Battery level
+  pinMode(A4, INPUT_PULLUP);    // reseved for future use     
+  pinMode(A5, INPUT_PULLUP);    // reseved for future use       
+  pinMode(A7, INPUT_PULLUP);    // Battery level
 
   // Setup input sensors
   setupInputDevice();
@@ -414,13 +412,13 @@ void Tx::onToggleSimulation()
 
   if(toggleSimulation_)
   {
-    STDOUT << "Simulation on" << endl;
+    info(INFO_SIMU_ON);
     for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->setSimulation(true);
   }
   else
   {
-    STDOUT << "Simulation off" << endl;
+    info(INFO_SIMU_OFF);
     for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->setSimulation(false);
   }

@@ -32,8 +32,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define INFO_SWITCH_MODE_TRANSMIT     0
 #define INFO_SWITCH_MODE_SETTINGS     1
-#define INFO_XXX1                     2
-#define INFO_XXX2                     3
+#define INFO_SIMU_ON                  2
+#define INFO_SIMU_OFF                 3
 #define INFO_HELP_USAGE1              4
 #define INFO_HELP_USAGE2              5
 #define INFO_SAVE_TO_EEPROM           6
