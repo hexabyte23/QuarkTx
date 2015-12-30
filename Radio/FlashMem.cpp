@@ -47,7 +47,7 @@ const char info_string_3[] PROGMEM = "Simulation OFF\n";
 const char info_string_4[] PROGMEM = "help command :\n"
          "a: load cur. model from EEPROM\n"
          "c: toggle sensors calibration\n" 
-         "d [e]|[r]: dump model or EEPROM or RCL\n"
+         "d [e]|[c]: dump model or EEPROM or RCL\n"
          "f: get free memory\n"
          "h: help\n"
          "i: toggle disp. input sensors update\n"
