@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.0.14" 
+#define QUARKTX_VERSION         "0.0.15" 
 #define SERIAL_SPEED            9600
 
 #define DISPLAY_BASE            DEC     // DEC or HEX
@@ -49,20 +49,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 
-//#define TERRATOP                // Define the hardware you want to test
-#define BLUETOOTH               // uncomment if BT is wired
+#define TERRATOP                // Define the hardware you want to test
+//#define BLUETOOTH               // uncomment if BT is wired
 
 #ifdef TERRATOP
 
 #define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
 #define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
-#define MAX_PPM_OUTPUT_CHANNEL  6
+#define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti module
 #define MAX_MIXER               8
 
-#define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
+#define PPM_SHAPE_SIGNAL        1       // 0 is positive, 1 is negative
 #define PPM_PIN                 10
 #define PPM_INTER_CHANNEL_TIME  500
-#define PPM_INTER_FRAME_TIME    4000
+#define PPM_INTER_FRAME_TIME    4500
 
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
@@ -80,7 +80,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti module
 #define MAX_MIXER               8
 
-#define PPM_SHAPE_SIGNAL        1       // 1 is positive, 0 is negative
+#define PPM_SHAPE_SIGNAL        1       // 0 is positive, 1 is negative
 #define PPM_PIN                 10
 #define PPM_INTER_CHANNEL_TIME  500
 #define PPM_INTER_FRAME_TIME    4500

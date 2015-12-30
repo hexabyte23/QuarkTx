@@ -40,7 +40,9 @@ struct Variant
   friend Variant operator + (const Variant &l, const Variant &r);
   friend Variant operator - (const Variant &l, const Variant &r);
   friend Variant operator * (const Variant &l, const Variant &r);
+  friend Variant operator / (const Variant &l, const Variant &r);
   friend Variant operator == (const Variant &l, const Variant &r);
+  friend Variant operator != (const Variant &l, const Variant &r);
 };
 
 class Expression
@@ -97,7 +99,7 @@ public:
   virtual Variant evaluate() const;
 };
 
-class GreaterExp : public Expression
+class SubExp : public Expression
 {
   const Expression *left_, *right_;
 
@@ -106,7 +108,34 @@ public:
   virtual Variant evaluate() const;
 };
 
-class LowerExp : public Expression
+class MulExp : public Expression
+{
+  const Expression *left_, *right_;
+
+public:
+  void setup(const Expression *left, const Expression *right);
+  virtual Variant evaluate() const;
+};
+
+class DivExp : public Expression
+{
+  const Expression *left_, *right_;
+
+public:
+  void setup(const Expression *left, const Expression *right);
+  virtual Variant evaluate() const;
+};
+
+class GreaterThanExp : public Expression
+{
+  const Expression *left_, *right_;
+
+public:
+  void setup(const Expression *left, const Expression *right);
+  virtual Variant evaluate() const;
+};
+
+class LowerThanExp : public Expression
 {
   const Expression *left_, *right_;
 
@@ -121,24 +150,6 @@ class IfExp : public Expression
 
 public:
   void setup(const Expression *test, const Expression *succeed, const Expression *fail);
-  virtual Variant evaluate() const;
-};
-
-class SubExp : public Expression
-{
-  const Expression *left_, *right_;
-
-public:
-  void setup(const Expression *left, const Expression *right);
-  virtual Variant evaluate() const;
-};
-
-class MulExp : public Expression
-{
-  const Expression *exp1_, *exp2_;
-
-public:
-  void setup(const Expression *exp1, const Expression *exp2);
   virtual Variant evaluate() const;
 };
 

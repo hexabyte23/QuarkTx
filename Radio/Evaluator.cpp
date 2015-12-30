@@ -182,6 +182,33 @@ Variant operator * (const Variant &l, const Variant &r)
   return (uint16_t)0;
 }
 
+Variant operator / (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ / r.iData_;
+          case Variant::tFloat: return l.iData_ / r.fData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ / r.iData_;
+          case Variant::tFloat: return l.fData_ / r.fData_;
+        }
+      }
+      break;
+  }
+
+  return (uint16_t)0;
+}
+
 Variant operator == (const Variant &l, const Variant &r)
 {
   switch(l.type_)
@@ -217,6 +244,41 @@ Variant operator == (const Variant &l, const Variant &r)
   return false;
 }
 
+Variant operator != (const Variant &l, const Variant &r)
+{
+  switch(l.type_)
+  {
+    case Variant::tInteger:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.iData_ != r.iData_;
+          case Variant::tFloat: return l.iData_ != r.fData_;
+        }
+      }
+      break;
+    case Variant::tFloat:
+      {
+        switch (r.type_)
+        {
+          case Variant::tInteger: return l.fData_ != r.iData_;
+          case Variant::tFloat: return l.fData_ != r.fData_;
+        }
+      }
+      break;
+    case Variant::tBool:
+      {
+        switch (r.type_)
+        {
+          case Variant::tBool: return l.bData_ != r.bData_;
+        }
+      }
+      break;
+  }
+
+  return false;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
@@ -233,26 +295,26 @@ Variant IfExp::evaluate() const
 
 //////////////////////////////////////////////////////////////////////////
 
-void LowerExp::setup(const Expression *left, const Expression *right)
+void LowerThanExp::setup(const Expression *left, const Expression *right)
 {
   left_ = left;
   right_ = right;
 }
 
-Variant LowerExp::evaluate() const
+Variant LowerThanExp::evaluate() const
 {
   return left_->evaluate() < right_->evaluate();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-void GreaterExp::setup(const Expression *left, const Expression *right)
+void GreaterThanExp::setup(const Expression *left, const Expression *right)
 {
   left_ = left;
   right_ = right;
 }
 
-Variant GreaterExp::evaluate() const
+Variant GreaterThanExp::evaluate() const
 {
   return left_->evaluate() > right_->evaluate();
 }
@@ -285,6 +347,32 @@ Variant SubExp::evaluate() const
 
 //////////////////////////////////////////////////////////////////////////
 
+void MulExp::setup(const Expression *left, const Expression *right)
+{
+  left_ = left;
+  right_ = right;
+}
+
+Variant MulExp::evaluate() const
+{
+  return left_->evaluate() * right_->evaluate();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void DivExp::setup(const Expression *left, const Expression *right)
+{
+  left_ = left;
+  right_ = right;
+}
+
+Variant DivExp::evaluate() const
+{
+  return left_->evaluate() / right_->evaluate();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void LimitExp::setup(const Expression *expr, const Expression *min, const Expression *max)
 {
   expr_ = expr;
@@ -296,19 +384,6 @@ Variant LimitExp::evaluate() const
 {
   Variant ret((uint16_t)map(expr_->evaluate().iData_, ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().iData_, max_->evaluate().iData_));
   return ret;
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void MulExp::setup(const Expression *exp1, const Expression *exp2)
-{
-  exp1_ = exp1;
-  exp2_ = exp2;
-}
-
-Variant MulExp::evaluate() const
-{
-  return exp1_->evaluate() * exp2_->evaluate();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -330,36 +405,39 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
   }
 }
 
-int getNextNumeric(char *&text, int &iVal, float &fVal)
+//
+// Private function for extracting integer or float leaf
+//
+uint8_t getNextNumeric(char *&text, int &iVal, float &fVal)
 {
-  int type = 0; // 0 = interger, 1 = float
-  char buf[] = {0,0,0,0,0,0,0}; // 6 digits + \0
+  uint8_t type = 0;                 // 0 = interger, 1 = float
+  char buf[] = {0,0,0,0,0,0,0};     // 6 digits + \0
   char *p = &buf[0];
-  int i = 0;
-  int ret;
+  uint8_t len = 0;
   //STDOUT << "gnn(" << text << ")" << endl;
   
   while(1)
   {
-    if(*text == 0) break;
-    if(*text == '.')
+    if(*text == 0) break;           // end of text 
+    if(len == sizeof(buf)-1) break; // end of buf
+    if(*text == '.')                // float ?
       type = 1;
-    else if(*text - '0' > 9)
-        break; // read until digit
-    if(i == sizeof(buf)-1) break;
+    else if(*text - '0' > 9)        // still a digit ?
+        break;
     
-    *p = *text;
+    *p = *text;                     // copy car into buf
     //STDOUT << *p;
     p++;
     text++;
-    i++;
+    len++;
   }
 
   if(type == 0)
     iVal = atoi(buf);
   else
     fVal = atof(buf);  
-  
+
+  // if not end of buf, step forward delim car
   if(*text != 0)
     text++;
   
@@ -387,8 +465,8 @@ Expression *Evaluator::parseExp(char *&ps)
             error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL);
             return NULL;
           }
-          leftExp = inputTab[c];
           ps += 2;
+          leftExp = inputTab[c];
           
           //STDOUT << "[d] op i=" << c << " next car='" << *ps << "'" << endl;
         }
