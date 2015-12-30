@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Command.h"
 #include "Tx.h"
 #include "FlashMem.h"
+#include "MemoryFree.h"
 
 Command::Command()
 :tx_(NULL)
@@ -49,19 +50,21 @@ void Command::onNewCommand(const char* cmdStr)
   
   switch(cmdStr[0])
   {
-    case 'h': helpCmd();break;
-    case 'm': toggleTransmitModeCmd();break;
-    case 'l': changeCurrentModelCmd(cmdStr+2);break;
-    case 'd': dumpCmd(cmdStr+2);break;
-    case 'i': toggleDisplayInputUpdateCmd();break;
-    case 'o': toggleDisplayOutputUpdateCmd();break;
-    case 'c': toggleCalibrateAnalogicSensorCmd();break;
     case 'a': loadModelsFromEEPROMCmd();break;
-    case 'v': saveModelsToEEPROMCmd();break;
-    case 's': setModelCmd(cmdStr+2);break;
+    case 'c': toggleCalibrateAnalogicSensorCmd();break;
+    case 'd': dumpCmd(cmdStr+2);break;
+    case 'f': getFreeMemoryCmd();break;        
+    case 'h': helpCmd();break;
+    case 'i': toggleDisplayInputUpdateCmd();break;
+    case 'l': changeCurrentModelCmd(cmdStr+2);break;
+    case 'm': toggleTransmitModeCmd();break;
+    case 'o': toggleDisplayOutputUpdateCmd();break;
     case 'r': resetCmd();break;
+    case 's': setModelCmd(cmdStr+2);break;
     case 'u': setSimulateSensorValueCmd(cmdStr+2);break;
+    case 'v': saveModelsToEEPROMCmd();break;
     case 'w': toggleSimulation();break;
+
     default: 
       error(ERR_COMMAND_UNKNOWN, cmdStr);
       break;
@@ -133,13 +136,16 @@ void Command::setModelCmd(const char* param)
   
   switch(param[0])
   {
-    case 'i':
-      tx_->getCurrentModel()->setMinValue(c, v);
-      info(INFO_SET_MIN_CHANNEL, c, v);
-      break;
     case 'a':
       tx_->getCurrentModel()->setMaxValue(c , v);
       info(INFO_SET_MAX_CHANNEL, c, v);
+      break;
+    case 'c':
+      tx_->onRCL(c, param+4);
+      break;
+    case 'i':
+      tx_->getCurrentModel()->setMinValue(c, v);
+      info(INFO_SET_MIN_CHANNEL, c, v);
       break;
     case 'n':
       tx_->getCurrentModel()->setNeutralValue(c , v);
@@ -177,5 +183,10 @@ void Command::setSimulateSensorValueCmd(const char* param)
   
   uint16_t v = atoi(param+2);
   tx_->onSetSimulateSensorValue(c, v);
+}
+
+void Command::getFreeMemoryCmd()
+{
+    STDOUT << freeMemory() << endl;
 }
 

@@ -32,8 +32,8 @@ const char err_string_3[] PROGMEM = "[e] buffer oversize\n";
 const char err_string_4[] PROGMEM = "[e] EEPROM data is corrupted\n";
 const char err_string_5[] PROGMEM = "[e] Command '%s' unknown\n";
 const char err_string_6[] PROGMEM = "[e] Command string '%s' too long\n";
-const char err_string_7[] PROGMEM = "[e] failed, switch in debug mode first\n";
-const char err_string_8[] PROGMEM = "[e] eval operator %c: left operand empty";
+const char err_string_7[] PROGMEM = "[e] Sim. failed, switch in debug mode first\n";
+const char err_string_8[] PROGMEM = "[e] Eval operator %c: left operand empty";
 
 // global error tab
 const char* const errorMsgTab[] PROGMEM = {err_string_0, err_string_1, err_string_2, err_string_3, err_string_4, err_string_5, 
@@ -45,26 +45,28 @@ const char info_string_1[] PROGMEM = "Mode switched to 'debug'\n";
 const char info_string_2[] PROGMEM = "Simulation ON\n";
 const char info_string_3[] PROGMEM = "Simulation OFF\n";
 const char info_string_4[] PROGMEM = "help command :\n"
-         "h: help\n"
-         "m: toggle Tx mode (transmit or debug)\n"
-         "l [0..2]: load cur. model\n"
-         "d [0..2]: dump model\n"
-         "i: toggle disp. input sensors update\n"
-         "o: toggle disp. output PPM update\n"
          "a: load cur. model from EEPROM\n"
+         "c: toggle sensors calibration\n" 
+         "d [e]|[r]: dump model or EEPROM or RCL\n"
+         "f: get free memory\n"
+         "h: help\n"
+         "i: toggle disp. input sensors update\n"
+         "l [0..2]: load cur. model\n"
          ;
 const char info_string_5[] PROGMEM =
-          "v: save cur. model to EEPROM\n"
-         "c: toggle sensors calibration\n"     
-         "s i [chan] [val]: set cur. model servo min\n"
-         "s a [chan] [val]: set cur. model servo max\n"
-         "s n [chan] [val]: set cur. model servo neutral\n"
-         "s r [chan] [val]: set cur. model servo revert\n"
+         "m: toggle Tx mode (transmit or debug)\n"
+         "o: toggle disp. output PPM update\n"
+         "r: clean all model datas, calibr.\n"
+         "s a chan val: set cur. model servo max\n"
+         "s c chan rclStr: set RCL code to PPM chan\n"
+         "s i chan val: set cur. model servo min\n"
          ;
 const char info_string_19[] PROGMEM =
-         "r: reset, clean all models\n"
-         "u [sensorID] [val]: set simulate value\n"
-         "w: toggle to simulation\n"
+         "s n chan val: set cur. model servo neutral\n"
+         "s r chan val: set cur. model servo revert\n"
+         "v: save cur. model to EEPROM\n"
+         "u sensorID val: set simulate value\n"
+         "w: toggle simulation mode\n"
          ;
 const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";
 const char info_string_7[] PROGMEM = "Current model load from EEPROM\n";

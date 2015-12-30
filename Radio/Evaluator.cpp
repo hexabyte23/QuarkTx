@@ -20,8 +20,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Evaluator.h"
 #include "FlashMem.h"
 #include "SerialLink.h"
-#include "MemoryFree.h"
 
+//////////////////////////////////////////////////////////////////////////
+// 
+// Some Misc funtions
+//
 //////////////////////////////////////////////////////////////////////////
 
 static uint8_t g_tab4Dump = 0;
@@ -50,11 +53,13 @@ void leaveDump()
   tabDump();
 }
 
+//
+// a float version of map
+//
 float fmap(float x, float in_min, float in_max, float out_min, float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -94,7 +99,6 @@ bool Variant::convertBool() const
   return 0;
 }
   
-
 Variant operator < (const Variant &l, const Variant &r)
 {
   switch(l.type_)
@@ -392,6 +396,18 @@ void SensorInputExp::dump() const
 }
 //////////////////////////////////////////////////////////////////////////
 
+IfExp::~IfExp() 
+{
+  if(test_->couldBeDeleted())
+    delete test_;
+    
+  if(succeed_->couldBeDeleted())
+    delete succeed_;
+
+  if(fail_->couldBeDeleted())
+    delete fail_;
+}
+
 void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
 {
   test_ = test;
@@ -416,49 +432,14 @@ void IfExp::dump() const
 
 //////////////////////////////////////////////////////////////////////////
 
-void LowerThanExp::setup(const Expression *left, const Expression *right)
+AddExp::~AddExp() 
 {
-  left_ = left;
-  right_ = right;
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
 }
-
-Variant LowerThanExp::evaluate() const
-{
-  return left_->evaluate() < right_->evaluate();
-}
-
-void LowerThanExp::dump() const
-{
-  enterDump();
-  STDOUT << "<";
-  left_->dump();
-  right_->dump();
-  leaveDump();
-}
-
-//////////////////////////////////////////////////////////////////////////
-
-void GreaterThanExp::setup(const Expression *left, const Expression *right)
-{
-  left_ = left;
-  right_ = right;
-}
-
-Variant GreaterThanExp::evaluate() const
-{
-  return left_->evaluate() > right_->evaluate();
-}
-
-void GreaterThanExp::dump() const
-{
-  enterDump();
-  STDOUT << ">";
-  left_->dump();
-  right_->dump();
-  leaveDump();
-}
-
-//////////////////////////////////////////////////////////////////////////
 
 void AddExp::setup(const Expression *left, const Expression *right)
 {
@@ -482,6 +463,15 @@ void AddExp::dump() const
 
 //////////////////////////////////////////////////////////////////////////
 
+SubExp::~SubExp() 
+{
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
+}
+
 void SubExp::setup(const Expression *left, const Expression *right)
 {
   left_ = left;
@@ -504,6 +494,15 @@ void SubExp::dump() const
 
 //////////////////////////////////////////////////////////////////////////
 
+MulExp::~MulExp() 
+{
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
+}
+
 void MulExp::setup(const Expression *left, const Expression *right)
 {
   left_ = left;
@@ -523,7 +522,17 @@ void MulExp::dump() const
   right_->dump();
   leaveDump();
 }
+
 //////////////////////////////////////////////////////////////////////////
+
+DivExp::~DivExp() 
+{
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
+}
 
 void DivExp::setup(const Expression *left, const Expression *right)
 {
@@ -546,6 +555,80 @@ void DivExp::dump() const
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+LowerThanExp::~LowerThanExp() 
+{
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
+}
+
+void LowerThanExp::setup(const Expression *left, const Expression *right)
+{
+  left_ = left;
+  right_ = right;
+}
+
+Variant LowerThanExp::evaluate() const
+{
+  return left_->evaluate() < right_->evaluate();
+}
+
+void LowerThanExp::dump() const
+{
+  enterDump();
+  STDOUT << "<";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+GreaterThanExp::~GreaterThanExp() 
+{
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
+}
+
+void GreaterThanExp::setup(const Expression *left, const Expression *right)
+{
+  left_ = left;
+  right_ = right;
+}
+
+Variant GreaterThanExp::evaluate() const
+{
+  return left_->evaluate() > right_->evaluate();
+}
+
+void GreaterThanExp::dump() const
+{
+  enterDump();
+  STDOUT << ">";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+LimitExp::~LimitExp() 
+{
+  if(data_->couldBeDeleted())
+    delete data_;
+    
+  if(min_->couldBeDeleted())
+    delete min_;
+    
+  if(max_->couldBeDeleted())
+    delete max_;
+}
 
 void LimitExp::setup(const Expression *data, const Expression *min, const Expression *max)
 {
@@ -642,7 +725,7 @@ Expression *Evaluator::parseExp(char *&ps)
           int c = ps[1] - '0';
           if(c > MAX_INPUT_CHANNEL)
           {
-            error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL);
+            error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
             return NULL;
           }
           ps += 2;
@@ -792,14 +875,29 @@ Expression *Evaluator::parseExp(char *&ps)
   return leftExp;
 }
 
-bool Evaluator::setupOutputChannel(uint8_t outChannelID, const char *str)
+bool Evaluator::setupOutputChannel(uint8_t chan, const char *str)
 {
   char buff[100];
   char *buf = &buff[0];
-  strcpy(buf, str);
-  expression_[outChannelID] = parseExp(buf);
+  strncpy(buf, str, sizeof(buff));
+  
+  if(expression_[chan] != NULL)
+      clearOuputChannel(chan);
+      
+  expression_[chan] = parseExp(buf);
 
-  //STDOUT << freeMemory() << endl;
+  return (expression_[chan] != NULL);
+}
+
+bool Evaluator::clearOuputChannel(uint8_t chan)
+{
+  Expression *expr = expression_[chan];
+
+  if(expr->couldBeDeleted())
+  {
+    STDOUT << "delete" << endl;
+    delete expr;
+  }
 }
 
 void Evaluator::idle()
@@ -815,9 +913,9 @@ void Evaluator::idle()
 
 void Evaluator::dump(uint8_t outChannelID)
 {
-  STDOUT << "Dump channel " << outChannelID;
   g_tab4Dump = 0;
-  expression_[outChannelID]->dump();
-  STDOUT << endl;
+  
+  if(expression_[outChannelID] != NULL)
+    expression_[outChannelID]->dump();
 }
 

@@ -22,13 +22,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.0.15" 
+#define QUARKTX_VERSION         "0.0.16" 
 #define SERIAL_SPEED            9600
 
 #define DISPLAY_BASE            DEC     // DEC or HEX
 
 #define MAX_MODEL               2
-#define MAX_SERIAL_INPUT_BUFFER 10
+#define MAX_SERIAL_INPUT_BUFFER 40
 
 #define ADC_MIN_VALUE           0
 #define ADC_MAX_VALUE           1023

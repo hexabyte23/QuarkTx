@@ -53,8 +53,10 @@ struct Variant
 class Expression
 {
 public:
+  virtual ~Expression() {}
   virtual Variant evaluate() const = 0;
   virtual void dump() const = 0;
+  virtual bool couldBeDeleted() const {return true;}
 };
 
 class SensorInputExp: public Expression
@@ -65,6 +67,7 @@ public:
   void setup(const Sensor *sensor) {sensor_ = sensor; }
   virtual Variant evaluate() const {Variant v (sensor_->getValue()); return v;}
   virtual void dump() const;
+  virtual bool couldBeDeleted() const {return false;}
 };
 
 class IntegerExp: public Expression
@@ -105,6 +108,7 @@ class AddExp : public Expression
   const Expression *left_, *right_;
 
 public:
+  virtual ~AddExp();
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -115,6 +119,7 @@ class SubExp : public Expression
   const Expression *left_, *right_;
 
 public:
+  virtual ~SubExp();
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -125,6 +130,7 @@ class MulExp : public Expression
   const Expression *left_, *right_;
 
 public:
+  virtual ~MulExp();
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -135,6 +141,7 @@ class DivExp : public Expression
   const Expression *left_, *right_;
 
 public:
+  virtual ~DivExp();
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -145,6 +152,7 @@ class GreaterThanExp : public Expression
   const Expression *left_, *right_;
 
 public:
+  virtual ~GreaterThanExp();
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -155,6 +163,7 @@ class LowerThanExp : public Expression
   const Expression *left_, *right_;
 
 public:
+  virtual ~LowerThanExp();
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -165,6 +174,7 @@ class IfExp : public Expression
   const Expression *test_, *succeed_, *fail_;
 
 public:
+  virtual ~IfExp();
   void setup(const Expression *test, const Expression *succeed, const Expression *fail);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -176,6 +186,7 @@ class LimitExp : public Expression
   const Expression *data_, *min_, *max_;
 
 public:
+  virtual ~LimitExp();
   void setup(const Expression *data, const Expression *min, const Expression *max);
   virtual Variant evaluate() const;
   virtual void dump() const;
@@ -195,7 +206,8 @@ public:
 
   Evaluator() {}
   void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
-  bool setupOutputChannel(uint8_t outChannelID, const char *expStr);
+  bool setupOutputChannel(uint8_t chan, const char *expStr);
+  bool clearOuputChannel(uint8_t chan);
   void idle();
   uint16_t evaluate();
   void dump(uint8_t outChannelID);

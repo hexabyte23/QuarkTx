@@ -125,16 +125,16 @@ bool Tx::setup()
   onLoadFromEEPROM();
 
   evaluator_.setup(sensor_, ppmOutputValue_, currentModel_);
+/*
   evaluator_.setupOutputChannel(0, "i0");
   evaluator_.setupOutputChannel(1, "i1");
   evaluator_.setupOutputChannel(2, "i2");
   evaluator_.setupOutputChannel(3, "i3");
   evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
-  //evaluator_.dump(4);
 #ifdef TERRATOP
   evaluator_.setupOutputChannel(5, "i6[1023;0]*i0[0;2]");
-  evaluator_.dump(5);
 #endif
+*/
   
   mesure_.stop();
   info(INFO_TX_READY,mesure_.getAverage());
@@ -285,43 +285,65 @@ void Tx::onChangeCurrentModel(int idx)
 
 void Tx::onDump(const char* param)
 {
-  if(param[0] == 'e')
+  switch(param[0])
   {
-    for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
+    case 'c':
     {
-      if(i == 0)
-        STDOUT << _HEX(idx) << "\t";
-      
-      STDOUT << _HEX(EEPROM.read(idx)) << " ";
-    
-      if(i == 15)
+      if(param[1] == 0)
       {
-        i = -1;
+        for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+        {
+          STDOUT << "channel " << idx << endl;
+          evaluator_.dump(idx);
+          STDOUT << endl;
+        }
+      }
+      else
+      {
+        evaluator_.dump(atoi(param+2));
         STDOUT << endl;
       }
     }
-    STDOUT << endl;
-  }
-  else
-  {
-    // dump sensors
-    info(INFO_SENSOR, MAX_INPUT_CHANNEL);
-
-    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+    break;
+    case 'e':
     {
-      STDOUT << idx << " ";
-      sensor_[idx]->dump();
+      for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
+      {
+        if(i == 0)
+          STDOUT << _HEX(idx) << "\t";
+        
+        STDOUT << _HEX(EEPROM.read(idx)) << " ";
+      
+        if(i == 15)
+        {
+          i = -1;
+          STDOUT << endl;
+        }
+      }
       STDOUT << endl;
     }
-    STDOUT << endl;
-    
-    // dump models
-    for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+    break;
+    default:
     {
-      char c = (currentModel_ == &modelList_[idx])?'*':' ';
-      STDOUT << "Model " << idx << " " << c << endl;
-    
-      modelList_[idx].dump();
+      // dump sensors
+      info(INFO_SENSOR, MAX_INPUT_CHANNEL);
+  
+      for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+      {
+        STDOUT << idx << " ";
+        sensor_[idx]->dump();
+        STDOUT << endl;
+      }
+      STDOUT << endl;
+      
+      // dump models
+      for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+      {
+        char c = (currentModel_ == &modelList_[idx])?'*':' ';
+        STDOUT << "Model " << idx << " " << c << endl;
+      
+        modelList_[idx].dump();
+      }
     }
   }
 }
@@ -429,5 +451,11 @@ void Tx::onToggleSimulation()
 void Tx::onSetSimulateSensorValue(uint8_t channel, uint16_t value)
 {
   sensor_[channel]->setSimulateValue(value); 
+}
+
+void Tx::onRCL(uint8_t chan, const char* rclCode)
+{
+  STDOUT << chan << " " << rclCode << endl;
+  evaluator_.setupOutputChannel(chan, rclCode);
 }
 
