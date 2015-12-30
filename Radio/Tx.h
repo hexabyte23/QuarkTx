@@ -72,10 +72,18 @@ class Tx
   void setupOutputDevice();
   void calibrateSensor();
   void ledBlinkIdle();
+  void dumpEEPROM();
+  void dumpModel();
+  void dumpSensor();
+  void dumpRCL(const char* param);
+  void resetModel();
+  void resetSensor();
+  void resetRCL();
 
   // Irq
   volatile boolean irqStartPulse_;
   volatile byte irqCurrentChannelNumber_;
+
   
   public:
   
@@ -94,14 +102,14 @@ class Tx
   void onToggleSimulation();
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
-  void onReset();
+  void onReset(const char* param);
   void onSetSimulateSensorValue(uint8_t chan, uint16_t value);
   void onSetRCL(uint8_t chan, const char* rclCode);
 
   // Functions
   void idle();
   Model* getCurrentModel() const {return currentModel_;}
-  uint8_t getCurrentModelIndex();
+  uint8_t getModelIndex(Model *model);
 };
 
 #endif

@@ -204,10 +204,10 @@ class Evaluator
   
 public:
 
-  Evaluator() {}
+  Evaluator();
   void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
   bool setupOutputChannel(uint8_t chan, const char *expStr);
-  bool clearOuputChannel(uint8_t chan);
+  void clearOuputChannel(uint8_t chan);
   void idle();
   uint16_t evaluate();
   void dump(uint8_t outChannelID);

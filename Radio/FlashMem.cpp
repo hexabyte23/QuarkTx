@@ -47,19 +47,19 @@ const char info_string_3[] PROGMEM = "Simulation OFF\n";
 const char info_string_4[] PROGMEM = "help command :\n"
          "a: load cur. model from EEPROM\n"
          "c: toggle sensors calibration\n" 
-         "d [e]|[c]: dump model or EEPROM or RCL\n"
+         "d [m]|[e]|[s]|[l]: dump model, EEPROM, sensor or RCL\n"
          "f: get free memory\n"
          "h: help\n"
-         "i: toggle disp. input sensors update\n"
+         "i: toggle input sensor update\n"
          "l [0..2]: load cur. model\n"
          ;
 const char info_string_5[] PROGMEM =
          "m: toggle Tx mode (transmit or debug)\n"
-         "o: toggle disp. output PPM update\n"
-         "r: clean all model datas, calibr.\n"
+         "o: toggle output PPM update\n"
+         "r [m]|[s]|[l]: clean model, sensor or RCL\n"
          "s a chan val: set cur. model servo max\n"
-         "s c chan rclStr: set RCL code to PPM chan\n"
          "s i chan val: set cur. model servo min\n"
+         "s l chan rclStr: set RCL code to PPM chan\n"
          ;
 const char info_string_19[] PROGMEM =
          "s n chan val: set cur. model servo neutral\n"

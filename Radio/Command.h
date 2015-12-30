@@ -51,7 +51,7 @@ class Command
   void setModelCmd(const char* param);
   void toggleSimulation();
   void setSimulateSensorValueCmd(const char* param);
-  void resetCmd();
+  void resetCmd(const char* param);
   void getFreeMemoryCmd();
   void setRCLCmd(const char* param);
 };

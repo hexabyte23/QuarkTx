@@ -59,7 +59,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'l': changeCurrentModelCmd(cmdStr+2);break;
     case 'm': toggleTransmitModeCmd();break;
     case 'o': toggleDisplayOutputUpdateCmd();break;
-    case 'r': resetCmd();break;
+    case 'r': resetCmd(cmdStr+2);break;
     case 's': setModelCmd(cmdStr+2);break;
     case 'u': setSimulateSensorValueCmd(cmdStr+2);break;
     case 'v': saveModelsToEEPROMCmd();break;
@@ -141,12 +141,12 @@ void Command::setModelCmd(const char* param)
       tx_->getCurrentModel()->setMaxValue(c , v);
       info(INFO_SET_MAX_CHANNEL, c, v);
       break;
-    case 'c':
-      tx_->onSetRCL(c, param+4);
-      break;
     case 'i':
       tx_->getCurrentModel()->setMinValue(c, v);
       info(INFO_SET_MIN_CHANNEL, c, v);
+      break;
+    case 'l':
+      tx_->onSetRCL(c, param+4);
       break;
     case 'n':
       tx_->getCurrentModel()->setNeutralValue(c , v);
@@ -162,9 +162,9 @@ void Command::setModelCmd(const char* param)
   }
 }
 
-void Command::resetCmd()
+void Command::resetCmd(const char* param)
 {
-  tx_->onReset();
+  tx_->onReset(param);
   info(INFO_RESET_CMD);
 }
 

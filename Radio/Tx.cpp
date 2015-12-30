@@ -33,7 +33,7 @@ toggleDisplayOutputUpdate_(false),
 toggleCalibrateSensor_(false),
 toggleSimulation_(false)
 {
-  onReset();
+  onReset("");
 }
 
 void Tx::setupInputDevice()
@@ -283,71 +283,82 @@ void Tx::onChangeCurrentModel(int idx)
     error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
 }
 
+void Tx::dumpEEPROM()
+{
+  for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
+  {
+    if(i == 0)
+      STDOUT << _HEX(idx) << "\t";
+
+    uint8_t v = EEPROM.read(idx);
+    if(v <= 9)
+      STDOUT << "0";
+    STDOUT << _HEX(v) << " ";
+  
+    if(i == 15)
+    {
+      i = -1;
+      STDOUT << endl;
+    }
+  }
+  STDOUT << endl;
+}
+
+void Tx::dumpModel()
+{
+  for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+  {
+    char c = (currentModel_ == &modelList_[idx])?'*':' ';
+    STDOUT << "Model " << idx << " " << c << endl;
+  
+    modelList_[idx].dump();
+  }
+}
+
+void Tx::dumpSensor()
+{
+  info(INFO_SENSOR, MAX_INPUT_CHANNEL);
+
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+  {
+    STDOUT << idx << " ";
+    sensor_[idx]->dump();
+    STDOUT << endl;
+  }
+  STDOUT << endl; 
+}
+
+void Tx::dumpRCL(const char* param)
+{
+  if(param[0] == 0)
+  {
+    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+    {
+      STDOUT << "# " << idx << endl;
+      evaluator_.dump(idx);
+      STDOUT << endl;
+    }
+  }
+  else
+  {
+    evaluator_.dump(atoi(param+2));
+    STDOUT << endl;
+  }
+}
+
 void Tx::onDump(const char* param)
 {
   switch(param[0])
   {
-    case 'c':
-    {
-      if(param[1] == 0)
-      {
-        for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-        {
-          STDOUT << "# " << idx << endl;
-          evaluator_.dump(idx);
-          STDOUT << endl;
-        }
-      }
-      else
-      {
-        evaluator_.dump(atoi(param+2));
-        STDOUT << endl;
-      }
-    }
-    break;
-    case 'e':
-    {
-      for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
-      {
-        if(i == 0)
-          STDOUT << _HEX(idx) << "\t";
-
-        uint8_t v = EEPROM.read(idx);
-        if(v <= 9)
-          STDOUT << "0";
-        STDOUT << _HEX(v) << " ";
-      
-        if(i == 15)
-        {
-          i = -1;
-          STDOUT << endl;
-        }
-      }
-      STDOUT << endl;
-    }
-    break;
+    case 'e': dumpEEPROM();break;
+    case 'l': dumpRCL(param+1);break;
+    case 'm': dumpModel();break;
+    case 's': dumpSensor();break;
     default:
-    {
-      // dump sensors
-      info(INFO_SENSOR, MAX_INPUT_CHANNEL);
-  
-      for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-      {
-        STDOUT << idx << " ";
-        sensor_[idx]->dump();
-        STDOUT << endl;
-      }
-      STDOUT << endl;
-      
-      // dump models
-      for(uint8_t idx=0; idx < MAX_MODEL; idx++)
-      {
-        char c = (currentModel_ == &modelList_[idx])?'*':' ';
-        STDOUT << "Model " << idx << " " << c << endl;
-      
-        modelList_[idx].dump();
-      }
-    }
+      dumpSensor();
+      dumpModel();
+      dumpRCL("");
+      dumpEEPROM();
   }
 }
 
@@ -377,6 +388,7 @@ void Tx::onLoadFromEEPROM()
   {
     i = 0;
     error(ERR_EEPROM_DATA_CORRUPTED);
+    return;
   }
   currentModel_ = &modelList_[i];
   addr += sizeof(uint8_t);
@@ -389,7 +401,7 @@ void Tx::onLoadFromEEPROM()
 
 void Tx::onSaveToEEPROM()
 {
-  uint8_t i = getCurrentModelIndex();
+  uint8_t i = getModelIndex(currentModel_);
   uint16_t addr = 0L;
     
   EEPROM.put(addr, i);
@@ -401,33 +413,50 @@ void Tx::onSaveToEEPROM()
     addr = sensor_[idx]->putToEEPROM(addr);
 }
 
-void Tx::onReset()
+void Tx::resetModel()
 {
-  // reset models 
   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
     modelList_[idx].reset();
-    
-  // reset calibration
+}
+
+void Tx::resetSensor()
+{
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     sensor_[idx]->reset();
+}
 
-  // remove all RCL
+void Tx::resetRCL()
+{
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     evaluator_.clearOuputChannel(idx);
+}
+
+void Tx::onReset(const char* param)
+{
+  switch(param[0])
+  {
+    case 'm': resetModel();break;
+    case 's': resetSensor();break;
+    case 'l': resetRCL();break;
+    default:
+      resetModel();
+      resetSensor();
+      resetRCL();
+  }
 
   toggleTxMode_ = tTransmit;
 
   setupInputDevice();
 }
 
-uint8_t Tx::getCurrentModelIndex()
+uint8_t Tx::getModelIndex(Model *model)
 {
   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
   {
-    if(currentModel_ == &modelList_[idx])
+    if(model == &modelList_[idx])
       return idx;
   }
-  return 0;
+  return -1;
 }
 
 void Tx::onToggleSimulation()

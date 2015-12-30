@@ -655,6 +655,11 @@ void LimitExp::dump() const
 
 //////////////////////////////////////////////////////////////////////////
 
+Evaluator::Evaluator()
+{
+  memset((void*)expression_,0,sizeof(expression_));
+}
+
 void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel)
 {
   sensorRef_ = sensorRef;
@@ -857,7 +862,7 @@ Expression *Evaluator::parseExp(char *&ps)
           {
             IntegerExp *expr = new IntegerExp;
             expr->setup(iData);
-            return expr;
+            //return expr;
           }
           else
           {
@@ -889,9 +894,11 @@ bool Evaluator::setupOutputChannel(uint8_t chan, const char *str)
   return (expression_[chan] != NULL);
 }
 
-bool Evaluator::clearOuputChannel(uint8_t chan)
+void Evaluator::clearOuputChannel(uint8_t chan)
 {
   Expression *expr = expression_[chan];
+  if(expr == NULL)
+    return;
 
   if(expr->couldBeDeleted())
   {
