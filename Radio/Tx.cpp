@@ -293,7 +293,7 @@ void Tx::onDump(const char* param)
       {
         for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
         {
-          STDOUT << "channel " << idx << endl;
+          STDOUT << "# " << idx << endl;
           evaluator_.dump(idx);
           STDOUT << endl;
         }
@@ -311,8 +311,11 @@ void Tx::onDump(const char* param)
       {
         if(i == 0)
           STDOUT << _HEX(idx) << "\t";
-        
-        STDOUT << _HEX(EEPROM.read(idx)) << " ";
+
+        uint8_t v = EEPROM.read(idx);
+        if(v <= 9)
+          STDOUT << "0";
+        STDOUT << _HEX(v) << " ";
       
         if(i == 15)
         {
