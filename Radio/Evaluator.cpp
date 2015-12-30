@@ -723,7 +723,7 @@ Expression *Evaluator::parseExp(char *&ps)
       case 'i': 
         {
           int c = ps[1] - '0';
-          if(c > MAX_INPUT_CHANNEL)
+          if(c >= MAX_INPUT_CHANNEL)
           {
             error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
             return NULL;
