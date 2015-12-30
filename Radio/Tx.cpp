@@ -125,7 +125,7 @@ bool Tx::setup()
   onLoadFromEEPROM();
 
   evaluator_.setup(sensor_, ppmOutputValue_, currentModel_);
-/*
+
   evaluator_.setupOutputChannel(0, "i0");
   evaluator_.setupOutputChannel(1, "i1");
   evaluator_.setupOutputChannel(2, "i2");
@@ -134,7 +134,7 @@ bool Tx::setup()
 #ifdef TERRATOP
   evaluator_.setupOutputChannel(5, "i6[1023;0]*i0[0;2]");
 #endif
-*/
+
   
   mesure_.stop();
   info(INFO_TX_READY,mesure_.getAverage());

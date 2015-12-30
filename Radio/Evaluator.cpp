@@ -862,7 +862,7 @@ Expression *Evaluator::parseExp(char *&ps)
           {
             IntegerExp *expr = new IntegerExp;
             expr->setup(iData);
-            //return expr;
+            return expr;
           }
           else
           {
