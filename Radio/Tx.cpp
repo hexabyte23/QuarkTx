@@ -411,6 +411,10 @@ void Tx::onReset()
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     sensor_[idx]->reset();
 
+  // remove all RCL
+  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+    evaluator_.clearOuputChannel(idx);
+
   toggleTxMode_ = tTransmit;
 
   setupInputDevice();
@@ -456,9 +460,17 @@ void Tx::onSetSimulateSensorValue(uint8_t channel, uint16_t value)
   sensor_[channel]->setSimulateValue(value); 
 }
 
-void Tx::onRCL(uint8_t chan, const char* rclCode)
+void Tx::onSetRCL(uint8_t chan, const char* rclCode)
 {
-  STDOUT << chan << " " << rclCode << endl;
-  evaluator_.setupOutputChannel(chan, rclCode);
+  if(rclCode[0] == 0)
+  {
+    STDOUT << chan << " cleaned" << endl;
+    evaluator_.clearOuputChannel(chan);
+  }
+  else
+  {
+    STDOUT << chan << " " << rclCode << endl;
+    evaluator_.setupOutputChannel(chan, rclCode); 
+  }
 }
 

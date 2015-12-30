@@ -211,6 +211,7 @@ public:
   void idle();
   uint16_t evaluate();
   void dump(uint8_t outChannelID);
+  void reset();
 };
 
 #endif

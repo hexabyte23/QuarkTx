@@ -132,6 +132,7 @@ void Command::setModelCmd(const char* param)
     error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_PPM_OUTPUT_CHANNEL-1);
     return;
   }
+  
   int v = atoi(param+4);
   
   switch(param[0])
@@ -141,7 +142,7 @@ void Command::setModelCmd(const char* param)
       info(INFO_SET_MAX_CHANNEL, c, v);
       break;
     case 'c':
-      tx_->onRCL(c, param+4);
+      tx_->onSetRCL(c, param+4);
       break;
     case 'i':
       tx_->getCurrentModel()->setMinValue(c, v);

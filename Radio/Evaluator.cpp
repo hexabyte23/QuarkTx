@@ -895,9 +895,10 @@ bool Evaluator::clearOuputChannel(uint8_t chan)
 
   if(expr->couldBeDeleted())
   {
-    STDOUT << "delete" << endl;
+//    STDOUT << "delete" << endl;
     delete expr;
   }
+  expression_[chan] = NULL;
 }
 
 void Evaluator::idle()
@@ -917,5 +918,11 @@ void Evaluator::dump(uint8_t outChannelID)
   
   if(expression_[outChannelID] != NULL)
     expression_[outChannelID]->dump();
+}
+
+void Evaluator::reset()
+{
+  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+    clearOuputChannel(idx);
 }
 
