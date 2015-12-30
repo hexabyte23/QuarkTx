@@ -22,6 +22,78 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "SerialLink.h"
 #include "MemoryFree.h"
 
+//////////////////////////////////////////////////////////////////////////
+
+static uint8_t g_tab4Dump = 0;
+
+void tabDump()
+{
+  for(uint8_t i = 0; i < g_tab4Dump; i++)
+    STDOUT << " ";
+}
+
+void enterDump()
+{
+  STDOUT << endl;
+  tabDump();
+  STDOUT << "{" << endl;
+  g_tab4Dump++;
+  tabDump();
+}
+
+void leaveDump()
+{
+  g_tab4Dump--;
+  STDOUT << endl;
+  tabDump();
+  STDOUT << "}";
+  tabDump();
+}
+
+float fmap(float x, float in_min, float in_max, float out_min, float out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+
+uint16_t Variant::convertInt() const
+{
+  switch(type_)
+  {
+    case Variant::tInteger: return iData_;
+    case Variant::tFloat: return (uint16_t)fData_;
+    case Variant::tBool: return (uint16_t)bData_;
+  }
+
+  return 0;
+}
+
+float Variant::convertFloat() const
+{
+  switch(type_)
+  {
+    case Variant::tInteger: return (float)iData_;
+    case Variant::tFloat: return fData_;
+    case Variant::tBool: return (float)bData_;
+  }
+
+  return 0;
+}
+
+bool Variant::convertBool() const
+{
+  switch(type_)
+  {
+    case Variant::tInteger: return iData_==1;
+    case Variant::tFloat: return fData_==1.0;
+    case Variant::tBool: return bData_;
+  }
+
+  return 0;
+}
+  
 
 Variant operator < (const Variant &l, const Variant &r)
 {
@@ -279,6 +351,45 @@ Variant operator != (const Variant &l, const Variant &r)
   return false;
 }
 
+Print & operator << (Print &obj, const Variant &arg)
+{ 
+  switch(arg.type_)
+  {
+    case Variant::tInteger: obj.print(arg.iData_); return obj;
+    case Variant::tFloat: obj.print(arg.fData_); return obj;
+    case Variant::tBool: obj.print(arg.bData_); return obj;
+  } 
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void IntegerExp::dump() const
+{
+  enterDump();
+  STDOUT << "i " << data_.iData_;
+  leaveDump();
+}
+
+void FloatExp::dump() const
+{
+  enterDump();
+  STDOUT << "f " << data_.fData_;
+  leaveDump();
+}
+
+void BoolExp::dump() const
+{
+  enterDump();
+  STDOUT << "b " << data_.bData_;
+  leaveDump();
+}
+
+void SensorInputExp::dump() const
+{
+  enterDump();
+  STDOUT << "si " << sensor_->getPin();
+  leaveDump();
+}
 //////////////////////////////////////////////////////////////////////////
 
 void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
@@ -290,7 +401,17 @@ void IfExp::setup(const Expression *test, const Expression *succeed, const Expre
 
 Variant IfExp::evaluate() const
 {
-  return (test_->evaluate().bData_)?succeed_->evaluate():fail_->evaluate();
+  return (test_->evaluate().convertBool())?succeed_->evaluate():fail_->evaluate();
+}
+
+void IfExp::dump() const
+{
+  enterDump();
+  STDOUT << "if";
+  test_->dump();
+  succeed_->dump();
+  fail_->dump();
+  leaveDump();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -306,6 +427,15 @@ Variant LowerThanExp::evaluate() const
   return left_->evaluate() < right_->evaluate();
 }
 
+void LowerThanExp::dump() const
+{
+  enterDump();
+  STDOUT << "<";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 void GreaterThanExp::setup(const Expression *left, const Expression *right)
@@ -317,6 +447,15 @@ void GreaterThanExp::setup(const Expression *left, const Expression *right)
 Variant GreaterThanExp::evaluate() const
 {
   return left_->evaluate() > right_->evaluate();
+}
+
+void GreaterThanExp::dump() const
+{
+  enterDump();
+  STDOUT << ">";
+  left_->dump();
+  right_->dump();
+  leaveDump();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -332,6 +471,15 @@ Variant AddExp::evaluate() const
   return left_->evaluate() + right_->evaluate();
 }
 
+void AddExp::dump() const
+{
+  enterDump();
+  STDOUT << "+";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 void SubExp::setup(const Expression *left, const Expression *right)
@@ -343,6 +491,15 @@ void SubExp::setup(const Expression *left, const Expression *right)
 Variant SubExp::evaluate() const
 {
   return left_->evaluate() - right_->evaluate();
+}
+
+void SubExp::dump() const
+{
+  enterDump();
+  STDOUT << "-";
+  left_->dump();
+  right_->dump();
+  leaveDump();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -358,6 +515,14 @@ Variant MulExp::evaluate() const
   return left_->evaluate() * right_->evaluate();
 }
 
+void MulExp::dump() const
+{
+  enterDump();
+  STDOUT << "*";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
 //////////////////////////////////////////////////////////////////////////
 
 void DivExp::setup(const Expression *left, const Expression *right)
@@ -371,26 +536,41 @@ Variant DivExp::evaluate() const
   return left_->evaluate() / right_->evaluate();
 }
 
+void DivExp::dump() const
+{
+  enterDump();
+  STDOUT << "/";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
+
 //////////////////////////////////////////////////////////////////////////
 
-void LimitExp::setup(const Expression *expr, const Expression *min, const Expression *max)
+void LimitExp::setup(const Expression *data, const Expression *min, const Expression *max)
 {
-  expr_ = expr;
+  data_ = data;
   min_ = min;
   max_ = max;
 }
 
 Variant LimitExp::evaluate() const
 {
-  Variant ret((uint16_t)map(expr_->evaluate().iData_, ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().iData_, max_->evaluate().iData_));
+  Variant ret((uint16_t)fmap(data_->evaluate().convertFloat(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convertFloat(), max_->evaluate().convertFloat()));
   return ret;
 }
 
-//////////////////////////////////////////////////////////////////////////
-
-Evaluator::Evaluator()
+void LimitExp::dump() const
 {
+  enterDump();
+  STDOUT << "[]";
+  data_->dump();
+  min_->dump();
+  max_->dump();
+  leaveDump();
 }
+
+//////////////////////////////////////////////////////////////////////////
 
 void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel)
 {
@@ -530,8 +710,6 @@ Expression *Evaluator::parseExp(char *&ps)
             MulExp *expr = new MulExp;
             expr->setup(leftExp, rightExp);
             leftExp = expr;
-
-            //STDOUT << "[d] op * " << (int)&leftExp << " " << (int)&rightExp << endl;
         }
         break;
       case '[':
@@ -629,9 +807,17 @@ void Evaluator::idle()
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     if(expression_[idx] != NULL)
-      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().iData_);
+      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().convertInt());
     else
       outputValueRef_[idx] = PPM_MIN_VALUE;
   }
+}
+
+void Evaluator::dump(uint8_t outChannelID)
+{
+  STDOUT << "Dump channel " << outChannelID;
+  g_tab4Dump = 0;
+  expression_[outChannelID]->dump();
+  STDOUT << endl;
 }
 

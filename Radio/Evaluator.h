@@ -35,6 +35,10 @@ struct Variant
   Variant(float fData) : fData_(fData), type_(tFloat) {}
   Variant(bool bData) : bData_(bData), type_(tBool) {}
 
+  uint16_t convertInt() const;
+  float convertFloat() const;
+  bool convertBool() const;
+
   friend Variant operator < (const Variant &l, const Variant &r);
   friend Variant operator > (const Variant &l, const Variant &r);
   friend Variant operator + (const Variant &l, const Variant &r);
@@ -43,12 +47,14 @@ struct Variant
   friend Variant operator / (const Variant &l, const Variant &r);
   friend Variant operator == (const Variant &l, const Variant &r);
   friend Variant operator != (const Variant &l, const Variant &r);
+  friend Print & operator << (Print &obj, const Variant &arg);
 };
 
 class Expression
 {
 public:
   virtual Variant evaluate() const = 0;
+  virtual void dump() const = 0;
 };
 
 class SensorInputExp: public Expression
@@ -58,6 +64,7 @@ class SensorInputExp: public Expression
 public:
   void setup(const Sensor *sensor) {sensor_ = sensor; }
   virtual Variant evaluate() const {Variant v (sensor_->getValue()); return v;}
+  virtual void dump() const;
 };
 
 class IntegerExp: public Expression
@@ -68,6 +75,7 @@ public:
   IntegerExp() : data_((uint16_t)0) {}
   void setup(uint16_t data) {data_.iData_ = data; }
   virtual Variant evaluate() const {return data_;}
+  virtual void dump() const;
 };
 
 class FloatExp: public Expression
@@ -78,6 +86,7 @@ public:
   FloatExp() : data_((float)0.0) {}
   void setup(float data) {data_.fData_ = data; }
   virtual Variant evaluate() const {return data_;}
+  virtual void dump() const;
 };
 
 class BoolExp: public Expression
@@ -88,6 +97,7 @@ public:
   BoolExp() : data_(false) {}
   void setup(bool data) {data_.bData_ = data; }
   virtual Variant evaluate() const {return data_;}
+  virtual void dump() const;
 };
 
 class AddExp : public Expression
@@ -97,6 +107,7 @@ class AddExp : public Expression
 public:
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class SubExp : public Expression
@@ -106,6 +117,7 @@ class SubExp : public Expression
 public:
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class MulExp : public Expression
@@ -115,6 +127,7 @@ class MulExp : public Expression
 public:
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class DivExp : public Expression
@@ -124,6 +137,7 @@ class DivExp : public Expression
 public:
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class GreaterThanExp : public Expression
@@ -133,6 +147,7 @@ class GreaterThanExp : public Expression
 public:
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class LowerThanExp : public Expression
@@ -142,6 +157,7 @@ class LowerThanExp : public Expression
 public:
   void setup(const Expression *left, const Expression *right);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class IfExp : public Expression
@@ -151,16 +167,18 @@ class IfExp : public Expression
 public:
   void setup(const Expression *test, const Expression *succeed, const Expression *fail);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 // Dual rate and Negative expression
 class LimitExp : public Expression
 {
-  const Expression *expr_, *min_, *max_;
+  const Expression *data_, *min_, *max_;
 
 public:
-  void setup(const Expression *expr, const Expression *min, const Expression *max);
+  void setup(const Expression *data, const Expression *min, const Expression *max);
   virtual Variant evaluate() const;
+  virtual void dump() const;
 };
 
 class Evaluator
@@ -175,11 +193,12 @@ class Evaluator
   
 public:
 
-  Evaluator();
+  Evaluator() {}
   void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
   bool setupOutputChannel(uint8_t outChannelID, const char *expStr);
   void idle();
   uint16_t evaluate();
+  void dump(uint8_t outChannelID);
 };
 
 #endif

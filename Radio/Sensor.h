@@ -39,6 +39,7 @@ class Sensor
 
   Sensor();
 
+  uint8_t getPin() const {return pin_;}
   uint16_t getMinCalibration() const {return calibrMin_;}
   uint16_t getMaxCalibration() const {return calibrMax_;}
   void setSimulateValue(uint16_t simuVal) {simuVal_ = simuVal;}
