@@ -388,6 +388,31 @@ void BoolExp::dump() const
   leaveDump();
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+SubExpression::~SubExpression()
+{
+  if(expr_->couldBeDeleted())
+    delete expr_;
+}
+
+void SubExpression::setup(Expression *expr)
+{
+  expr_ = expr;
+}
+
+Variant SubExpression::evaluate() const
+{
+  return expr_->evaluate();
+}
+
+void SubExpression::dump() const
+{
+  enterDump();
+  STDOUT << "( ";
+  expr_->dump();
+  leaveDump();
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -766,12 +791,17 @@ Expression *Evaluator::parseOperand(char *&in)
 {  
   switch(*in)
   {
-/*    case '(':
+    case '(':
     {
-      i++;
+      in++; // (
       Expression *expr = parseExp(in);
-      
-    }*/
+      if(expr == NULL)
+        return NULL;
+      in++; // )
+      SubExpression *sexpr = new SubExpression;
+      sexpr->setup(expr);
+      return sexpr;
+    }
     break;
     case 'i': // sensor input
     {
@@ -833,11 +863,11 @@ Expression *Evaluator::parseOperand(char *&in)
 
 Expression *Evaluator::parseExp(char *&in)
 {
-  //STDOUT << "in='" << *in << "'" << endl;
+  STDOUT << "in='" << *in << "'" << endl;
   
   Expression *leftExp = parseOperand(in);
 
-  //STDOUT << "next='" << *in << "'" << endl; 
+  STDOUT << "next='" << *in << "'" << endl; 
   
   if(leftExp == NULL)
     return NULL;
@@ -893,17 +923,35 @@ Expression *Evaluator::parseExp(char *&in)
     break;
     case '?':
     {
-      Expression *condition = parseOperand(in);
-      if(condition == NULL)
-        return NULL;
       Expression *succeed = parseOperand(in);
       if(succeed == NULL)
         return NULL;
+      in++; // :
       Expression *fail = parseOperand(in);
       if(fail == NULL)
         return NULL;
       IfExp *expr = new IfExp;
-      expr->setup(condition, succeed, fail);
+      expr->setup(leftExp, succeed, fail);
+      return expr; 
+    }
+    break;
+    case '>':
+    {
+      Expression *rightExp = parseOperand(in);
+      if(rightExp == NULL)
+        return NULL;
+      GreaterThanExp *expr = new GreaterThanExp;
+      expr->setup(leftExp, rightExp);
+      return expr; 
+    }
+    break;
+    case '<':
+    {
+      Expression *rightExp = parseOperand(in);
+      if(rightExp == NULL)
+        return NULL;
+      LowerThanExp *expr = new LowerThanExp;
+      expr->setup(leftExp, rightExp);
       return expr; 
     }
     break;

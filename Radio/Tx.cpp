@@ -73,7 +73,7 @@ void Tx::setupOutputDevice()
   OCR1A = PPM_INTER_FRAME_TIME;  // compare match register, initial value
 
   TCCR1B |= (1 << WGM12);   // turn on CTC mode
-  TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0,5 microseconds at 16mhz
+  TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0.5 microseconds at 16mhz
  
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
@@ -132,7 +132,7 @@ bool Tx::setup()
   evaluator_.setupOutputChannel(3, "i3");
   evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
 #ifdef TERRATOP
-  evaluator_.setupOutputChannel(5, "i6?0.5:0.5*i0");
+  evaluator_.setupOutputChannel(5, "(i2>200)?512:i0");
 #endif
 
   
@@ -149,23 +149,26 @@ void Tx::onIrqTimerChange()
    * (as HF modules can now sent more than 8 channels) but just care about 2 times:
    * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME) 
    * The minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
+   * 
+   * We successfully test with a Jeti TU2 RF module up to 17 channels
    */
  
   TCNT1 = 0;
 
   if(irqStartPulse_) 
   {  
-    // Falling edge of a channel pulse
+    // Falling edge of a channel pulse (in negative shape)
     if(toggleTxMode_ == tTransmit)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
+    // All time must be x2, as prescale is set to 0.5 microseconds at 16mhz
     OCR1A = ppmOutputValue_[irqCurrentChannelNumber_]*2;
     irqCurrentChannelNumber_++;
     irqStartPulse_ = false;
   }
   else
   {
-    // Raising edge of a channel pulse
+    // Raising edge of a channel pulse (in negative shape)
     if(toggleTxMode_ == tTransmit)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
     irqStartPulse_ = true;

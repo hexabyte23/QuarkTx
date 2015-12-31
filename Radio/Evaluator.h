@@ -59,6 +59,17 @@ public:
   virtual bool couldBeDeleted() const {return true;}
 };
 
+class SubExpression : public Expression
+{
+  Expression *expr_;
+  
+public:
+  virtual ~SubExpression();
+  void setup(Expression *expr);
+  virtual Variant evaluate() const;
+  virtual void dump() const;
+};
+
 class SensorInputExp: public Expression
 {
   const Sensor *sensor_;
