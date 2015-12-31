@@ -132,7 +132,7 @@ bool Tx::setup()
   evaluator_.setupOutputChannel(3, "i3");
   evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
 #ifdef TERRATOP
-  evaluator_.setupOutputChannel(5, "(i2>200)?512:i0");
+  evaluator_.setupOutputChannel(5, "(i2>512)?i0:0");
 #endif
 
   

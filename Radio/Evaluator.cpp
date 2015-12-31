@@ -863,11 +863,11 @@ Expression *Evaluator::parseOperand(char *&in)
 
 Expression *Evaluator::parseExp(char *&in)
 {
-  STDOUT << "in='" << *in << "'" << endl;
+  //STDOUT << "in='" << *in << "'" << endl;
   
   Expression *leftExp = parseOperand(in);
 
-  STDOUT << "next='" << *in << "'" << endl; 
+  //STDOUT << "next='" << *in << "'" << endl; 
   
   if(leftExp == NULL)
     return NULL;
