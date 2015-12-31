@@ -33,7 +33,15 @@ ServoCommand::ServoCommand()
 
 uint16_t ServoCommand::getValue(uint16_t rawInputValue)
 {
-  return map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
+  uint16_t ret = map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
+  
+  // apply PPM bound limitations
+  if(ret > PPM_MAX_VALUE)
+    ret = PPM_MAX_VALUE;
+  if(ret < PPM_MIN_VALUE)
+    ret = PPM_MIN_VALUE;
+
+  return ret;
 }
 
 void ServoCommand::reset()
