@@ -201,7 +201,8 @@ class Evaluator
   SensorInputExp *inputTab[MAX_INPUT_CHANNEL];
 
   Expression *parseExp(char *&in);
-  Expression *parseLiteral(char *&in);
+  Expression *parseOperand(char *&in);
+  Expression *parseNumeric(char *&in);
   
 public:
 

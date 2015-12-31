@@ -680,7 +680,7 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
 //
 // Private function for extracting integer or float leaf
 //
-uint8_t getNextNumeric(char *&text, int &iVal, float &fVal)
+Expression *Evaluator::parseNumeric(char *&in)
 {
   uint8_t type = 0;                 // 0 = interger, 1 = float
   char buf[] = {0,0,0,0,0,0,0};     // 6 digits + \0
@@ -689,41 +689,56 @@ uint8_t getNextNumeric(char *&text, int &iVal, float &fVal)
   
   while(1)
   {
-    if(*text == 0) break;           // end of text 
+    if(*in == 0) break;             // end of text 
     if(len == sizeof(buf)-1) break; // end of buf
-    if(*text == '.')                // float ?
-      type = 1;
-    else if(*text - '0' > 9)        // still a digit ?
-        break;
+    if(*in == '.')                  // float ?
+      type = 1;                     // this is a float
+    else if(*in - '0' > 9)          // still a digit ?
+        break;                      // no
     
-    *p = *text;                     // copy car into buf
+    *p = *in;                       // copy car into buf
 
     p++;
-    text++;
+    in++;
     len++;
   }
 
+  // if not end of in, step over delim car
+  if(*in != 0)
+    in++;
+    
   if(type == 0)
-    iVal = atoi(buf);
+  {
+    //STDOUT << "int " << atoi(buf) << endl;
+    IntegerExp *expr = new IntegerExp;
+    expr->setup(atoi(buf));
+    return expr;
+  }
   else
-    fVal = atof(buf);  
+  {
+    //STDOUT << "float " << atof(buf) << endl;
+    FloatExp *expr = new FloatExp;
+    expr->setup(atof(buf));
+    return expr;
+  }
 
-  // if not end of buf, step forward delim car
-  if(*text != 0)
-    text++;
-  
-  //STDOUT << "exit gnn " << ret << " '" << *text << "'(" << _HEX(*text) << ")" << endl;
-
-  return type;
+  return NULL;
 }
 
-Expression *Evaluator::parseLiteral(char *&in)
+Expression *Evaluator::parseOperand(char *&in)
 {
 //  STDOUT << "pl" << in << endl;
   
   switch(*in)
   {
-    case 'i': 
+/*    case '(':
+    {
+      i++;
+      Expression *expr = parseExp(in);
+      
+    }*/
+    break;
+    case 'i': // sensor input
     {
       int c = in[1] - '0';
       if(c >= MAX_INPUT_CHANNEL)
@@ -732,11 +747,26 @@ Expression *Evaluator::parseLiteral(char *&in)
         return NULL;
       }
       in += 2;
-//      STDOUT << "i" << endl;
-      return inputTab[c];
+
+      // STDOUT << "i" << c << " '" << *in << "'" << endl;
+
+      if(*in != '[')
+        return inputTab[c];
+      
+      in++;
+      
+      Expression *_min = parseOperand(in);
+      if(_min == NULL)
+        return NULL;
+      Expression *_max = parseOperand(in);
+      if(_max == NULL)
+        return NULL;
+      LimitExp *expr = new LimitExp;
+      expr->setup(inputTab[c], _min, _max );
+      return expr;
     }
     break;
-    case 'T':
+    case 'T': // true const
     {
       in++;
 
@@ -745,7 +775,7 @@ Expression *Evaluator::parseLiteral(char *&in)
       return expr;
     }
     break;
-    case 'F':
+    case 'F': // false const
     {
       in++;
 
@@ -756,31 +786,8 @@ Expression *Evaluator::parseLiteral(char *&in)
     break;
     default:
     {
-      if(in[0] - '0' <= 9) // check if numeric
-      {
-        int iData = 0;
-        float fData = .0;
-        int type = getNextNumeric(in, iData, fData);
-        
-        if(type == 0)
-        {
-//          STDOUT << "int" << iData << endl;
-          IntegerExp *expr = new IntegerExp;
-          expr->setup(iData);
-          return expr;
-        }
-        else
-        {
-//          STDOUT << "float" << fData << endl;
-          FloatExp *expr = new FloatExp;
-          expr->setup(fData);
-          return expr;
-        }
-      }
-      else // variable
-      {
-        
-      }
+      if(*in - '0' <= 9)
+        return parseNumeric(in);
     }
   }
 
@@ -789,7 +796,12 @@ Expression *Evaluator::parseLiteral(char *&in)
 
 Expression *Evaluator::parseExp(char *&in)
 {
-  Expression *leftExp = parseLiteral(in);
+  Expression *leftExp = parseOperand(in);
+  
+  if(leftExp == NULL)
+    return NULL;
+  if(*in == 0)
+    return leftExp;
 
   char op = *in;
   in++;
@@ -798,7 +810,9 @@ Expression *Evaluator::parseExp(char *&in)
   {
     case '+':
     {
-      Expression *rightExp = parseLiteral(in);
+      Expression *rightExp = parseOperand(in);
+      if(rightExp == NULL)
+        return NULL;
       AddExp *expr = new AddExp;
       expr->setup(leftExp, rightExp);
       return expr;
@@ -806,7 +820,9 @@ Expression *Evaluator::parseExp(char *&in)
     break;
     case '-':
     {
-      Expression *rightExp = parseLiteral(in);
+      Expression *rightExp = parseOperand(in);
+      if(rightExp == NULL)
+        return NULL;
       SubExp *expr = new SubExp;
       expr->setup(leftExp, rightExp);
       return expr;    
@@ -814,7 +830,9 @@ Expression *Evaluator::parseExp(char *&in)
     break;
     case '*':
     {
-      Expression *rightExp = parseLiteral(in);
+      Expression *rightExp = parseOperand(in);
+      if(rightExp == NULL)
+        return NULL;
       MulExp *expr = new MulExp;
       expr->setup(leftExp, rightExp);
       return expr; 
@@ -822,27 +840,15 @@ Expression *Evaluator::parseExp(char *&in)
     break;
     case '/':
     {
-      Expression *rightExp = parseLiteral(in);
+      Expression *rightExp = parseOperand(in);
+      if(rightExp == NULL)
+        return NULL;
       DivExp *expr = new DivExp;
       expr->setup(leftExp, rightExp);
       return expr; 
     }
     break;
-    case '[':
-    {
-      Expression *_min = parseLiteral(in);
-      Expression *_max = parseLiteral(in);
-      LimitExp *expr = new LimitExp;
-      expr->setup(leftExp, _min, _max );
-      return expr;
-    }
-    break;
     case '?':
-    {
-      
-    }
-    break;
-    case '(':
     {
       
     }
