@@ -34,6 +34,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PPM_MIN_VALUE           500
 #define PPM_MAX_VALUE           1500
 
+#define TRIM_MIN_VALUE          -100
+#define TRIM_MAX_VALUE          100
+
 #define TX_MODE                 1       // mode 1 : left stick operates elevator & rudder, right stick operates throttle & ailerons
                                         // mode 2 : left stick operates throttle & rudder, right stick operates elevator & ailerons
                                         // mode 3 : left stick operates elevator & ailerons, right stick operates throttle & rudder

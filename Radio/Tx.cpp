@@ -487,13 +487,21 @@ void Tx::onToggleSimulation()
   }
 }
 
-void Tx::onSetSimulateSensorValue(uint8_t channel, uint16_t value)
+void Tx::onSetSimulateSensorValue(uint8_t sensorID, uint16_t value)
 {
-  sensor_[channel]->setSimulateValue(value); 
+  if(sensorID < 0) return;
+  sensor_[sensorID]->setSimulateValue(value); 
+}
+
+void Tx::onSetTrimSensorValue(uint8_t sensorID, int value)
+{
+  if(sensorID < 0) return;
+  sensor_[sensorID]->setTrim(value); 
 }
 
 void Tx::onSetRCL(uint8_t chan, const char* rclCode)
 {
+  if(chan < 0) return;
   if(rclCode[0] == 0)
   {
     STDOUT << chan << " cleaned" << endl;

@@ -101,7 +101,7 @@ uint16_t Stick::getValue() const
   if(isSimu_)
     return simuVal_;
   else
-    return map(analogRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+    return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 ////////////////////////////////////////////////////////

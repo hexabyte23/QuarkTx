@@ -60,8 +60,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'm': toggleTransmitModeCmd();break;
     case 'o': toggleDisplayOutputUpdateCmd();break;
     case 'r': resetCmd(cmdStr+2);break;
-    case 's': setModelCmd(cmdStr+2);break;
-    case 'u': setSimulateSensorValueCmd(cmdStr+2);break;
+    case 's': setCmd(cmdStr+2);break;
     case 'v': saveModelsToEEPROMCmd();break;
     case 'w': toggleSimulation();break;
 
@@ -124,37 +123,60 @@ void Command::saveModelsToEEPROMCmd()
  info(INFO_SAVE_TO_EEPROM);
 }
 
-void Command::setModelCmd(const char* param)
+uint8_t getChannel(const char *str)
 {
-  uint8_t c = atoi(param+2);
-  if(c > MAX_PPM_OUTPUT_CHANNEL-1)
+  uint8_t channel = atoi(str+2);
+  if(channel > MAX_PPM_OUTPUT_CHANNEL-1)
   {
-    error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_PPM_OUTPUT_CHANNEL-1);
-    return;
+    error(ERR_BAD_PARAM_IDX_HIGH, channel, MAX_PPM_OUTPUT_CHANNEL-1);
+    return -1;
   }
-  
-  int v = atoi(param+4);
+
+  return channel;
+}
+
+uint8_t getSensorID(const char *str)
+{
+  uint8_t sensorID = atoi(str+2);
+  if(sensorID > MAX_INPUT_CHANNEL-1)
+  {
+    error(ERR_BAD_PARAM_IDX_HIGH, sensorID, MAX_INPUT_CHANNEL-1);
+    return -1;
+  }
+
+  return sensorID;
+}
+
+void Command::setCmd(const char* param)
+{  
+  int val = atoi(param+4);
   
   switch(param[0])
   {
     case 'a':
-      tx_->getCurrentModel()->setMaxValue(c , v);
-      info(INFO_SET_MAX_CHANNEL, c, v);
+      tx_->getCurrentModel()->setMaxValue(getChannel(param) , val);
+      info(INFO_SET_MAX_CHANNEL, getChannel(param), val);
       break;
     case 'i':
-      tx_->getCurrentModel()->setMinValue(c, v);
-      info(INFO_SET_MIN_CHANNEL, c, v);
+      tx_->getCurrentModel()->setMinValue(getChannel(param), val);
+      info(INFO_SET_MIN_CHANNEL, getChannel(param), val);
       break;
     case 'l':
-      tx_->onSetRCL(c, param+4);
+      tx_->onSetRCL(getChannel(param), param+4);
       break;
     case 'n':
-      tx_->getCurrentModel()->setNeutralValue(c , v);
-      info(INFO_SET_NEUTRAL_CHANNEL, c, v);
+      tx_->getCurrentModel()->setNeutralValue(getChannel(param), val);
+      info(INFO_SET_NEUTRAL_CHANNEL, getChannel(param), val);
       break;
     case 'r':
-      tx_->getCurrentModel()->setRevertValue(c , v);
-      info(INFO_SET_REVERT_CHANNEL, c, v);
+      tx_->getCurrentModel()->setRevertValue(getChannel(param) , val);
+      info(INFO_SET_REVERT_CHANNEL, getChannel(param), val);
+      break;
+    case 't':
+      tx_->onSetTrimSensorValue(getSensorID(param), val);
+      break;
+    case 'u': 
+      tx_->onSetSimulateSensorValue(getSensorID(param), val);
       break;
     default:
       error(ERR_BAD_PARAM_IDX_EMPTY);
@@ -171,19 +193,6 @@ void Command::resetCmd(const char* param)
 void Command::toggleSimulation()
 {
   tx_->onToggleSimulation();
-}
-
-void Command::setSimulateSensorValueCmd(const char* param)
-{
-  uint8_t c = atoi(param);
-  if(c > MAX_INPUT_CHANNEL-1)
-  {
-    error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
-    return;
-  }
-  
-  uint16_t v = atoi(param+2);
-  tx_->onSetSimulateSensorValue(c, v);
 }
 
 void Command::getFreeMemoryCmd()

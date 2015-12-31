@@ -64,8 +64,9 @@ const char info_string_5[] PROGMEM =
 const char info_string_19[] PROGMEM =
          "s n chan val: set cur. model servo neutral\n"
          "s r chan val: set cur. model servo revert\n"
+         "s t sensorID val: set sensor trim\n"
+         "s u sensorID val: set simulate value\n"
          "v: save cur. model to EEPROM\n"
-         "u sensorID val: set simulate value\n"
          "w: toggle simulation mode\n"
          ;
 const char info_string_6[] PROGMEM = "Current model saved to EEPROM\n";

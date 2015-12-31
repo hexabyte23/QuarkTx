@@ -797,7 +797,9 @@ Expression *Evaluator::parseOperand(char *&in)
       Expression *expr = parseExp(in);
       if(expr == NULL)
         return NULL;
+        
       in++; // )
+      
       SubExpression *sexpr = new SubExpression;
       sexpr->setup(expr);
       return sexpr;
@@ -811,7 +813,7 @@ Expression *Evaluator::parseOperand(char *&in)
         error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
         return NULL;
       }
-      in += 2;
+      in += 2; // ix
 
       // STDOUT << "i" << c << " '" << *in << "'" << endl;
 

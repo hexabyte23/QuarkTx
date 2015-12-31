@@ -103,7 +103,8 @@ class Tx
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
   void onReset(const char* param);
-  void onSetSimulateSensorValue(uint8_t chan, uint16_t value);
+  void onSetTrimSensorValue(uint8_t sensorID, int value);
+  void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
   void onSetRCL(uint8_t chan, const char* rclCode);
 
   // Functions

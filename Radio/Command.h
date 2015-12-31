@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <inttypes.h>
 #include "config.h"
 
 // forward decl
@@ -28,17 +29,8 @@ class Tx;
 class Command
 {
   Tx *tx_;
-  
-  public:
- 
-  Command();
 
-  bool setup(Tx *tx);
-
-  // signals
-  void onNewCommand(const char* cmdStr);
-
-  // Commands
+  // internal commands
   void helpCmd();
   void toggleTransmitModeCmd();
   void toggleDisplayInputUpdateCmd();
@@ -48,12 +40,20 @@ class Command
   void toggleCalibrateAnalogicSensorCmd();
   void loadModelsFromEEPROMCmd();
   void saveModelsToEEPROMCmd();
-  void setModelCmd(const char* param);
+  void setCmd(const char* param);
   void toggleSimulation();
-  void setSimulateSensorValueCmd(const char* param);
   void resetCmd(const char* param);
   void getFreeMemoryCmd();
   void setRCLCmd(const char* param);
+  
+  public:
+ 
+  Command();
+
+  bool setup(Tx *tx);
+
+  // signals
+  void onNewCommand(const char* cmdStr);
 };
 
 #endif
