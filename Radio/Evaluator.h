@@ -147,6 +147,17 @@ public:
   virtual void dump() const;
 };
 
+class EqualExp : public Expression
+{
+  const Expression *left_, *right_;
+
+public:
+  virtual ~EqualExp();
+  void setup(const Expression *left, const Expression *right);
+  virtual Variant evaluate() const;
+  virtual void dump() const;
+};
+
 class GreaterThanExp : public Expression
 {
   const Expression *left_, *right_;
@@ -171,11 +182,11 @@ public:
 
 class IfExp : public Expression
 {
-  const Expression *test_, *succeed_, *fail_;
+  const Expression *condition_, *succeed_, *fail_;
 
 public:
   virtual ~IfExp();
-  void setup(const Expression *test, const Expression *succeed, const Expression *fail);
+  void setup(const Expression *condition_, const Expression *succeed, const Expression *fail);
   virtual Variant evaluate() const;
   virtual void dump() const;
 };

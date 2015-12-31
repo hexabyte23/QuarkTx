@@ -402,8 +402,8 @@ void SensorInputExp::dump() const
 
 IfExp::~IfExp() 
 {
-  if(test_->couldBeDeleted())
-    delete test_;
+  if(condition_->couldBeDeleted())
+    delete condition_;
     
   if(succeed_->couldBeDeleted())
     delete succeed_;
@@ -412,23 +412,23 @@ IfExp::~IfExp()
     delete fail_;
 }
 
-void IfExp::setup(const Expression *test, const Expression *succeed, const Expression *fail)
+void IfExp::setup(const Expression *condition, const Expression *succeed, const Expression *fail)
 {
-  test_ = test;
+  condition_ = condition;
   succeed_ = succeed;
   fail_ = fail;
 }
 
 Variant IfExp::evaluate() const
 {
-  return (test_->evaluate().convertBool())?succeed_->evaluate():fail_->evaluate();
+  return (condition_->evaluate().convertBool())?succeed_->evaluate():fail_->evaluate();
 }
 
 void IfExp::dump() const
 {
   enterDump();
   STDOUT << "if";
-  test_->dump();
+  condition_->dump();
   succeed_->dump();
   fail_->dump();
   leaveDump();
@@ -560,6 +560,37 @@ void DivExp::dump() const
 
 //////////////////////////////////////////////////////////////////////////
 
+EqualExp::~EqualExp() 
+{
+  if(left_->couldBeDeleted())
+    delete left_;
+    
+  if(right_->couldBeDeleted())
+    delete right_;
+}
+
+void EqualExp::setup(const Expression *left, const Expression *right)
+{
+  left_ = left;
+  right_ = right;
+}
+
+Variant EqualExp::evaluate() const
+{
+  return left_->evaluate() == right_->evaluate();
+}
+
+void EqualExp::dump() const
+{
+  enterDump();
+  STDOUT << "=";
+  left_->dump();
+  right_->dump();
+  leaveDump();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 LowerThanExp::~LowerThanExp() 
 {
   if(left_->couldBeDeleted())
@@ -677,12 +708,18 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
   }
 }
 
-//
-// Private function for extracting integer or float leaf
-//
+/*
+ * RCL Grammar in EBNF
+ * 
+ * digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+ * integer = digit , { digit };
+ * float = digit | "." , { digit | "." };
+ * 
+ */
+
 Expression *Evaluator::parseNumeric(char *&in)
 {
-  uint8_t type = 0;                 // 0 = interger, 1 = float
+  uint8_t type = 0;                 // 0 = integer, 1 = float
   char buf[] = {0,0,0,0,0,0,0};     // 6 digits + \0
   char *p = &buf[0];
   uint8_t len = 0;
@@ -693,23 +730,23 @@ Expression *Evaluator::parseNumeric(char *&in)
     if(len == sizeof(buf)-1) break; // end of buf
     if(*in == '.')                  // float ?
       type = 1;                     // this is a float
-    else if(*in - '0' > 9)          // still a digit ?
-        break;                      // no
+    else
+    { 
+      if(!isdigit(*in))             // digit ?
+          break;                    // no more a digit
+    }
     
     *p = *in;                       // copy car into buf
-
+    //STDOUT << *p;
+    
     p++;
     in++;
     len++;
   }
-
-  // if not end of in, step over delim car
-  if(*in != 0)
-    in++;
     
   if(type == 0)
   {
-    //STDOUT << "int " << atoi(buf) << endl;
+    //STDOUT << "int " << atoi(buf) << " next='" << *in << "'" << endl;
     IntegerExp *expr = new IntegerExp;
     expr->setup(atoi(buf));
     return expr;
@@ -726,9 +763,7 @@ Expression *Evaluator::parseNumeric(char *&in)
 }
 
 Expression *Evaluator::parseOperand(char *&in)
-{
-//  STDOUT << "pl" << in << endl;
-  
+{  
   switch(*in)
   {
 /*    case '(':
@@ -753,14 +788,16 @@ Expression *Evaluator::parseOperand(char *&in)
       if(*in != '[')
         return inputTab[c];
       
-      in++;
+      in++; // [
       
       Expression *_min = parseOperand(in);
       if(_min == NULL)
         return NULL;
+      in++; // ;
       Expression *_max = parseOperand(in);
       if(_max == NULL)
         return NULL;
+      in++; // ]
       LimitExp *expr = new LimitExp;
       expr->setup(inputTab[c], _min, _max );
       return expr;
@@ -768,7 +805,7 @@ Expression *Evaluator::parseOperand(char *&in)
     break;
     case 'T': // true const
     {
-      in++;
+      in++; // T
 
       BoolExp *expr = new BoolExp;
       expr->setup(true);
@@ -777,7 +814,7 @@ Expression *Evaluator::parseOperand(char *&in)
     break;
     case 'F': // false const
     {
-      in++;
+      in++; // F
 
       BoolExp *expr = new BoolExp;
       expr->setup(false);
@@ -786,7 +823,7 @@ Expression *Evaluator::parseOperand(char *&in)
     break;
     default:
     {
-      if(*in - '0' <= 9)
+      if(isdigit(*in))
         return parseNumeric(in);
     }
   }
@@ -796,7 +833,11 @@ Expression *Evaluator::parseOperand(char *&in)
 
 Expression *Evaluator::parseExp(char *&in)
 {
+  //STDOUT << "in='" << *in << "'" << endl;
+  
   Expression *leftExp = parseOperand(in);
+
+  //STDOUT << "next='" << *in << "'" << endl; 
   
   if(leftExp == NULL)
     return NULL;
@@ -805,6 +846,8 @@ Expression *Evaluator::parseExp(char *&in)
 
   char op = *in;
   in++;
+
+  //STDOUT << "op " << op << endl;
 
   switch(op)
   {
@@ -850,7 +893,18 @@ Expression *Evaluator::parseExp(char *&in)
     break;
     case '?':
     {
-      
+      Expression *condition = parseOperand(in);
+      if(condition == NULL)
+        return NULL;
+      Expression *succeed = parseOperand(in);
+      if(succeed == NULL)
+        return NULL;
+      Expression *fail = parseOperand(in);
+      if(fail == NULL)
+        return NULL;
+      IfExp *expr = new IfExp;
+      expr->setup(condition, succeed, fail);
+      return expr; 
     }
     break;
   }
