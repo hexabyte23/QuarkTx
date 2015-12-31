@@ -200,7 +200,8 @@ class Evaluator
   Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
   SensorInputExp *inputTab[MAX_INPUT_CHANNEL];
 
-  Expression *parseExp(char *&str);
+  Expression *parseExp(char *&in);
+  Expression *parseLiteral(char *&in);
   
 public:
 

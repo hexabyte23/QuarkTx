@@ -388,12 +388,16 @@ void BoolExp::dump() const
   leaveDump();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+
 void SensorInputExp::dump() const
 {
   enterDump();
   STDOUT << "si " << sensor_->getPin();
   leaveDump();
 }
+
 //////////////////////////////////////////////////////////////////////////
 
 IfExp::~IfExp() 
@@ -682,7 +686,6 @@ uint8_t getNextNumeric(char *&text, int &iVal, float &fVal)
   char buf[] = {0,0,0,0,0,0,0};     // 6 digits + \0
   char *p = &buf[0];
   uint8_t len = 0;
-  //STDOUT << "gnn(" << text << ")" << endl;
   
   while(1)
   {
@@ -694,7 +697,7 @@ uint8_t getNextNumeric(char *&text, int &iVal, float &fVal)
         break;
     
     *p = *text;                     // copy car into buf
-    //STDOUT << *p;
+
     p++;
     text++;
     len++;
@@ -714,169 +717,138 @@ uint8_t getNextNumeric(char *&text, int &iVal, float &fVal)
   return type;
 }
 
-Expression *Evaluator::parseExp(char *&ps)
+Expression *Evaluator::parseLiteral(char *&in)
 {
-  Expression *leftExp = NULL;
-  //STDOUT << "[d] parseExp(str=" << ps << ", len=" << strlen(ps) << ")" << endl;
+//  STDOUT << "pl" << in << endl;
   
-  while(*ps != 0)
+  switch(*in)
   {
-    //STDOUT << "enter loop ps='" << *ps << "'" << endl;
-    
-    switch(ps[0])
+    case 'i': 
     {
-      case 'i': 
-        {
-          int c = ps[1] - '0';
-          if(c >= MAX_INPUT_CHANNEL)
-          {
-            error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
-            return NULL;
-          }
-          ps += 2;
-          leftExp = inputTab[c];
-          
-          //STDOUT << "[d] op i=" << c << " next car='" << *ps << "'" << endl;
-        }
-        break;
-      case '+':
-        {
-            // check if previous expression is not NULL
-            if(leftExp == NULL)
-            {
-              error(ERR_LEFT_OP_EMPTY, '+');
-              return NULL;
-            }
-            ps++;
-
-            Expression *rightExp = parseExp(ps);
-            if(rightExp == NULL)
-              return NULL;
-              
-            AddExp *expr = new AddExp;
-            expr->setup(leftExp, rightExp);
-            leftExp = expr;
-
-            //STDOUT << "[d] op + " << (int)&leftExp << " " << (int)&rightExp << endl;
-        }
-        break;
-      case '-': 
-        {
-            // check if previous expression is not NULL
-            if(leftExp == NULL)
-            {
-              error(ERR_LEFT_OP_EMPTY, '-');
-              return NULL;
-            }
-            ps++;
-
-            Expression *rightExp = parseExp(ps);
-            if(rightExp == NULL)
-              return NULL;
-              
-            SubExp *expr = new SubExp;
-            expr->setup(leftExp, rightExp);
-            leftExp = expr;
-
-            //STDOUT << "[d] op - " << (int)&leftExp << " " << (int)&rightExp << endl;
-        }
-        break;
-      case '*': 
-        {
-            // check if previous expression is not NULL
-            if(leftExp == NULL)
-            {
-              error(ERR_LEFT_OP_EMPTY, '*');
-              return NULL;
-            }
-            ps++;
-
-            Expression *rightExp = parseExp(ps);
-            if(rightExp == NULL)
-              return NULL;
-
-            MulExp *expr = new MulExp;
-            expr->setup(leftExp, rightExp);
-            leftExp = expr;
-        }
-        break;
-      case '[':
-        {
-          // check if previous expression is not NULL (expected ixx)
-          if(leftExp == NULL)
-          {
-            error(ERR_LEFT_OP_EMPTY, '[');
-            return NULL;
-          }
-          
-          ps++;
-
-          Expression *_min = parseExp(ps);
-          if(_min == NULL)
-            return NULL;
-          Expression *_max = parseExp(ps);          
-          if(_max == NULL)
-            return NULL;
-            
-          LimitExp *expr = new LimitExp;
-          expr->setup(leftExp, _min, _max );
-          leftExp = expr;
-          
-          //STDOUT << "[d] op [" << _min << " " << _max << " next car='" << *ps << "'" << endl;
-        }
-        break;
-      case 'T':
-        {
-          ps++;
-          // True constant
-          BoolExp *expr = new BoolExp;
-          expr->setup(true);
-          return expr;
-        }
-        break;
-      case 'F':
-        {
-          ps++;
-          // False constant
-          BoolExp *expr = new BoolExp;
-          expr->setup(false);
-          return expr;
-        }
-        break;
-        break;
-      case '?': break;
-      case '(': break;
-      default:
+      int c = in[1] - '0';
+      if(c >= MAX_INPUT_CHANNEL)
       {
-        // check if numeric
-        if(ps[0] - '0' <= 9)
-        {
-          //STDOUT << "Numeric" << endl;
+        error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
+        return NULL;
+      }
+      in += 2;
+//      STDOUT << "i" << endl;
+      return inputTab[c];
+    }
+    break;
+    case 'T':
+    {
+      in++;
 
-          int iData;
-          float fData;
-          int type = getNextNumeric(ps, iData, fData);
-          //STDOUT << type << " " << iData << " " << fData << endl;
-          
-          if(type == 0)
-          {
-            IntegerExp *expr = new IntegerExp;
-            expr->setup(iData);
-            return expr;
-          }
-          else
-          {
-            FloatExp *expr = new FloatExp;
-            expr->setup(fData);
-            return expr;
-          }
+      BoolExp *expr = new BoolExp;
+      expr->setup(true);
+      return expr;
+    }
+    break;
+    case 'F':
+    {
+      in++;
+
+      BoolExp *expr = new BoolExp;
+      expr->setup(false);
+      return expr;
+    }
+    break;
+    default:
+    {
+      if(in[0] - '0' <= 9) // check if numeric
+      {
+        int iData = 0;
+        float fData = .0;
+        int type = getNextNumeric(in, iData, fData);
+        
+        if(type == 0)
+        {
+//          STDOUT << "int" << iData << endl;
+          IntegerExp *expr = new IntegerExp;
+          expr->setup(iData);
+          return expr;
+        }
+        else
+        {
+//          STDOUT << "float" << fData << endl;
+          FloatExp *expr = new FloatExp;
+          expr->setup(fData);
+          return expr;
         }
       }
-      break;
+      else // variable
+      {
+        
+      }
     }
   }
 
-  //STDOUT << "exit parseExp()" << endl;
+  return NULL;
+}
+
+Expression *Evaluator::parseExp(char *&in)
+{
+  Expression *leftExp = parseLiteral(in);
+
+  char op = *in;
+  in++;
+
+  switch(op)
+  {
+    case '+':
+    {
+      Expression *rightExp = parseLiteral(in);
+      AddExp *expr = new AddExp;
+      expr->setup(leftExp, rightExp);
+      return expr;
+    }
+    break;
+    case '-':
+    {
+      Expression *rightExp = parseLiteral(in);
+      SubExp *expr = new SubExp;
+      expr->setup(leftExp, rightExp);
+      return expr;    
+    }
+    break;
+    case '*':
+    {
+      Expression *rightExp = parseLiteral(in);
+      MulExp *expr = new MulExp;
+      expr->setup(leftExp, rightExp);
+      return expr; 
+    }
+    break;
+    case '/':
+    {
+      Expression *rightExp = parseLiteral(in);
+      DivExp *expr = new DivExp;
+      expr->setup(leftExp, rightExp);
+      return expr; 
+    }
+    break;
+    case '[':
+    {
+      Expression *_min = parseLiteral(in);
+      Expression *_max = parseLiteral(in);
+      LimitExp *expr = new LimitExp;
+      expr->setup(leftExp, _min, _max );
+      return expr;
+    }
+    break;
+    case '?':
+    {
+      
+    }
+    break;
+    case '(':
+    {
+      
+    }
+    break;
+  }
+  
   return leftExp;
 }
 
@@ -901,10 +873,8 @@ void Evaluator::clearOuputChannel(uint8_t chan)
     return;
 
   if(expr->couldBeDeleted())
-  {
-//    STDOUT << "delete" << endl;
     delete expr;
-  }
+
   expression_[chan] = NULL;
 }
 
