@@ -1,6 +1,6 @@
 /*
 Tx.cpp - QuarkTx
-Copyright (c) 2015 Thierry & Betrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -130,9 +130,9 @@ bool Tx::setup()
   evaluator_.setupOutputChannel(1, "i1");
   evaluator_.setupOutputChannel(2, "i2");
   evaluator_.setupOutputChannel(3, "i3");
-  evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
+  evaluator_.setupOutputChannel(4, "i4[0;512]");//+i5[512;0]");
 #ifdef TERRATOP
-  evaluator_.setupOutputChannel(5, "i6[1023;0]*i0[0;2]");
+  //evaluator_.setupOutputChannel(5, "i6?0.5:1*i0");
 #endif
 
   

@@ -1,6 +1,6 @@
 /*
 Config.h - QuarkTx
-Copyright (c) 2015 Thierry & Betrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -22,10 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.0.16" 
+#define QUARKTX_VERSION         "0.0.17" 
 #define SERIAL_SPEED            9600
-
-#define DISPLAY_BASE            DEC     // DEC or HEX
 
 #define MAX_MODEL               2
 #define MAX_SERIAL_INPUT_BUFFER 40
@@ -94,6 +92,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define BT_TX_PIN               8
 
 #endif
+
+//
+// Never modify lower defines
+//
 
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
 #define STDOUT *SerialLink::currentStream_
