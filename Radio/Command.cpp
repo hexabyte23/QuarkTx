@@ -56,7 +56,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'h': helpCmd();break;
     case 'i': toggleDisplayInputUpdateCmd();break;
     case 'l': changeCurrentModelCmd(cmdStr+2);break;
-    case 'm': toggleTransmitModeCmd();break;
+    case 'm': toggleTxModeCmd();break;
     case 'o': toggleDisplayOutputUpdateCmd();break;
     case 'r': resetCmd(cmdStr+2);break;
     case 's': setCmd(cmdStr+2);break;
@@ -95,9 +95,9 @@ void Command::helpCmd()
          );
 }
 
-void Command::toggleTransmitModeCmd()
+void Command::toggleTxModeCmd()
 {
-   tx_->onToggleMode();
+   tx_->onToggleTxMode();
 }
 
 void Command::changeCurrentModelCmd(const char *idxStr)

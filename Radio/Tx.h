@@ -95,7 +95,7 @@ class Tx
   void onIrqTimerChange();
   void onChangeCurrentModel(int idx);
   void onDump(const char* param);
-  void onToggleMode();
+  void onToggleTxMode();
   void onToggleDisplayInputUpdate();
   void onToggleDisplayOutputUpdate();
   void onToggleCalibrateSensor();

@@ -258,7 +258,7 @@ void Tx::onToggleDisplayOutputUpdate()
   toggleDisplayOutputUpdate_ = !toggleDisplayOutputUpdate_;
 }
 
-void Tx::onToggleMode()
+void Tx::onToggleTxMode()
 {
   if(toggleTxMode_ == tTransmit)
   {
