@@ -19,7 +19,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <arduino.h>
 #include <stream.h>
-#include "FlashMem.h"
 #include "SerialLink.h"
 #include "Streaming.h"
 #ifdef BLUETOOTH
@@ -56,10 +55,11 @@ bool SerialLink::setup(Command *cmd)
   // reroute printf() output to currentStream_
   stdout = stderr = fdevopen(serialWrite, NULL);
 
-  info(INFO_BOOTING_MESSAGE, QUARKTX_VERSION);   
-  info(INFO_SERIAL);
+  //info(INFO_BOOTING_MESSAGE, QUARKTX_VERSION);
+  STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << F("\nBooting...") << endl;
+  STDOUT << F("Serial\t\tOK") << endl;
 #ifdef BLUETOOTH
-  info(INFO_BT_READY);
+  STDOUT << F("Bluetooth\tOK") << endl;
 #endif
 
   return true;
@@ -68,7 +68,7 @@ bool SerialLink::setup(Command *cmd)
 void SerialLink::clearSerialBuffer() 
 {
   idxBuffer_ = 0;
-  memset((void*)idxBuffer_,0,sizeof(idxBuffer_));
+  memset((void*)serialBuffer_,0,sizeof(serialBuffer_));
 }
 
 void SerialLink::displayPrompt()
@@ -84,7 +84,6 @@ void SerialLink::idle()
   while (currentStream_->available())
   {
     char c = (char)currentStream_->read();
-    //debug("[d] '%d'",c);
     if (c == '\n')
     {
       serialBuffer_[idxBuffer_] = 0;
@@ -92,7 +91,6 @@ void SerialLink::idle()
       
       if(cmd_ != NULL)
       {
-        //debug(" %d Sent\n", idxBuffer_);
         currentStream_->println(serialBuffer_);
         cmd_->onNewCommand(serialBuffer_);
         idxBuffer_ = 0;
@@ -101,16 +99,15 @@ void SerialLink::idle()
     }
     else
     {
-      //debug(" %d %c\n", idxBuffer_, c);
       serialBuffer_[idxBuffer_] = c;
       
       if(idxBuffer_ < MAX_SERIAL_INPUT_BUFFER)
         idxBuffer_++;
       else
       {
-        error(ERR_STRING_TOO_LONG, serialBuffer_);
+        STDOUT << F("e-cstl ") << MAX_SERIAL_INPUT_BUFFER << endl;    // Command string '%s' too long
         idxBuffer_ = 0;
-        break;
+        return;
       }
     }
   }

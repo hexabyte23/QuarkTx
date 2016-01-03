@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Config.h"
 #include "SerialLink.h"
 #include "Tx.h"
-#include "FlashMem.h"
 
 
 Tx::Tx()
@@ -122,22 +121,24 @@ bool Tx::setup()
   bool ret1 = serialLink_.setup(&command_);
   bool ret2 = command_.setup(this);
 
-  onLoadFromEEPROM();
-
-  evaluator_.setup(sensor_, ppmOutputValue_, currentModel_);
-
-  evaluator_.setupOutputChannel(0, "i0");
-  evaluator_.setupOutputChannel(1, "i1");
-  evaluator_.setupOutputChannel(2, "i2");
-  evaluator_.setupOutputChannel(3, "i3");
-  evaluator_.setupOutputChannel(4, "i4[0;512]+i5[512;0]");
-#ifdef TERRATOP
-  evaluator_.setupOutputChannel(5, "(i2>512)?i0:0");
-#endif
+  rcl_.setup(sensor_, ppmOutputValue_, currentModel_);
 
   
+  onLoadFromEEPROM();
+
+/*
+  rcl_.setupRCL(0, "i0");
+  rcl_.setupRCL(1, "i1");
+  rcl_.setupRCL(2, "i2");
+  rcl_.setupRCL(3, "i3");
+  rcl_.setupRCL(4, "i4[0;512]+i5[512;0]");
+#ifdef TERRATOP
+  rcl_.setupRCL(5, "(i2>512)?i0:0");
+#endif
+*/
+  
   mesure_.stop();
-  info(INFO_TX_READY,mesure_.getAverage());
+  STDOUT << F("Tx\t\tOK\t") << mesure_.getAverage() << F(" µs") << endl;
   
   return ret1 | ret2;
 }
@@ -190,7 +191,7 @@ void Tx::idle()
   if(toggleTxMode_ == tDebug)
     mesure_.start();
 
-  evaluator_.idle();
+  rcl_.idle();
   ledBlinkIdle();
   serialLink_.idle();
 
@@ -229,7 +230,7 @@ void Tx::ledBlinkIdle()
 
 void Tx::displayInputUpdate()
 {
-  STDOUT << "<\t";
+  STDOUT << F("<\t");
   
   for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
     STDOUT << sensor_[idx]->getValue() << "\t";
@@ -244,7 +245,7 @@ void Tx::onToggleDisplayInputUpdate()
 
 void Tx::displayOutputUpdate()
 {
-  STDOUT << ">\t";
+  STDOUT << F(">\t");
 
   for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     STDOUT << ppmOutputValue_[idx] << "\t";
@@ -262,14 +263,14 @@ void Tx::onToggleMode()
   if(toggleTxMode_ == tTransmit)
   {
     toggleTxMode_ = tDebug;
-    info(INFO_SWITCH_MODE_SETTINGS);
+    STDOUT << F("Mode switched to 'debug'") << endl;
     
     mesure_.reset();
   }
   else
   {
     toggleTxMode_ = tTransmit;
-    info(INFO_SWITCH_MODE_TRANSMIT);
+    STDOUT << F("Mode switched to 'transmit'") << endl;
     
     mesure_.reset();
   }
@@ -279,11 +280,11 @@ void Tx::onChangeCurrentModel(int idx)
 {
   if(idx < MAX_MODEL)
   {
-    info(INFO_LOAD_MODEL,idx);
+    STDOUT << F("Load model ") << idx << endl;
     currentModel_ = &modelList_[idx];
   }
   else
-    error(ERR_BAD_PARAM_IDX_HIGH, idx, MAX_MODEL);
+    STDOUT << F("e-bp ") << idx << (" ") << MAX_MODEL-1 << endl;  // Bad parameter
 }
 
 void Tx::dumpEEPROM()
@@ -320,7 +321,7 @@ void Tx::dumpModel()
 
 void Tx::dumpSensor()
 {
-  info(INFO_SENSOR, MAX_INPUT_CHANNEL);
+  STDOUT << F("Sensors (") << MAX_INPUT_CHANNEL << F(")\n# Pin   Trim    Min     Max    Simu") << endl;
 
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
   {
@@ -338,13 +339,13 @@ void Tx::dumpRCL(const char* param)
     for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     {
       STDOUT << "# " << idx << endl;
-      evaluator_.dump(idx);
+      rcl_.dump(idx);
       STDOUT << endl;
     }
   }
   else
   {
-    evaluator_.dump(atoi(param+2));
+    rcl_.dump(atoi(param+2));
     STDOUT << endl;
   }
 }
@@ -378,6 +379,7 @@ void Tx::calibrateSensor()
 
     STDOUT << "{" << sensor_[idx]->getMinCalibration() << "\t" << sensor_[idx]->getMaxCalibration() << "}\t";
   }
+  
   STDOUT << endl;
 }
 
@@ -385,21 +387,27 @@ void Tx::onLoadFromEEPROM()
 {
   uint8_t i;
   uint16_t addr = 0L;
-  
+
+  // Get current model used index
   EEPROM.get(addr, i);
   if(i >= MAX_MODEL)    // EEPROM is corrupted
   {
     i = 0;
-    error(ERR_EEPROM_DATA_CORRUPTED);
+    STDOUT << F("e-edic") << endl;    //  EEPROM data is corrupted
     return;
   }
   currentModel_ = &modelList_[i];
   addr += sizeof(uint8_t);
-  
+
+  // Get Model dat
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
     addr = modelList_[idx].getFromEEPROM(addr);
+
+  // Get Sensors data
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     addr = sensor_[idx]->getFromEEPROM(addr);
+  
+    rcl_.loadFromEEPROM();
 }
 
 void Tx::onSaveToEEPROM()
@@ -431,7 +439,7 @@ void Tx::resetSensor()
 void Tx::resetRCL()
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    evaluator_.clearOuputChannel(idx);
+    rcl_.clearRCL(idx);
 }
 
 void Tx::onReset(const char* param)
@@ -466,7 +474,7 @@ void Tx::onToggleSimulation()
 {
   if(toggleTxMode_ == tTransmit)
   {
-    error(ERR_DEBUG_FIRST);
+    STDOUT << F("e-sdf") << endl;    //  switch to simulation failed, switch in debug mode first
     return;
   }
   
@@ -475,13 +483,15 @@ void Tx::onToggleSimulation()
 
   if(toggleSimulation_)
   {
-    info(INFO_SIMU_ON);
+    STDOUT << F("Simulation ON") << endl;
+    
     for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->setSimulation(true);
   }
   else
   {
-    info(INFO_SIMU_OFF);
+    STDOUT << F("Simulation OFF") << endl;
+
     for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->setSimulation(false);
   }
@@ -504,13 +514,13 @@ void Tx::onSetRCL(uint8_t chan, const char* rclCode)
   if(chan < 0) return;
   if(rclCode[0] == 0)
   {
-    STDOUT << chan << " cleaned" << endl;
-    evaluator_.clearOuputChannel(chan);
+    STDOUT << chan << F(" cleaned") << endl;
+    rcl_.clearRCL(chan);
   }
   else
   {
     STDOUT << chan << " " << rclCode << endl;
-    evaluator_.setupOutputChannel(chan, rclCode); 
+    rcl_.setupRCL(chan, rclCode); 
   }
 }
 

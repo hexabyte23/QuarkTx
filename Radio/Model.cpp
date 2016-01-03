@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <EEPROM.h>
 #include "Model.h"
 #include "SerialLink.h"
-#include "FlashMem.h"
-
 
 //////////////////////////////////////////////////////////////
 
@@ -129,7 +127,8 @@ void Model::setRevertValue(uint8_t channel, bool value)
 
 void Model::dump()
 {
-  info(INFO_DUMP_SERVO_HEADER);
+  STDOUT << F("Servo\n# Min   Max   Neutral   Rev") << endl;
+  
   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     STDOUT << idx << " " << channel_[idx].servo_.minOutCurse_ << "\t" << 

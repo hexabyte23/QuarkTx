@@ -35,9 +35,9 @@ struct Variant
   Variant(float fData) : fData_(fData), type_(tFloat) {}
   Variant(bool bData) : bData_(bData), type_(tBool) {}
 
-  uint16_t convertInt() const;
-  float convertFloat() const;
-  bool convertBool() const;
+  uint16_t convert2Int() const;
+  float convert2Float() const;
+  bool convert2Bool() const;
 
   friend Variant operator < (const Variant &l, const Variant &r);
   friend Variant operator > (const Variant &l, const Variant &r);
@@ -230,8 +230,10 @@ public:
 
   Evaluator();
   void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
-  bool setupOutputChannel(uint8_t chan, const char *expStr);
-  void clearOuputChannel(uint8_t chan);
+  bool setupRCL(uint8_t chan, const char *expStr);
+  bool saveToEEPROM(uint8_t chan, const char *expStr);
+  bool loadFromEEPROM();
+  void clearRCL(uint8_t chan);
   void idle();
   uint16_t evaluate();
   void dump(uint8_t outChannelID);

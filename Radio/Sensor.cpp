@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <EEPROM.h>
 #include "SerialLink.h"
 #include "Sensor.h"
-#include "FlashMem.h"
+
 
 Sensor::Sensor()
 {

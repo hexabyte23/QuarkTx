@@ -50,7 +50,7 @@ class Tx
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
 
   // For mixers, dual rate, expo...
-  Evaluator evaluator_;
+  Evaluator rcl_;
 
   Mesure mesure_;
 

@@ -18,8 +18,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "Evaluator.h"
-#include "FlashMem.h"
 #include "SerialLink.h"
+#include <EEPROM.h>
 
 //////////////////////////////////////////////////////////////////////////
 // 
@@ -63,7 +63,7 @@ float fmap(float x, float in_min, float in_max, float out_min, float out_max)
 
 //////////////////////////////////////////////////////////////////////////
 
-uint16_t Variant::convertInt() const
+uint16_t Variant::convert2Int() const
 {
   switch(type_)
   {
@@ -75,7 +75,7 @@ uint16_t Variant::convertInt() const
   return 0;
 }
 
-float Variant::convertFloat() const
+float Variant::convert2Float() const
 {
   switch(type_)
   {
@@ -87,7 +87,7 @@ float Variant::convertFloat() const
   return 0;
 }
 
-bool Variant::convertBool() const
+bool Variant::convert2Bool() const
 {
   switch(type_)
   {
@@ -367,29 +367,6 @@ Print & operator << (Print &obj, const Variant &arg)
 
 //////////////////////////////////////////////////////////////////////////
 
-void IntegerExp::dump() const
-{
-  enterDump();
-  STDOUT << "i " << data_.iData_;
-  leaveDump();
-}
-
-void FloatExp::dump() const
-{
-  enterDump();
-  STDOUT << "f " << data_.fData_;
-  leaveDump();
-}
-
-void BoolExp::dump() const
-{
-  enterDump();
-  STDOUT << "b " << data_.bData_;
-  leaveDump();
-}
-
-//////////////////////////////////////////////////////////////////////////
-
 SubExpression::~SubExpression()
 {
   if(expr_->couldBeDeleted())
@@ -411,6 +388,29 @@ void SubExpression::dump() const
   enterDump();
   STDOUT << "( ";
   expr_->dump();
+  leaveDump();
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+void IntegerExp::dump() const
+{
+  enterDump();
+  STDOUT << "i " << data_.iData_;
+  leaveDump();
+}
+
+void FloatExp::dump() const
+{
+  enterDump();
+  STDOUT << "f " << data_.fData_;
+  leaveDump();
+}
+
+void BoolExp::dump() const
+{
+  enterDump();
+  STDOUT << "b " << data_.bData_;
   leaveDump();
 }
 
@@ -446,7 +446,7 @@ void IfExp::setup(const Expression *condition, const Expression *succeed, const 
 
 Variant IfExp::evaluate() const
 {
-  return (condition_->evaluate().convertBool())?succeed_->evaluate():fail_->evaluate();
+  return (condition_->evaluate().convert2Bool())?succeed_->evaluate():fail_->evaluate();
 }
 
 void IfExp::dump() const
@@ -699,7 +699,7 @@ void LimitExp::setup(const Expression *data, const Expression *min, const Expres
 
 Variant LimitExp::evaluate() const
 {
-  Variant ret((uint16_t)fmap(data_->evaluate().convertFloat(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convertFloat(), max_->evaluate().convertFloat()));
+  Variant ret((uint16_t)fmap(data_->evaluate().convert2Float(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Float(), max_->evaluate().convert2Float()));
   return ret;
 }
 
@@ -764,10 +764,11 @@ Expression *Evaluator::parseNumeric(char *&in)
     *p = *in;                       // copy car into buf
     //STDOUT << *p;
     
-    p++;
-    in++;
-    len++;
+    p++, in++, len++;
   }
+
+  if((len == 0) || (buf[0] == 0))
+    return NULL;
     
   if(type == 0)
   {
@@ -810,7 +811,7 @@ Expression *Evaluator::parseOperand(char *&in)
       int c = in[1] - '0';
       if(c >= MAX_INPUT_CHANNEL)
       {
-        error(ERR_BAD_PARAM_IDX_HIGH, c, MAX_INPUT_CHANNEL-1);
+        STDOUT << F("e-bp ") << c << (" ") << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
         return NULL;
       }
       in += 2; // ix
@@ -962,21 +963,31 @@ Expression *Evaluator::parseExp(char *&in)
   return leftExp;
 }
 
-bool Evaluator::setupOutputChannel(uint8_t chan, const char *str)
+bool Evaluator::setupRCL(uint8_t chan, const char *str)
 {
   char buff[100];
   char *buf = &buff[0];
   strncpy(buf, str, sizeof(buff));
   
   if(expression_[chan] != NULL)
-      clearOuputChannel(chan);
+      clearRCL(chan);
       
   expression_[chan] = parseExp(buf);
 
   return (expression_[chan] != NULL);
 }
 
-void Evaluator::clearOuputChannel(uint8_t chan)
+bool Evaluator::saveToEEPROM(uint8_t chan, const char *expStr)
+{
+  
+}
+
+bool Evaluator::loadFromEEPROM()
+{
+  
+}
+
+void Evaluator::clearRCL(uint8_t chan)
 {
   Expression *expr = expression_[chan];
   if(expr == NULL)
@@ -993,7 +1004,7 @@ void Evaluator::idle()
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
     if(expression_[idx] != NULL)
-      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().convertInt());
+      outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().convert2Int());
     else
       outputValueRef_[idx] = PPM_MIN_VALUE;
   }
@@ -1010,6 +1021,6 @@ void Evaluator::dump(uint8_t outChannelID)
 void Evaluator::reset()
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    clearOuputChannel(idx);
+    clearRCL(idx);
 }
 
