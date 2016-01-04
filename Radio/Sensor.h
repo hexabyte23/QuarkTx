@@ -54,8 +54,8 @@ class Sensor
   virtual void setup(uint8_t pin) = 0;
   virtual void calibrate() = 0;
   virtual uint16_t getValue() const = 0;
-  virtual uint16_t putToEEPROM(uint16_t addr) const;
-  virtual uint16_t getFromEEPROM(uint16_t addr);
+  virtual uint16_t saveToEEPROM(uint16_t addr) const;
+  virtual uint16_t loadFromEEPROM(uint16_t addr);
   virtual void reset();
 };
 

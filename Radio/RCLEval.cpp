@@ -17,7 +17,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Evaluator.h"
+#include "Tx.h"
+#include "RCLEval.h"
 #include "SerialLink.h"
 #include <EEPROM.h>
 
@@ -28,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //////////////////////////////////////////////////////////////////////////
 
 static uint8_t g_tab4Dump = 0;
+static bool g_hierachyDump = true;
 
 void tabDump()
 {
@@ -37,6 +39,9 @@ void tabDump()
 
 void enterDump()
 {
+  if(!g_hierachyDump)
+    return;
+    
   STDOUT << endl;
   tabDump();
   STDOUT << "{" << endl;
@@ -46,6 +51,9 @@ void enterDump()
 
 void leaveDump()
 {
+  if(!g_hierachyDump)
+    return;
+    
   g_tab4Dump--;
   STDOUT << endl;
   tabDump();
@@ -386,8 +394,9 @@ Variant SubExpression::evaluate() const
 void SubExpression::dump() const
 {
   enterDump();
-  STDOUT << "( ";
+  STDOUT << "(";
   expr_->dump();
+  STDOUT << ")";
   leaveDump();
 }
 
@@ -396,30 +405,31 @@ void SubExpression::dump() const
 void IntegerExp::dump() const
 {
   enterDump();
-  STDOUT << "i " << data_.iData_;
+  STDOUT << data_.iData_;
   leaveDump();
 }
 
 void FloatExp::dump() const
 {
   enterDump();
-  STDOUT << "f " << data_.fData_;
+  STDOUT << data_.fData_;
   leaveDump();
 }
 
 void BoolExp::dump() const
 {
   enterDump();
-  STDOUT << "b " << data_.bData_;
+  STDOUT << data_.bData_;
   leaveDump();
 }
 
 //////////////////////////////////////////////////////////////////////////
+extern Tx tx;
 
 void SensorInputExp::dump() const
 {
   enterDump();
-  STDOUT << "si " << sensor_->getPin();
+  STDOUT << "i" << tx.getSensorIndex(sensor_->getPin());
   leaveDump();
 }
 
@@ -452,9 +462,10 @@ Variant IfExp::evaluate() const
 void IfExp::dump() const
 {
   enterDump();
-  STDOUT << "if";
   condition_->dump();
+  STDOUT << "?";
   succeed_->dump();
+  STDOUT << ":";
   fail_->dump();
   leaveDump();
 }
@@ -484,8 +495,8 @@ Variant AddExp::evaluate() const
 void AddExp::dump() const
 {
   enterDump();
-  STDOUT << "+";
   left_->dump();
+  STDOUT << "+";
   right_->dump();
   leaveDump();
 }
@@ -515,8 +526,8 @@ Variant SubExp::evaluate() const
 void SubExp::dump() const
 {
   enterDump();
-  STDOUT << "-";
   left_->dump();
+  STDOUT << "-";
   right_->dump();
   leaveDump();
 }
@@ -546,8 +557,8 @@ Variant MulExp::evaluate() const
 void MulExp::dump() const
 {
   enterDump();
-  STDOUT << "*";
   left_->dump();
+  STDOUT << "*";
   right_->dump();
   leaveDump();
 }
@@ -577,8 +588,8 @@ Variant DivExp::evaluate() const
 void DivExp::dump() const
 {
   enterDump();
-  STDOUT << "/";
   left_->dump();
+  STDOUT << "/";
   right_->dump();
   leaveDump();
 }
@@ -608,8 +619,8 @@ Variant EqualExp::evaluate() const
 void EqualExp::dump() const
 {
   enterDump();
-  STDOUT << "=";
   left_->dump();
+  STDOUT << "=";
   right_->dump();
   leaveDump();
 }
@@ -639,8 +650,8 @@ Variant LowerThanExp::evaluate() const
 void LowerThanExp::dump() const
 {
   enterDump();
-  STDOUT << "<";
   left_->dump();
+  STDOUT << "<";
   right_->dump();
   leaveDump();
 }
@@ -670,8 +681,8 @@ Variant GreaterThanExp::evaluate() const
 void GreaterThanExp::dump() const
 {
   enterDump();
-  STDOUT << ">";
   left_->dump();
+  STDOUT << ">";
   right_->dump();
   leaveDump();
 }
@@ -706,21 +717,23 @@ Variant LimitExp::evaluate() const
 void LimitExp::dump() const
 {
   enterDump();
-  STDOUT << "[]";
   data_->dump();
+  STDOUT << "[";
   min_->dump();
+  STDOUT << ";";
   max_->dump();
+  STDOUT << "]";
   leaveDump();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-Evaluator::Evaluator()
+RCLEval::RCLEval()
 {
   memset((void*)expression_,0,sizeof(expression_));
 }
 
-void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel)
+void RCLEval::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel)
 {
   sensorRef_ = sensorRef;
   outputValueRef_ = outputValueRef;
@@ -742,7 +755,7 @@ void Evaluator::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *curre
  * 
  */
 
-Expression *Evaluator::parseNumeric(char *&in)
+Expression *RCLEval::parseNumeric(char *&in)
 {
   uint8_t type = 0;                 // 0 = integer, 1 = float
   char buf[] = {0,0,0,0,0,0,0};     // 6 digits + \0
@@ -788,7 +801,7 @@ Expression *Evaluator::parseNumeric(char *&in)
   return NULL;
 }
 
-Expression *Evaluator::parseOperand(char *&in)
+Expression *RCLEval::parseOperand(char *&in)
 {  
   switch(*in)
   {
@@ -864,7 +877,7 @@ Expression *Evaluator::parseOperand(char *&in)
   return NULL;
 }
 
-Expression *Evaluator::parseExp(char *&in)
+Expression *RCLEval::parseExp(char *&in)
 {
   //STDOUT << "in='" << *in << "'" << endl;
   
@@ -963,7 +976,7 @@ Expression *Evaluator::parseExp(char *&in)
   return leftExp;
 }
 
-bool Evaluator::setupRCL(uint8_t chan, const char *str)
+bool RCLEval::setupRCL(uint8_t chan, const char *str)
 {
   char buff[100];
   char *buf = &buff[0];
@@ -977,17 +990,20 @@ bool Evaluator::setupRCL(uint8_t chan, const char *str)
   return (expression_[chan] != NULL);
 }
 
-bool Evaluator::saveToEEPROM(uint8_t chan, const char *expStr)
+bool RCLEval::saveToEEPROM(uint16_t addr) const
+{
+  STDOUT << F("Save RCL") << endl;
+  g_hierachyDump = false;
+  dump(0);
+  g_hierachyDump = true;
+}
+
+bool RCLEval::loadFromEEPROM(uint16_t addr)
 {
   
 }
 
-bool Evaluator::loadFromEEPROM()
-{
-  
-}
-
-void Evaluator::clearRCL(uint8_t chan)
+void RCLEval::clearRCL(uint8_t chan)
 {
   Expression *expr = expression_[chan];
   if(expr == NULL)
@@ -999,7 +1015,7 @@ void Evaluator::clearRCL(uint8_t chan)
   expression_[chan] = NULL;
 }
 
-void Evaluator::idle()
+void RCLEval::idle()
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
   {
@@ -1010,7 +1026,7 @@ void Evaluator::idle()
   }
 }
 
-void Evaluator::dump(uint8_t outChannelID)
+void RCLEval::dump(uint8_t outChannelID) const
 {
   g_tab4Dump = 0;
   
@@ -1018,7 +1034,7 @@ void Evaluator::dump(uint8_t outChannelID)
     expression_[outChannelID]->dump();
 }
 
-void Evaluator::reset()
+void RCLEval::reset()
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
     clearRCL(idx);

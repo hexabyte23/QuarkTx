@@ -17,12 +17,13 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef EVALUATOR_H
-#define EVALUATOR_H
+#ifndef RCLEVAL_H
+#define RCLEVAL_H
 
 #include <arduino.h>
 #include "Sensor.h"
 #include "Model.h"
+#include "Tx.h"
 
 struct Variant
 {
@@ -214,7 +215,7 @@ public:
   virtual void dump() const;
 };
 
-class Evaluator
+class RCLEval
 {    
   Sensor **sensorRef_;
   uint16_t *outputValueRef_;
@@ -228,15 +229,15 @@ class Evaluator
   
 public:
 
-  Evaluator();
+  RCLEval();
   void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
   bool setupRCL(uint8_t chan, const char *expStr);
-  bool saveToEEPROM(uint8_t chan, const char *expStr);
-  bool loadFromEEPROM();
+  bool saveToEEPROM(uint16_t addr) const;
+  bool loadFromEEPROM(uint16_t addr);
   void clearRCL(uint8_t chan);
   void idle();
   uint16_t evaluate();
-  void dump(uint8_t outChannelID);
+  void dump(uint8_t outChannelID) const;
   void reset();
 };
 

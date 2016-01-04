@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Command.h"
 #include "Model.h"
 #include "Sensor.h"
-#include "Evaluator.h"
+#include "RCLEval.h"
 #include "Mesure.h"
 
 
@@ -50,7 +50,7 @@ class Tx
   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
 
   // For mixers, dual rate, expo...
-  Evaluator rcl_;
+  RCLEval rcl_;
 
   Mesure mesure_;
 
@@ -102,7 +102,7 @@ class Tx
   void onToggleSimulation();
   void onLoadFromEEPROM();
   void onSaveToEEPROM();
-  void onReset(const char* param);
+  void onSoftwareReset(const char* param);
   void onSetTrimSensorValue(uint8_t sensorID, int value);
   void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
   void onSetRCL(uint8_t chan, const char* rclCode);
@@ -111,6 +111,7 @@ class Tx
   void idle();
   Model* getCurrentModel() const {return currentModel_;}
   uint8_t getModelIndex(Model *model);
+  uint8_t getSensorIndex(uint8_t pinPort);
 };
 
 #endif

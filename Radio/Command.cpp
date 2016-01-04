@@ -49,7 +49,7 @@ void Command::onNewCommand(const char* cmdStr)
   
   switch(cmdStr[0])
   {
-    case 'a': loadModelsFromEEPROMCmd();break;
+    case 'a': loadFromEEPROMCmd();break;
     case 'c': toggleCalibrateAnalogicSensorCmd();break;
     case 'd': dumpCmd(cmdStr+2);break;
     case 'f': getFreeMemoryCmd();break;        
@@ -60,7 +60,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'o': toggleDisplayOutputUpdateCmd();break;
     case 'r': resetCmd(cmdStr+2);break;
     case 's': setCmd(cmdStr+2);break;
-    case 'v': saveModelsToEEPROMCmd();break;
+    case 'v': saveToEEPROMCmd();break;
     case 'w': toggleSimulation();break;
 
     default:
@@ -73,7 +73,7 @@ void Command::helpCmd()
 {
   STDOUT << F(
          "help command :\n"
-         "a: load cur. model from EEPROM\n"
+         "a: load from EEPROM\n"
          "c: toggle sensors calibration\n" 
          "d [m]|[e]|[s]|[l]: dump model, EEPROM, sensor or RCL\n"
          "f: get free memory\n"
@@ -90,7 +90,7 @@ void Command::helpCmd()
          "s r chan val: set cur. model servo revert\n"
          "s t sensorID val: set sensor trim\n"
          "s u sensorID val: set simulate value\n"
-         "v: save cur. model to EEPROM\n"
+         "v: save to EEPROM\n"
          "w: toggle simulation mode\n"
          );
 }
@@ -129,16 +129,16 @@ void Command::toggleCalibrateAnalogicSensorCmd()
   tx_->onToggleCalibrateSensor();
 }
 
-void Command::loadModelsFromEEPROMCmd()
+void Command::loadFromEEPROMCmd()
 {
   tx_->onLoadFromEEPROM();
-  STDOUT << F("Current model load from EEPROM") << endl;
+  STDOUT << F("Load from EEPROM") << endl;
 }
 
-void Command::saveModelsToEEPROMCmd()
+void Command::saveToEEPROMCmd()
 {
   tx_->onSaveToEEPROM();
-  STDOUT << F("Current model saved to EEPROM") << endl;
+  STDOUT << F("Saved to EEPROM") << endl;
 }
 
 uint8_t getChannel(const char *str)
@@ -205,7 +205,7 @@ void Command::setCmd(const char* param)
 
 void Command::resetCmd(const char* param)
 {
-  tx_->onReset(param);
+  tx_->onSoftwareReset(param);
   STDOUT << F("Ok") << endl;
 }
 

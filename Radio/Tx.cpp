@@ -32,7 +32,7 @@ toggleDisplayOutputUpdate_(false),
 toggleCalibrateSensor_(false),
 toggleSimulation_(false)
 {
-  onReset("");
+  onSoftwareReset("");
 }
 
 void Tx::setupInputDevice()
@@ -388,7 +388,7 @@ void Tx::onLoadFromEEPROM()
   uint8_t i;
   uint16_t addr = 0L;
 
-  // Get current model used index
+  // get current model used index
   EEPROM.get(addr, i);
   if(i >= MAX_MODEL)    // EEPROM is corrupted
   {
@@ -399,29 +399,35 @@ void Tx::onLoadFromEEPROM()
   currentModel_ = &modelList_[i];
   addr += sizeof(uint8_t);
 
-  // Get Model dat
+  // get Model data
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
-    addr = modelList_[idx].getFromEEPROM(addr);
+    addr = modelList_[idx].loadFromEEPROM(addr);
 
-  // Get Sensors data
+  // get Sensors data
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-    addr = sensor_[idx]->getFromEEPROM(addr);
+    addr = sensor_[idx]->loadFromEEPROM(addr);
   
-    rcl_.loadFromEEPROM();
+  rcl_.loadFromEEPROM(addr);
 }
 
 void Tx::onSaveToEEPROM()
 {
   uint8_t i = getModelIndex(currentModel_);
   uint16_t addr = 0L;
-    
+
+  // save current model index
   EEPROM.put(addr, i);
   addr += sizeof(uint8_t);
 
+  // save Model data
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
-    addr = modelList_[idx].putToEEPROM(addr);
+    addr = modelList_[idx].saveToEEPROM(addr);
+
+  // save Sensor data
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-    addr = sensor_[idx]->putToEEPROM(addr);
+    addr = sensor_[idx]->saveToEEPROM(addr);
+
+  rcl_.saveToEEPROM(addr);
 }
 
 void Tx::resetModel()
@@ -442,7 +448,7 @@ void Tx::resetRCL()
     rcl_.clearRCL(idx);
 }
 
-void Tx::onReset(const char* param)
+void Tx::onSoftwareReset(const char* param)
 {
   switch(param[0])
   {
@@ -458,6 +464,17 @@ void Tx::onReset(const char* param)
   toggleTxMode_ = tTransmit;
 
   setupInputDevice();
+}
+
+uint8_t Tx::getSensorIndex(uint8_t pinPort)
+{
+  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+  {
+    if(sensor_[idx]->getPin() == pinPort)
+      return idx;
+  }
+
+  return -1;
 }
 
 uint8_t Tx::getModelIndex(Model *model)

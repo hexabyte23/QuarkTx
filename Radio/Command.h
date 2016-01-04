@@ -38,8 +38,8 @@ class Command
   void changeCurrentModelCmd(const char* modelIdx);
   void dumpCmd(const char* param);
   void toggleCalibrateAnalogicSensorCmd();
-  void loadModelsFromEEPROMCmd();
-  void saveModelsToEEPROMCmd();
+  void loadFromEEPROMCmd();
+  void saveToEEPROMCmd();
   void setCmd(const char* param);
   void toggleSimulation();
   void resetCmd(const char* param);

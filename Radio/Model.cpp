@@ -50,29 +50,29 @@ void ServoCommand::reset()
   isRevert_ = false; 
 }
 
-uint16_t ServoCommand::putToEEPROM(uint16_t addr)
+uint16_t ServoCommand::saveToEEPROM(uint16_t addr) const
 {
-  EEPROM.put(addr,maxOutCurse_);
+  EEPROM.put(addr, maxOutCurse_);
   addr += sizeof(uint16_t);
-  EEPROM.put(addr,minOutCurse_);
+  EEPROM.put(addr, minOutCurse_);
   addr += sizeof(uint16_t);
-  EEPROM.put(addr,neutral_);
+  EEPROM.put(addr, neutral_);
   addr += sizeof(int16_t);
-  EEPROM.put(addr,isRevert_);
+  EEPROM.put(addr, isRevert_);
   addr += sizeof(bool);
 
   return addr;
 }
 
-uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
+uint16_t ServoCommand::loadFromEEPROM(uint16_t addr)
 {
-  EEPROM.get(addr,maxOutCurse_);
+  EEPROM.get(addr, maxOutCurse_);
   addr += sizeof(uint16_t);
-  EEPROM.get(addr,minOutCurse_);
+  EEPROM.get(addr, minOutCurse_);
   addr += sizeof(uint16_t);
-  EEPROM.get(addr,neutral_);
+  EEPROM.get(addr, neutral_);
   addr += sizeof(int16_t);
-  EEPROM.get(addr,isRevert_);
+  EEPROM.get(addr, isRevert_);
   addr += sizeof(bool);
 
   return addr;
@@ -80,14 +80,14 @@ uint16_t ServoCommand::getFromEEPROM(uint16_t addr)
 
 //////////////////////////////////////////////////////////////
 
-uint16_t OutputChannel::putToEEPROM(uint16_t addr)
+uint16_t OutputChannel::saveToEEPROM(uint16_t addr) const
 {
-  return servo_.putToEEPROM(addr);
+  return servo_.saveToEEPROM(addr);
 }
 
-uint16_t OutputChannel::getFromEEPROM(uint16_t addr)
+uint16_t OutputChannel::loadFromEEPROM(uint16_t addr)
 {
-  return servo_.getFromEEPROM(addr);
+  return servo_.loadFromEEPROM(addr);
 }
 
 //////////////////////////////////////////////////////////////
@@ -144,18 +144,18 @@ void Model::reset()
     channel_[idx].servo_.reset();
 }
 
-uint16_t Model::putToEEPROM(uint16_t addr)
+uint16_t Model::saveToEEPROM(uint16_t addr) const
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    addr = channel_[idx].putToEEPROM(addr);
+    addr = channel_[idx].saveToEEPROM(addr);
 
   return addr;
 }
 
-uint16_t Model::getFromEEPROM(uint16_t addr)
+uint16_t Model::loadFromEEPROM(uint16_t addr)
 {
   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    addr = channel_[idx].getFromEEPROM(addr);
+    addr = channel_[idx].loadFromEEPROM(addr);
 
   return addr;
 }

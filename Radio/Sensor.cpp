@@ -36,7 +36,7 @@ void Sensor::calibration(uint16_t val)
     calibrMax_ = val;
 }
 
-uint16_t Sensor::putToEEPROM(uint16_t addr) const
+uint16_t Sensor::saveToEEPROM(uint16_t addr) const
 {
   EEPROM.put(addr,pin_);
   addr += sizeof(uint8_t);
@@ -50,7 +50,7 @@ uint16_t Sensor::putToEEPROM(uint16_t addr) const
   return addr;
 }
 
-uint16_t Sensor::getFromEEPROM(uint16_t addr)
+uint16_t Sensor::loadFromEEPROM(uint16_t addr)
 {
   EEPROM.get(addr,pin_);
   addr += sizeof(uint8_t);
