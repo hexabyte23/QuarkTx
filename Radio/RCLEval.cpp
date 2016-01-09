@@ -104,7 +104,7 @@ bool Variant::convert2Bool() const
     case Variant::tBool: return bData_;
   }
 
-  return 0;
+  return false;
 }
   
 Variant operator < (const Variant &l, const Variant &r)
