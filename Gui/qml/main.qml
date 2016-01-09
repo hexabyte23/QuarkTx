@@ -3,41 +3,26 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtMultimedia 5.0
 
-ApplicationWindow {
-    id: osrc_app
+ApplicationWindow
+{
+    id: quarkTxApp
     visible: true
-    width: 640
-    height: 480
     title: qsTr("QuarkTx")
+    height: 480
+    width: 320
 
-    Header {
-        modelname: "Supra pro competition"
-    }
 
-    Item {
-        x: 60
-        y: 88
-        //width: 500
-        //height: 400
-        Loader {
-            id: load
+    LauncherList
+    {
+        id: ll
+        anchors.fill: parent
+
+        Component.onCompleted:
+        {
+            addExample("System", "EEPROM, Dump, free memory ...",  Qt.resolvedUrl("qrc:/qml/System.qml"));
+            addExample("Tx sensors", "Setup",  Qt.resolvedUrl("qrc:/qml/Sensors.qml"));
+            addExample("Models", "Setup",  Qt.resolvedUrl("qrc:/qml/Models.qml"));
+            addExample("Radio Control Language", "Setup",  Qt.resolvedUrl("qrc:/qml/rcl.qml"));
         }
-
-    }
-
-    MainContent {
-        id: main_window
-    }
-
-    TrimStatus {
-
-    }
-
-    Footer {
-
-    }
-
-    Component.onCompleted: {
-        console.log("ready")
     }
 }

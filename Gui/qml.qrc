@@ -26,5 +26,15 @@
         <file>artwork/preferences-icon.png</file>
         <file>artwork/properties-icon.png</file>
         <file alias="bluetooth">artwork/bluetooth-icon.png</file>
+        <file>qml/LauncherList.qml</file>
+        <file>qml/SimpleLauncherDelegate.qml</file>
+        <file>artwork/back.png</file>
+        <file>artwork/checkmark.png</file>
+        <file>artwork/next.png</file>
+        <file>artwork/slider_handle.png</file>
+        <file>artwork/tab.png</file>
+        <file>qml/Models.qml</file>
+        <file>qml/Sensors.qml</file>
+        <file>qml/System.qml</file>
     </qresource>
 </RCC>

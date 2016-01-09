@@ -13,7 +13,8 @@ SOURCES +=  src/main.cpp \
 HEADERS +=  src/global.h \
             src/main.h \
     src/mainmodel.h \
-    src/batterymodel.h
+    src/batterymodel.h \
+    qml/shared/shared.h
 
 RESOURCES += qml.qrc
 

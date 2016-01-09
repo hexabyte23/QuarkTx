@@ -52,7 +52,9 @@ void Init(const QApplication &app)
     QString manufacturer;
     QString serialNumber;
 
-    foreach (const QSerialPortInfo &serialPortInfo, serialPortInfoList) {
+/*
+    foreach (const QSerialPortInfo &serialPortInfo, serialPortInfoList)
+    {
         description = serialPortInfo.description();
         manufacturer = serialPortInfo.manufacturer();
         serialNumber = serialPortInfo.serialNumber();
@@ -66,6 +68,7 @@ void Init(const QApplication &app)
             << QObject::tr("Product Identifier: ") << (serialPortInfo.hasProductIdentifier() ? QByteArray::number(serialPortInfo.productIdentifier(), 16) : blankString) << endl
             << QObject::tr("Busy: ") << (serialPortInfo.isBusy() ? QObject::tr("Yes") : QObject::tr("No")) << endl;
     }
+    */
 }
 
 int main(int argc, char *argv[])
