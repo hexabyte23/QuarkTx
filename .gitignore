@@ -27,6 +27,5 @@
 *.out
 *.app
 
-# QtCreator
+# gnuplot 2D and 3D curves
 build-QuarkTx*
-*.pro.user
