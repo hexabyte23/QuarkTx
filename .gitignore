@@ -28,4 +28,4 @@
 *.app
 
 # gnuplot 2D and 3D curves
-*d.png
+build-QuarkTx*
