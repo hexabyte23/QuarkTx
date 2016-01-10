@@ -91,7 +91,7 @@ void SerialLink::idle()
       
       if(cmd_ != NULL)
       {
-        currentStream_->println(serialBuffer_);
+        //currentStream_->println(serialBuffer_);
         cmd_->onNewCommand(serialBuffer_);
         idxBuffer_ = 0;
         displayPrompt();
