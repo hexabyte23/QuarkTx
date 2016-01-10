@@ -44,6 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LED_BLINK_PERIOD        500    // millisec
 
+#define SERIAL_END_CMD_CHAR     '\r'
+
 //
 //
 //  Put here after all definitions relative to your board configuration

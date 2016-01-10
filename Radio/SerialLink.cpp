@@ -83,7 +83,7 @@ void SerialLink::idle()
   while (currentStream_->available())
   {
     char c = (char)currentStream_->read();
-    if (c == '\n')
+    if (c == SERIAL_END_CMD_CHAR)
     {
       serialBuffer_[idxBuffer_] = 0;
       serialBuffer_[idxBuffer_+1] = 0;
