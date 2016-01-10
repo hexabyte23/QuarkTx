@@ -302,7 +302,7 @@ void Tx::dumpEEPROM()
     }
 
     uint8_t v = EEPROM.read(idx);
-    if(v <= 9)
+    if(v <= 0xF)
       STDOUT << F("0");
     STDOUT << _HEX(v) << " ";
   
