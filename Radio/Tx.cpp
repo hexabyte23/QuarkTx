@@ -284,7 +284,7 @@ void Tx::onChangeCurrentModel(int idx)
     currentModel_ = &modelList_[idx];
   }
   else
-    STDOUT << F("e-bp ") << idx << (" ") << MAX_MODEL-1 << endl;  // Bad parameter
+    STDOUT << F("e-bp ") << idx << F(" ") << MAX_MODEL-1 << endl;  // Bad parameter
 }
 
 void Tx::dumpEEPROM()
@@ -292,11 +292,18 @@ void Tx::dumpEEPROM()
   for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
   {
     if(i == 0)
+    {
+      if(idx < 0x10)
+        STDOUT << F("00");
+      else if (idx < 0x100)
+        STDOUT << F("0");
+              
       STDOUT << _HEX(idx) << "\t";
+    }
 
     uint8_t v = EEPROM.read(idx);
     if(v <= 9)
-      STDOUT << "0";
+      STDOUT << F("0");
     STDOUT << _HEX(v) << " ";
   
     if(i == 15)
@@ -313,7 +320,7 @@ void Tx::dumpModel()
   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
   {
     char c = (currentModel_ == &modelList_[idx])?'*':' ';
-    STDOUT << "Model " << idx << " " << c << endl;
+    STDOUT << F("Model ") << idx << " " << c << endl;
   
     modelList_[idx].dump();
   }
