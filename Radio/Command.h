@@ -33,6 +33,7 @@ class Command
   // internal commands
   void helpCmd();
   void toggleTxModeCmd();
+  void displayVersionCmd();
   void toggleDisplayInputUpdateCmd();
   void toggleDisplayOutputUpdateCmd();
   void changeCurrentModelCmd(const char* modelIdx);

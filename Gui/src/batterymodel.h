@@ -1,5 +1,5 @@
-#ifndef BATTERYDATA_H
-#define BATTERYDATA_H
+#ifndef BATTERYMODEL_H
+#define BATTERYMODEL_H
 
 #include <QObject>
 #include <QString>
@@ -20,5 +20,5 @@ public:
     Q_INVOKABLE int getRemainingLevel() const;
 };
 
-#endif // BATTERYDATA_H
+#endif // BATTERYMODEL_H
 

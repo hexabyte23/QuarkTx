@@ -17,16 +17,10 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
-import QtMultimedia 5.0
+import QtQuick 2.0
 
-ApplicationWindow
+Item
 {
-    id: quarkTxApp
-    visible: true
-    title: qsTr("QuarkTx")
     height: 480
     width: 320
 
@@ -37,12 +31,9 @@ ApplicationWindow
 
         Component.onCompleted:
         {
-            addPage("About", "QuarkTx v 0.0.0.1",  "");
-            addPage("Connect", "Connect to RadioControl",  Qt.resolvedUrl("qrc:/qml/Link.qml"));
-            addPage("System", "EEPROM, Dump, free memory ...",  Qt.resolvedUrl("qrc:/qml/System.qml"));
-            addPage("Tx sensors", "Calibrate, trim, simulate ...",  Qt.resolvedUrl("qrc:/qml/Sensors.qml"));
-            addPage("Models", "Change current, neutral, reverse",  Qt.resolvedUrl("qrc:/qml/Models.qml"));
-            addPage("Radio Control Language", "Load/save EEPROM",  Qt.resolvedUrl("qrc:/qml/Rcl.qml"));
+            addPage("Load from EEPROM", "",  Qt.resolvedUrl("xx.qml"));
+            addPage("Save to EEPROM", "",  Qt.resolvedUrl("xx.qml"));
+
         }
     }
 }

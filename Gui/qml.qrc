@@ -36,5 +36,6 @@
         <file>qml/Models.qml</file>
         <file>qml/Sensors.qml</file>
         <file>qml/System.qml</file>
+        <file>qml/Rcl.qml</file>
     </qresource>
 </RCC>

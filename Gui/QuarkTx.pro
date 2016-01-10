@@ -1,25 +1,32 @@
 TEMPLATE = app
 
-VERSION = 1.0.0.0
+VERSION = 0.0.0.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 DEFINES += APP_NAME=\\\"QUARTTX\\\"
 
 
-QT += qml quick widgets bluetooth serialport
+QT += qml quick widgets bluetooth
 
 SOURCES +=  src/main.cpp \
-    src/mainmodel.cpp \
-    src/batterymodel.cpp
+    src/MainModel.cpp \
+    src/BatteryModel.cpp \
+    src/RadioLink.cpp
 HEADERS +=  src/global.h \
             src/main.h \
-    src/mainmodel.h \
-    src/batterymodel.h \
-    qml/shared/shared.h
+    src/MainModel.h \
+    src/BatteryModel.h \
+    qml/shared/shared.h \
+    src/RadioLink.h
 
 RESOURCES += qml.qrc
 
 macx {
-    QMAKE_MAC_SDK = macosx10.11
+    QT += serialport
+    #QMAKE_MAC_SDK = macosx10.11
+}
+
+win32 {
+    QT += serialport
 }
 
 # Additional import path used to resolve QML modules in Qt Creator's code model

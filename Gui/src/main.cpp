@@ -1,8 +1,28 @@
+/*
+Command.cpp - QuarkTx
+Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+
 #include "src/main.h"
 #include "src/global.h"
-#include "batterymodel.h"
-#include "mainmodel.h"
-#include <QSerialPortInfo>
+#include "BatteryModel.h"
+#include "MainModel.h"
+
 
 Q_LOGGING_CATEGORY(QT_QUARKTX, "qt.quarktx.main")
 static MainModel g_model;
@@ -11,7 +31,9 @@ void myMessageOutput(QtMsgType type, const QMessageLogContext &context, const QS
 {
     QByteArray localMsg = msg.toLocal8Bit();
     const char* time = QTime::currentTime().toString("hh:mm:ss.zzz").toStdString().c_str();
-    switch (type) {
+
+    switch (type)
+    {
     case QtInfoMsg:
         fprintf(stderr, "%s [I] %s (%s:%u, %s)\n", time, localMsg.constData(), context.file, context.line, context.function);
         break;
@@ -40,35 +62,6 @@ void Init(const QApplication &app)
     app.setApplicationName(APP_NAME);
     app.setApplicationVersion(APP_VERSION);
     qCInfo(QT_QUARKTX) << "Starting " APP_NAME << APP_VERSION;
-
-
-    QTextStream out(stdout);
-    QList<QSerialPortInfo> serialPortInfoList = QSerialPortInfo::availablePorts();
-
-    out << QObject::tr("Total number of ports available: ") << serialPortInfoList.count() << endl;
-
-    const QString blankString = QObject::tr("N/A");
-    QString description;
-    QString manufacturer;
-    QString serialNumber;
-
-/*
-    foreach (const QSerialPortInfo &serialPortInfo, serialPortInfoList)
-    {
-        description = serialPortInfo.description();
-        manufacturer = serialPortInfo.manufacturer();
-        serialNumber = serialPortInfo.serialNumber();
-        out << endl
-            << QObject::tr("Port: ") << serialPortInfo.portName() << endl
-            << QObject::tr("Location: ") << serialPortInfo.systemLocation() << endl
-            << QObject::tr("Description: ") << (!description.isEmpty() ? description : blankString) << endl
-            << QObject::tr("Manufacturer: ") << (!manufacturer.isEmpty() ? manufacturer : blankString) << endl
-            << QObject::tr("Serial number: ") << (!serialNumber.isEmpty() ? serialNumber : blankString) << endl
-            << QObject::tr("Vendor Identifier: ") << (serialPortInfo.hasVendorIdentifier() ? QByteArray::number(serialPortInfo.vendorIdentifier(), 16) : blankString) << endl
-            << QObject::tr("Product Identifier: ") << (serialPortInfo.hasProductIdentifier() ? QByteArray::number(serialPortInfo.productIdentifier(), 16) : blankString) << endl
-            << QObject::tr("Busy: ") << (serialPortInfo.isBusy() ? QObject::tr("Yes") : QObject::tr("No")) << endl;
-    }
-    */
 }
 
 int main(int argc, char *argv[])

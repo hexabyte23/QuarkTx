@@ -1,35 +1,51 @@
+/*
+Command.cpp - QuarkTx
+Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+
 import QtQuick 2.0
 
-Rectangle {
+Rectangle
+{
     id: container
-    property Item exampleItem
+    property Item pageItem
     width: ListView.view.width
-    height: button.implicitHeight + 22
+    height: button.implicitHeight + 23
 
-    gradient: Gradient {
-        GradientStop {
-            position: 0
-            Behavior on color {ColorAnimation { duration: 100 }}
-            color: button.pressed ? "#e0e0e0" : "#fff"
-        }
-        GradientStop {
-            position: 1
-            Behavior on color {ColorAnimation { duration: 100 }}
-            color: button.pressed ? "#e0e0e0" : button.containsMouse ? "#f5f5f5" : "#eee"
-        }
+    gradient: Gradient
+    {
+        GradientStop {position: 0; color: "#eee"}
+        GradientStop {position: 1; color: "#ddd"}
     }
 
-    Image {
+    Image
+    {
         id: image
-        opacity: 0.7
-        Behavior on opacity {NumberAnimation {duration: 100}}
-        source: "qrc:/artwork/next.png"
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 16
+        visible: (url != "") ? true : false
+        opacity: 0.7
+        source: "qrc:/artwork/next.png"
     }
 
-    Item {
+    Item
+    {
         id: button
         anchors.top: parent.top
         anchors.left: parent.left
@@ -39,19 +55,23 @@ Rectangle {
         height: implicitHeight
         width: buttonLabel.width + 20
 
-        MouseArea {
+        MouseArea
+        {
             id: mouseArea
             anchors.fill: parent
-            onClicked: exampleItem.exampleUrl = url
+            onClicked: pageItem.pageUrl = url
             hoverEnabled: true
         }
 
-        Column {
-            spacing: 2
+        Column
+        {
             id: col
+            spacing: 2
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width
-            Text {
+
+            Text
+            {
                 id: buttonLabel
                 anchors.left: parent.left
                 anchors.leftMargin: 10
@@ -65,7 +85,9 @@ Rectangle {
                 style: Text.Raised
 
             }
-            Text {
+
+            Text
+            {
                 id: buttonLabel2
                 anchors.left: parent.left
                 anchors.leftMargin: 10
@@ -77,7 +99,9 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Rectangle
+    {
+        id:justLine
         height: 1
         color: "#ccc"
         anchors.bottom: parent.bottom
@@ -85,3 +109,4 @@ Rectangle {
         anchors.right: parent.right
     }
 }
+

@@ -3,6 +3,6 @@
 
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(QT_OSRC)
+Q_DECLARE_LOGGING_CATEGORY(QT_QUARKTX)
 
 #endif

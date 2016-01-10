@@ -57,6 +57,7 @@ void Command::onNewCommand(const char* cmdStr)
     case 'i': toggleDisplayInputUpdateCmd();break;
     case 'l': changeCurrentModelCmd(cmdStr+2);break;
     case 'm': toggleTxModeCmd();break;
+    case 'n': displayVersionCmd();break;
     case 'o': toggleDisplayOutputUpdateCmd();break;
     case 'r': resetCmd(cmdStr+2);break;
     case 's': setCmd(cmdStr+2);break;
@@ -73,25 +74,26 @@ void Command::helpCmd()
 {
   STDOUT << F(
          "help command :\n"
-         "a: load from EEPROM\n"
-         "c: toggle sensors calibration\n" 
-         "d [m]|[e]|[s]|[l]: dump model, EEPROM, sensor or RCL\n"
-         "f: get free memory\n"
-         "h: help\n"
-         "i: toggle input sensor update\n"
-         "l [0..2]: load cur. model\n"
-         "m: toggle Tx mode (transmit or debug)\n"
-         "o: toggle output PPM update\n"
-         "r [m]|[s]|[l]: clean model, sensor or RCL\n"
-         "s a chan val: set cur. model servo max\n"
-         "s i chan val: set cur. model servo min\n"
-         "s l chan rclStr: set RCL code to PPM chan\n"
-         "s n chan val: set cur. model servo neutral\n"
-         "s r chan val: set cur. model servo revert\n"
-         "s t sensorID val: set sensor trim\n"
-         "s u sensorID val: set simulate value\n"
-         "v: save to EEPROM\n"
-         "w: toggle simulation mode\n"
+         "a: Load from EEPROM\n"
+         "c: Toggle sensors calibration\n" 
+         "d [m]|[e]|[s]|[l]: Dump model, EEPROM, sensor or RCL\n"
+         "f: Get free memory\n"
+         "h: Help\n"
+         "i: Toggle input sensor update\n"
+         "l [0..1]: Load cur. model\n"
+         "m: Toggle Tx mode (transmit or debug)\n"
+         "n: Display version\n"
+         "o: Toggle output PPM update\n"
+         "r [m]|[s]|[l]: Clean model, sensor or RCL\n"
+         "s a chan val: Set cur. model servo max\n"
+         "s i chan val: Set cur. model servo min\n"
+         "s l chan rclStr: Set RCL code to PPM chan\n"
+         "s n chan val: Set cur. model servo neutral\n"
+         "s r chan val: Set cur. model servo revert\n"
+         "s t sensorID val: Set sensor trim\n"
+         "s u sensorID val: Set simulate value\n"
+         "v: Save to EEPROM\n"
+         "w: Toggle simulation mode\n"
          );
 }
 
@@ -217,5 +219,10 @@ void Command::toggleSimulation()
 void Command::getFreeMemoryCmd()
 {
     STDOUT << freeMemory() << endl;
+}
+
+void Command::displayVersionCmd()
+{
+  STDOUT << F(QUARKTX_VERSION) << endl;
 }
 
