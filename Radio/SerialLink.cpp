@@ -55,7 +55,6 @@ bool SerialLink::setup(Command *cmd)
   // reroute printf() output to currentStream_
   stdout = stderr = fdevopen(serialWrite, NULL);
 
-  //info(INFO_BOOTING_MESSAGE, QUARKTX_VERSION);
   STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << F("\nBooting...") << endl;
   STDOUT << F("Serial\t\tOK") << endl;
 #ifdef BLUETOOTH
@@ -91,7 +90,6 @@ void SerialLink::idle()
       
       if(cmd_ != NULL)
       {
-        //currentStream_->println(serialBuffer_);
         cmd_->onNewCommand(serialBuffer_);
         idxBuffer_ = 0;
         displayPrompt();
