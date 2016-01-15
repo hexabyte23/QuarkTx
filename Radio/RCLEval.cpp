@@ -234,7 +234,7 @@ Variant operator + (const Variant &l, const Variant &r)
       {
         switch (r.type_)
         {
-          case Variant::tInteger: return l.iData_ + r.iData_;
+          case Variant::tInteger: return (uint16_t)(l.iData_ + r.iData_);
           case Variant::tFloat: return l.iData_ + r.fData_;
         }
       }
@@ -261,7 +261,7 @@ Variant operator - (const Variant &l, const Variant &r)
       {
         switch (r.type_)
         {
-          case Variant::tInteger: return l.iData_ - r.iData_;
+          case Variant::tInteger: return (uint16_t)(l.iData_ - r.iData_);
           case Variant::tFloat: return l.iData_ - r.fData_;
         }
       }
@@ -288,7 +288,7 @@ Variant operator * (const Variant &l, const Variant &r)
       {
         switch (r.type_)
         {
-          case Variant::tInteger: return l.iData_ * r.iData_;
+          case Variant::tInteger: return (uint16_t)(l.iData_ * r.iData_);
           case Variant::tFloat: return l.iData_ * r.fData_;
         }
       }
@@ -315,7 +315,7 @@ Variant operator / (const Variant &l, const Variant &r)
       {
         switch (r.type_)
         {
-          case Variant::tInteger: return l.iData_ / r.iData_;
+          case Variant::tInteger: return (uint16_t)(l.iData_ / r.iData_);
           case Variant::tFloat: return l.iData_ / r.fData_;
         }
       }
