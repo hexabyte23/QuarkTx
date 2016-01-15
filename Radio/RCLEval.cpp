@@ -28,8 +28,48 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 //////////////////////////////////////////////////////////////////////////
 
+static char g_dump[MAX_SERIAL_INPUT_BUFFER];
+static uint8_t g_idxDump = 0;
 static uint8_t g_tab4Dump = 0;
 static bool g_hierachyDump = true;
+
+char addChar(char c)
+{
+  if(g_idxDump < MAX_SERIAL_INPUT_BUFFER)
+    g_dump[g_idxDump++] = c;
+
+  return c;
+}
+
+uint16_t addChar(uint16_t i)
+{
+  char buf[10];
+  itoa(i, buf, 10);
+  for(uint8_t i=0; i < 10; i++)
+  {
+    g_dump[g_idxDump] = buf[i];
+    g_idxDump++;
+  }
+  return i;
+}
+
+float addChar(float f)
+{
+  char buf[10];
+  dtostrf(f, 4, 3, buf);
+  for(uint8_t i=0; i < 10; i++)
+  {
+    g_dump[g_idxDump] = buf[i];
+    g_idxDump++;
+  }
+  return f;
+}
+
+bool addChar(bool b)
+{
+  b?addChar("T"):addChar("F");
+  return b;
+}
 
 void tabDump()
 {
@@ -44,7 +84,7 @@ void enterDump()
     
   STDOUT << endl;
   tabDump();
-  STDOUT << "{" << endl;
+  //STDOUT << "{" << endl;
   g_tab4Dump++;
   tabDump();
 }
@@ -57,13 +97,14 @@ void leaveDump()
   g_tab4Dump--;
   STDOUT << endl;
   tabDump();
-  STDOUT << "}";
+  //STDOUT << "}";
   tabDump();
 }
 
 //
-// a float version of map
+// a float version of map()
 //
+
 float fmap(float x, float in_min, float in_max, float out_min, float out_max)
 {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -303,6 +344,7 @@ Variant operator == (const Variant &l, const Variant &r)
         {
           case Variant::tInteger: return l.iData_ == r.iData_;
           case Variant::tFloat: return l.iData_ == r.fData_;
+          
         }
       }
       break;
@@ -394,9 +436,9 @@ Variant SubExpression::evaluate() const
 void SubExpression::dump() const
 {
   enterDump();
-  STDOUT << "(";
+  STDOUT << addChar('(');
   expr_->dump();
-  STDOUT << ")";
+  STDOUT << addChar(')');
   leaveDump();
 }
 
@@ -405,21 +447,21 @@ void SubExpression::dump() const
 void IntegerExp::dump() const
 {
   enterDump();
-  STDOUT << data_.iData_;
+  STDOUT << addChar(data_.iData_);
   leaveDump();
 }
 
 void FloatExp::dump() const
 {
   enterDump();
-  STDOUT << data_.fData_;
+  STDOUT << addChar(data_.fData_);
   leaveDump();
 }
 
 void BoolExp::dump() const
 {
   enterDump();
-  STDOUT << data_.bData_;
+  STDOUT << addChar(data_.bData_);
   leaveDump();
 }
 
@@ -463,9 +505,9 @@ void IfExp::dump() const
 {
   enterDump();
   condition_->dump();
-  STDOUT << "?";
+  STDOUT << addChar('?');
   succeed_->dump();
-  STDOUT << ":";
+  STDOUT << addChar(':');
   fail_->dump();
   leaveDump();
 }
@@ -496,7 +538,7 @@ void AddExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << "+";
+  STDOUT << addChar('+');
   right_->dump();
   leaveDump();
 }
@@ -527,7 +569,7 @@ void SubExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << "-";
+  STDOUT << addChar('-');
   right_->dump();
   leaveDump();
 }
@@ -558,7 +600,7 @@ void MulExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << "*";
+  STDOUT << addChar('*');
   right_->dump();
   leaveDump();
 }
@@ -589,7 +631,7 @@ void DivExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << "/";
+  STDOUT << addChar('/');
   right_->dump();
   leaveDump();
 }
@@ -620,7 +662,7 @@ void EqualExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << "=";
+  STDOUT << addChar('=');
   right_->dump();
   leaveDump();
 }
@@ -651,7 +693,7 @@ void LowerThanExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << "<";
+  STDOUT << addChar('<');
   right_->dump();
   leaveDump();
 }
@@ -682,7 +724,7 @@ void GreaterThanExp::dump() const
 {
   enterDump();
   left_->dump();
-  STDOUT << ">";
+  STDOUT << addChar('>');
   right_->dump();
   leaveDump();
 }
@@ -718,11 +760,11 @@ void LimitExp::dump() const
 {
   enterDump();
   data_->dump();
-  STDOUT << "[";
+  STDOUT << addChar('[');
   min_->dump();
-  STDOUT << ";";
+  STDOUT << addChar(';');
   max_->dump();
-  STDOUT << "]";
+  STDOUT << addChar(']');
   leaveDump();
 }
 
@@ -730,7 +772,7 @@ void LimitExp::dump() const
 
 RCLEval::RCLEval()
 {
-  memset((void*)expression_,0,sizeof(expression_));
+  memset((void*)expression_, 0, sizeof(expression_));
 }
 
 void RCLEval::setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel)
@@ -775,7 +817,6 @@ Expression *RCLEval::parseNumeric(char *&in)
     }
     
     *p = *in;                       // copy car into buf
-    //STDOUT << *p;
     
     p++, in++, len++;
   }
@@ -785,14 +826,12 @@ Expression *RCLEval::parseNumeric(char *&in)
     
   if(type == 0)
   {
-    //STDOUT << "int " << atoi(buf) << " next='" << *in << "'" << endl;
     IntegerExp *expr = new IntegerExp;
     expr->setup(atoi(buf));
     return expr;
   }
   else
   {
-    //STDOUT << "float " << atof(buf) << endl;
     FloatExp *expr = new FloatExp;
     expr->setup(atof(buf));
     return expr;
@@ -824,13 +863,12 @@ Expression *RCLEval::parseOperand(char *&in)
       int c = in[1] - '0';
       if(c >= MAX_INPUT_CHANNEL)
       {
-        STDOUT << F("e-bp ") << c << (" ") << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
+        STDOUT << F("e-bp ") << c << " " << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
         return NULL;
       }
       in += 2; // ix
 
-      // STDOUT << "i" << c << " '" << *in << "'" << endl;
-
+      // check optionnal limit operator 
       if(*in != '[')
         return inputTab[c];
       
@@ -879,21 +917,15 @@ Expression *RCLEval::parseOperand(char *&in)
 
 Expression *RCLEval::parseExp(char *&in)
 {
-  //STDOUT << "in='" << *in << "'" << endl;
-  
   Expression *leftExp = parseOperand(in);
-
-  //STDOUT << "next='" << *in << "'" << endl; 
-  
   if(leftExp == NULL)
     return NULL;
+    
   if(*in == 0)
     return leftExp;
 
   char op = *in;
   in++;
-
-  //STDOUT << "op " << op << endl;
 
   switch(op)
   {
@@ -978,9 +1010,9 @@ Expression *RCLEval::parseExp(char *&in)
 
 bool RCLEval::setupRCL(uint8_t chan, const char *str)
 {
-  char buff[100];
+  char buff[MAX_SERIAL_INPUT_BUFFER];
   char *buf = &buff[0];
-  strncpy(buf, str, sizeof(buff));
+  strncpy(buf, str, MAX_SERIAL_INPUT_BUFFER);
   
   if(expression_[chan] != NULL)
       clearRCL(chan);
@@ -994,8 +1026,11 @@ bool RCLEval::saveToEEPROM(uint16_t addr) const
 {
   STDOUT << F("Save RCL") << endl;
   g_hierachyDump = false;
+  memset((void*)g_dump,0,sizeof(g_dump));
   dump(0);
   g_hierachyDump = true;
+  
+  STDOUT << g_dump  << endl;
 }
 
 bool RCLEval::loadFromEEPROM(uint16_t addr)

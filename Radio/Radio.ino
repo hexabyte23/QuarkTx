@@ -24,10 +24,7 @@ Tx tx;
 
 void setup()
 {
-  if(tx.setup() == true)
-    STDOUT << "Ready.\n>" << endl;
-  else
-    STDOUT << "Failed.\n" << endl;
+  STDOUT << (tx.setup()?F("Ready\n>"):F("Failed\n>")) << endl;
 }
 
 ISR(TIMER1_COMPA_vect)

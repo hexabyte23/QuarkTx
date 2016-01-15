@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define RCLEVAL_H
 
 #include <arduino.h>
+#include "SerialLink.h"
 #include "Sensor.h"
 #include "Model.h"
 #include "Tx.h"
@@ -32,9 +33,9 @@ struct Variant
   float fData_;
   bool bData_;
   
-  Variant(uint16_t iData) : iData_(iData), type_(tInteger) {}
-  Variant(float fData) : fData_(fData), type_(tFloat) {}
-  Variant(bool bData) : bData_(bData), type_(tBool) {}
+  Variant(uint16_t iData) : type_(tInteger), iData_(iData) {}
+  Variant(float fData) : type_(tFloat), fData_(fData) {}
+  Variant(bool bData) : type_(tBool), bData_(bData) {}
 
   uint16_t convert2Int() const;
   float convert2Float() const;

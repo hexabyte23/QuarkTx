@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.0.18" 
+#define QUARKTX_VERSION         "0.0.19" 
 #define SERIAL_SPEED            9600
 
 #define MAX_MODEL               2
@@ -46,14 +46,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define SERIAL_END_CMD_CHAR     '\r'
 
+
 //
 //
-//  Put here after all definitions relative to your board configuration
+//  Put here after all definitions relative to your configuration
 //
 //
 
 #define TERRATOP                // Define the hardware you want to test
-//#define BLUETOOTH               // uncomment if BT is wired
+//#define BLUETOOTH             
+#define JETI_TU2_MODULE
+
+
 
 #ifdef TERRATOP
 
@@ -61,10 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
 #define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti TU2 module
 
-#define PPM_SHAPE_SIGNAL        1       // 0 is positive, 1 is negative
 #define PPM_PIN                 10
-#define PPM_INTER_CHANNEL_TIME  500
-#define PPM_INTER_FRAME_TIME    4500
 
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
@@ -81,10 +82,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
 #define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti module
 
-#define PPM_SHAPE_SIGNAL        1       // 0 is positive, 1 is negative
 #define PPM_PIN                 10
-#define PPM_INTER_CHANNEL_TIME  500
-#define PPM_INTER_FRAME_TIME    4500
 
 #define SWITCH1_PIN             2
 #define SWITCH2_PIN             3
@@ -93,6 +91,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define BT_RX_PIN               9
 #define BT_TX_PIN               8
+
+#endif
+
+
+//
+//  HF Modules
+//
+
+#ifdef JETI_TU2_MODULE
+
+#define PPM_SHAPE_SIGNAL        1       // 0 is positive, 1 is negative
+#define PPM_INTER_CHANNEL_TIME  500
+#define PPM_INTER_FRAME_TIME    4500
 
 #endif
 

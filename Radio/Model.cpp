@@ -159,3 +159,4 @@ uint16_t Model::loadFromEEPROM(uint16_t addr)
 
   return addr;
 }
+

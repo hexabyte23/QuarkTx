@@ -26,7 +26,7 @@ Mesure::Mesure()
   reset();
 }
 
-void Mesure::displayStat(int maxLoop)
+void Mesure::displayStat(unsigned long maxLoop)
 {
   if(loop_++ > maxLoop)
   {

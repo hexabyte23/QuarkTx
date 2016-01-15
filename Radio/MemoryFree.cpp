@@ -39,6 +39,9 @@ int freeListSize()
 
 int freeMemory()
 {
+#ifdef QT_CORE_LIB
+    return 0;
+#else
   int free_memory;
   if ((int)__brkval == 0)
   {
@@ -50,4 +53,5 @@ int freeMemory()
     free_memory += freeListSize();
   }
   return free_memory;
+#endif
 }

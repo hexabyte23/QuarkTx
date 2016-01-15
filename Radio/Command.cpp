@@ -73,7 +73,7 @@ void Command::onNewCommand(const char* cmdStr)
 void Command::helpCmd()
 {
   STDOUT << F(
-         "help command :\n"
+         "help command\n"
          "a: Load from EEPROM\n"
          "c: Toggle sensors calibration\n" 
          "d [m]|[e]|[s]|[l]: Dump model, EEPROM, sensor or RCL\n"
@@ -218,7 +218,7 @@ void Command::toggleSimulation()
 
 void Command::getFreeMemoryCmd()
 {
-    STDOUT << freeMemory() << endl;
+  STDOUT << freeMemory() << endl;
 }
 
 void Command::displayVersionCmd()

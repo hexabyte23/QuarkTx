@@ -18,7 +18,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <arduino.h>
-#include <stream.h>
 #include "SerialLink.h"
 #include "Streaming.h"
 #ifdef BLUETOOTH
@@ -67,7 +66,7 @@ bool SerialLink::setup(Command *cmd)
 void SerialLink::clearSerialBuffer() 
 {
   idxBuffer_ = 0;
-  memset((void*)serialBuffer_,0,sizeof(serialBuffer_));
+  memset((void*)serialBuffer_, 0, sizeof(serialBuffer_));
 }
 
 void SerialLink::displayPrompt()

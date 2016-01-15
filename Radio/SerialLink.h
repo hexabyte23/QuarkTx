@@ -20,12 +20,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef SERIALLINK_H
 #define SERIALLINK_H
 
+#include <stream.h>
 #include "config.h"
 #include "Command.h"
 #include "Streaming.h"
-
-// forward decl
-class Stream;
 
 class SerialLink
 {

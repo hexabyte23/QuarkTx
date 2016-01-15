@@ -122,7 +122,6 @@ bool Tx::setup()
   bool ret2 = command_.setup(this);
 
   rcl_.setup(sensor_, ppmOutputValue_, currentModel_);
-
   
   onLoadFromEEPROM();
 
@@ -138,7 +137,7 @@ bool Tx::setup()
 */
   
   mesure_.stop();
-  STDOUT << F("Tx\t\tOK\t") << mesure_.getAverage() << F(" µs") << endl;
+  STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;
   
   return ret1 | ret2;
 }
@@ -419,9 +418,10 @@ void Tx::onLoadFromEEPROM()
 
 void Tx::onSaveToEEPROM()
 {
+
   uint8_t i = getModelIndex(currentModel_);
   uint16_t addr = 0L;
-
+/*
   // save current model index
   EEPROM.put(addr, i);
   addr += sizeof(uint8_t);
@@ -433,7 +433,7 @@ void Tx::onSaveToEEPROM()
   // save Sensor data
   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
     addr = sensor_[idx]->saveToEEPROM(addr);
-
+*/
   rcl_.saveToEEPROM(addr);
 }
 
