@@ -549,9 +549,15 @@ void Tx::onSetRCL(uint8_t chan, const char* rclCode)
 }
 
 #ifdef QT_CORE_LIB
+
 void Tx::onNewCommand(const char* cmdStr)
 {
    command_.onNewCommand(cmdStr);
+}
+
+void Tx::onEvaluateExpression()
+{
+   rcl_.idle();
 }
 
 #endif

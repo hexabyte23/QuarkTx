@@ -106,8 +106,12 @@ public:
    void onSetTrimSensorValue(uint8_t sensorID, int value);
    void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
    void onSetRCL(uint8_t chan, const char* rclCode);
+
 #ifdef QT_CORE_LIB
+   // for testing only
    void onNewCommand(const char* cmdStr);
+   void onEvaluateExpression();
+   uint16_t getOutputPPM(uint8_t channel) {return ppmOutputValue_[channel];}
 #endif
 
    // Functions
