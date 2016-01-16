@@ -452,29 +452,21 @@ void SubExpression::dump() const
 
 //////////////////////////////////////////////////////////////////////////
 
-void IntegerExp::dump() const
+void ConstantExp::dump() const
 {
    enterDump();
-   STDOUT << addChar(data_.iData_);
-   leaveDump();
-}
-
-void FloatExp::dump() const
-{
-   enterDump();
-   STDOUT << addChar(data_.fData_);
-   leaveDump();
-}
-
-void BoolExp::dump() const
-{
-   enterDump();
-   STDOUT << addChar(data_.bData_);
+   switch(data_.type_)
+   {
+   case Variant::tNone: STDOUT << F("e-nt");break; // error tNone type
+   case Variant::tInteger: STDOUT << addChar(data_.iData_);break;
+   case Variant::tFloat: STDOUT << addChar(data_.fData_);break;
+   case Variant::tBool: STDOUT << addChar(data_.bData_);break;
+   }
    leaveDump();
 }
 
 //////////////////////////////////////////////////////////////////////////
-extern Tx tx;
+extern Tx tx;     // Horrible, must be cleaned
 
 void SensorInputExp::dump() const
 {
@@ -832,20 +824,14 @@ Expression *RCLEval::parseNumeric(char *&in)
    if((len == 0) || (buf[0] == 0))
       return NULL;
 
-   if(type == 0)
-   {
-      IntegerExp *expr = new IntegerExp;
-      expr->setup(atoi(buf));
-      return expr;
-   }
-   else
-   {
-      FloatExp *expr = new FloatExp;
-      expr->setup(atof(buf));
-      return expr;
-   }
+   ConstantExp *expr = new ConstantExp;
 
-   return NULL;
+   if(type == 0)
+      expr->setup((uint16_t)atoi(buf));
+   else
+      expr->setup((float)atof(buf));
+
+   return expr;
 }
 
 Expression *RCLEval::parseOperand(char *&in)
@@ -900,7 +886,7 @@ Expression *RCLEval::parseOperand(char *&in)
    {
       in++; // T
 
-      BoolExp *expr = new BoolExp;
+      ConstantExp *expr = new ConstantExp;
       expr->setup(true);
       return expr;
    }
@@ -909,7 +895,7 @@ Expression *RCLEval::parseOperand(char *&in)
    {
       in++; // F
 
-      BoolExp *expr = new BoolExp;
+      ConstantExp *expr = new ConstantExp;
       expr->setup(false);
       return expr;
    }
@@ -1068,6 +1054,8 @@ void RCLEval::clearRCL(uint8_t chan)
 
 void RCLEval::idle()
 {
+   // Evaluate expression for all channels
+
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       if(expression_[idx] != NULL)

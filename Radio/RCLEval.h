@@ -33,6 +33,7 @@ struct Variant
    float fData_;
    bool bData_;
 
+   Variant() : type_(tNone) {}
    Variant(uint16_t iData) : type_(tInteger), iData_(iData) {}
    Variant(float fData) : type_(tFloat), fData_(fData) {}
    Variant(bool bData) : type_(tBool), bData_(bData) {}
@@ -83,34 +84,14 @@ public:
    virtual bool couldBeDeleted() const {return false;}
 };
 
-class IntegerExp: public Expression
+class ConstantExp: public Expression
 {
    Variant data_;
 
 public:
-   IntegerExp() : data_((uint16_t)0) {}
+   ConstantExp() {}
    void setup(uint16_t data) {data_.iData_ = data; }
-   virtual Variant evaluate() const {return data_;}
-   virtual void dump() const;
-};
-
-class FloatExp: public Expression
-{
-   Variant data_;
-
-public:
-   FloatExp() : data_((float)0.0) {}
    void setup(float data) {data_.fData_ = data; }
-   virtual Variant evaluate() const {return data_;}
-   virtual void dump() const;
-};
-
-class BoolExp: public Expression
-{
-   Variant data_;
-
-public:
-   BoolExp() : data_(false) {}
    void setup(bool data) {data_.bData_ = data; }
    virtual Variant evaluate() const {return data_;}
    virtual void dump() const;
@@ -237,7 +218,6 @@ public:
    void loadFromEEPROM(uint16_t &addr);
    void clearRCL(uint8_t chan);
    void idle();
-   uint16_t evaluate();
    void dump(uint8_t outChannelID) const;
    void reset();
 };
