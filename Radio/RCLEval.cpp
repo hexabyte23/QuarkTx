@@ -73,7 +73,7 @@ float addChar(float f)
 
 bool addChar(bool b)
 {
-   b?addChar("T"):addChar("F");
+   b?addChar('T'):addChar('F');
    return b;
 }
 
@@ -479,7 +479,7 @@ extern Tx tx;
 void SensorInputExp::dump() const
 {
    enterDump();
-   STDOUT << "i" << addChar((uint16_t)tx.getSensorIndex(sensor_->getPin()));
+   STDOUT << addChar('i') << addChar((uint16_t)tx.getSensorIndex(sensor_->getPin()));
    leaveDump();
 }
 
