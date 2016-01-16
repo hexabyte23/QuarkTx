@@ -23,21 +23,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Mesure::Mesure() 
 {
-  reset();
+   reset();
 }
 
 void Mesure::displayStat(unsigned long maxLoop)
 {
-  if(loop_++ > maxLoop)
-  {
-    loop_ = 0;
-    STDOUT << min_ << " " << avg_ << " " << max_ << " " << freeMemory() << endl;
-  }
+   if(loop_++ > maxLoop)
+   {
+      loop_ = 0;
+      STDOUT << min_ << " " << avg_ << " " << max_ << " " << freeMemory() << endl;
+   }
 }
 
 void Mesure::reset()
 {
-  sum_ = avg_ = max_ = count_ = loop_ = 0L;
-  min_ = -1;
+   sum_ = avg_ = max_ = count_ = loop_ = 0L;
+   min_ = -1;
 }
 

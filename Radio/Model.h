@@ -25,46 +25,46 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 struct ServoCommand
 {
-  uint16_t maxOutCurse_;    // in microsec
-  uint16_t minOutCurse_;    // in microsec
-  int16_t neutral_;         // in microsec
-  bool isRevert_;
+   uint16_t maxOutCurse_;    // in microsec
+   uint16_t minOutCurse_;    // in microsec
+   int16_t neutral_;         // in microsec
+   bool isRevert_;
 
-  ServoCommand();
+   ServoCommand();
 
-  uint16_t getValue(uint16_t rawInputValue);
-  void reset();
-  uint16_t saveToEEPROM(uint16_t addr) const;
-  uint16_t loadFromEEPROM(uint16_t addr);
+   uint16_t getValue(uint16_t rawInputValue);
+   void reset();
+   uint16_t saveToEEPROM(uint16_t addr) const;
+   uint16_t loadFromEEPROM(uint16_t addr);
 };
 
 struct OutputChannel
 {
-  ServoCommand servo_;      // next step, put many servo per channel
+   ServoCommand servo_;      // next step, put many servo per channel
 
-  uint16_t saveToEEPROM(uint16_t addr) const;
-  uint16_t loadFromEEPROM(uint16_t addr);
+   uint16_t saveToEEPROM(uint16_t addr) const;
+   uint16_t loadFromEEPROM(uint16_t addr);
 };
 
 class Model
 {
-  OutputChannel channel_[MAX_PPM_OUTPUT_CHANNEL];
+   OutputChannel channel_[MAX_PPM_OUTPUT_CHANNEL];
 
-  public:
+public:
 
-  Model();
+   Model();
 
-  bool setup();
-  void reset();
-  void dump();
-  
-  uint16_t getValue(uint8_t channel, uint16_t rawInputValue);
-  void setMinValue(uint8_t channel, int value); 
-  void setMaxValue(uint8_t channel, int value);
-  void setNeutralValue(uint8_t channel, uint16_t value); 
-  void setRevertValue(uint8_t channel, bool value);
-  uint16_t saveToEEPROM(uint16_t addr) const;
-  uint16_t loadFromEEPROM(uint16_t addr);
+   bool setup();
+   void reset();
+   void dump();
+
+   uint16_t getValue(uint8_t channel, uint16_t rawInputValue);
+   void setMinValue(uint8_t channel, int value);
+   void setMaxValue(uint8_t channel, int value);
+   void setNeutralValue(uint8_t channel, uint16_t value);
+   void setRevertValue(uint8_t channel, bool value);
+   uint16_t saveToEEPROM(uint16_t addr) const;
+   uint16_t loadFromEEPROM(uint16_t addr);
 };
 
 #endif

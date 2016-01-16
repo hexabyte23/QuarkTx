@@ -32,86 +32,89 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class Tx
 {
-  SerialLink serialLink_;
-  Command command_;
-  Model modelList_[MAX_MODEL];
-  Model *currentModel_;
+   SerialLink serialLink_;
+   Command command_;
+   Model modelList_[MAX_MODEL];
+   Model *currentModel_;
 
-  // Input & output datas
-  Stick elevator_, aileron_, rudder_, throttle_;
-  BatteryMeter battery_;
+   // Input & output datas
+   Stick elevator_, aileron_, rudder_, throttle_;
+   BatteryMeter battery_;
 #ifdef TERRATOP
-  Switch s1_, s2_, s3_;
-  Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_, &s3_};
+   Switch s1_, s2_, s3_;
+   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_, &s3_};
 #else
-  Switch s1_, s2_;
-  Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
+   Switch s1_, s2_;
+   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
 #endif
-  uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
 
-  // For mixers, dual rate, expo...
-  RCLEval rcl_;
+   // For mixers, dual rate, expo...
+   RCLEval rcl_;
 
-  Mesure mesure_;
+   Mesure mesure_;
 
-  // LED
-  int ledState_;
-  unsigned long ledPrevMS_;
+   // LED
+   int ledState_;
+   unsigned long ledPrevMS_;
 
-  // toggles
-  enum {tTransmit, tDebug} toggleTxMode_;
-  bool toggleDisplayInputUpdate_;
-  bool toggleDisplayOutputUpdate_;
-  bool toggleCalibrateSensor_;
-  bool toggleSimulation_;
+   // toggles
+   enum {tTransmit, tDebug} toggleTxMode_;
+   bool toggleDisplayInputUpdate_;
+   bool toggleDisplayOutputUpdate_;
+   bool toggleCalibrateSensor_;
+   bool toggleSimulation_;
 
-  // Private functions
-  void displayInputUpdate();
-  void displayOutputUpdate();
-  void setupInputDevice();
-  void setupOutputDevice();
-  void calibrateSensor();
-  void ledBlinkIdle();
-  void dumpEEPROM();
-  void dumpModel();
-  void dumpSensor();
-  void dumpRCL(const char* param);
-  void resetModel();
-  void resetSensor();
-  void resetRCL();
+   // Private functions
+   void displayInputUpdate();
+   void displayOutputUpdate();
+   void setupInputDevice();
+   void setupOutputDevice();
+   void calibrateSensor();
+   void ledBlinkIdle();
+   void dumpEEPROM();
+   void dumpModel();
+   void dumpSensor();
+   void dumpRCL(const char* param);
+   void resetModel();
+   void resetSensor();
+   void resetRCL();
 
-  // Irq
-  volatile boolean irqStartPulse_;
-  volatile byte irqCurrentChannelNumber_;
+   // Irq
+   volatile boolean irqStartPulse_;
+   volatile byte irqCurrentChannelNumber_;
 
-  
-  public:
-  
-  Tx();
-  
-  bool setup();
 
-  // Signals
-  void onIrqTimerChange();
-  void onChangeCurrentModel(int idx);
-  void onDump(const char* param);
-  void onToggleTxMode();
-  void onToggleDisplayInputUpdate();
-  void onToggleDisplayOutputUpdate();
-  void onToggleCalibrateSensor();
-  void onToggleSimulation();
-  void onLoadFromEEPROM();
-  void onSaveToEEPROM();
-  void onSoftwareReset(const char* param);
-  void onSetTrimSensorValue(uint8_t sensorID, int value);
-  void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
-  void onSetRCL(uint8_t chan, const char* rclCode);
+public:
 
-  // Functions
-  void idle();
-  Model* getCurrentModel() const {return currentModel_;}
-  uint8_t getModelIndex(Model *model);
-  uint8_t getSensorIndex(uint8_t pinPort);
+   Tx();
+
+   bool setup();
+
+   // Signals
+   void onIrqTimerChange();
+   void onChangeCurrentModel(int idx);
+   void onDump(const char* param);
+   void onToggleTxMode();
+   void onToggleDisplayInputUpdate();
+   void onToggleDisplayOutputUpdate();
+   void onToggleCalibrateSensor();
+   void onToggleSimulation();
+   void onLoadFromEEPROM();
+   void onSaveToEEPROM();
+   void onSoftwareReset(const char* param);
+   void onSetTrimSensorValue(uint8_t sensorID, int value);
+   void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
+   void onSetRCL(uint8_t chan, const char* rclCode);
+#ifdef QT_CORE_LIB
+   void onNewCommand(const char* cmdStr);
+#endif
+
+   // Functions
+   void idle();
+   Model* getCurrentModel() const {return currentModel_;}
+   uint8_t getModelIndex(Model *model);
+   uint8_t getSensorIndex(uint8_t pinPort);
 };
 
 #endif

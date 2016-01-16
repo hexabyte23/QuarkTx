@@ -28,33 +28,33 @@ class Tx;
 
 class Command
 {
-  Tx *tx_;
+   Tx *tx_;
 
-  // internal commands
-  void helpCmd();
-  void toggleTxModeCmd();
-  void displayVersionCmd();
-  void toggleDisplayInputUpdateCmd();
-  void toggleDisplayOutputUpdateCmd();
-  void changeCurrentModelCmd(const char* modelIdx);
-  void dumpCmd(const char* param);
-  void toggleCalibrateAnalogicSensorCmd();
-  void loadFromEEPROMCmd();
-  void saveToEEPROMCmd();
-  void setCmd(const char* param);
-  void toggleSimulation();
-  void resetCmd(const char* param);
-  void getFreeMemoryCmd();
-  void setRCLCmd(const char* param);
-  
-  public:
- 
-  Command();
+   // internal commands
+   void helpCmd();
+   void toggleTxModeCmd();
+   void displayVersionCmd();
+   void toggleDisplayInputUpdateCmd();
+   void toggleDisplayOutputUpdateCmd();
+   void changeCurrentModelCmd(const char* modelIdx);
+   void dumpCmd(const char* param);
+   void toggleCalibrateAnalogicSensorCmd();
+   void loadFromEEPROMCmd();
+   void saveToEEPROMCmd();
+   void setCmd(const char* param);
+   void toggleSimulation();
+   void resetCmd(const char* param);
+   void getFreeMemoryCmd();
+   void setRCLCmd(const char* param);
 
-  bool setup(Tx *tx);
+public:
 
-  // signals
-  void onNewCommand(const char* cmdStr);
+   Command();
+
+   bool setup(Tx *tx);
+
+   // signals
+   void onNewCommand(const char* cmdStr);
 };
 
 #endif

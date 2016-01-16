@@ -27,19 +27,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class SerialLink
 {
-  char serialBuffer_[MAX_SERIAL_INPUT_BUFFER+2];
-  uint8_t idxBuffer_; 
-  Command *cmd_;
+   char serialBuffer_[MAX_SERIAL_INPUT_BUFFER+2];
+   uint8_t idxBuffer_;
+   Command *cmd_;
 
-  void clearSerialBuffer();
-  void displayPrompt();
+   void clearSerialBuffer();
+   void displayPrompt();
 
-  public:
-  static Stream *currentStream_;
+public:
+   static Stream *currentStream_;
 
-  SerialLink();
-  bool setup(Command *cmd);
-  void idle();
+   SerialLink();
+   bool setup(Command *cmd);
+   void idle();
 };
 
 #endif

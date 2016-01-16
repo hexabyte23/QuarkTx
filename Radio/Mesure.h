@@ -24,32 +24,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class Mesure
 {
-  unsigned long sum_, avg_, min_, max_, count_, p1_, loop_;
+   unsigned long sum_, avg_, min_, max_, count_, p1_, loop_;
 
-  public:
+public:
 
-  Mesure();
+   Mesure();
 
-  void start() {p1_ = micros();}
-  void stop() 
-  {
-    uint32_t delta = micros() - p1_;
-    
-    count_++;
-    sum_ += delta;
-    
-    avg_ = sum_/count_;
-    
-    if(min_ > delta)
-      min_ = delta;
-    if(max_ < delta)
-      max_ = delta;
-  }
+   void start() {p1_ = micros();}
+   void stop()
+   {
+      uint32_t delta = micros() - p1_;
 
-  uint32_t getAverage() {return avg_;}
+      count_++;
+      sum_ += delta;
 
-  void displayStat(unsigned long maxLoop);
-  void reset();
+      avg_ = sum_/count_;
+
+      if(min_ > delta)
+         min_ = delta;
+      if(max_ < delta)
+         max_ = delta;
+   }
+
+   uint32_t getAverage() {return avg_;}
+
+   void displayStat(unsigned long maxLoop);
+   void reset();
 };
 
 #endif

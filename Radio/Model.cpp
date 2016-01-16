@@ -26,68 +26,68 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 ServoCommand::ServoCommand()
 {
-  reset();
+   reset();
 }
 
 uint16_t ServoCommand::getValue(uint16_t rawInputValue)
 {
-  uint16_t ret = map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
-  
-  // apply PPM bound limitations
-  if(ret > PPM_MAX_VALUE)
-    ret = PPM_MAX_VALUE;
-  if(ret < PPM_MIN_VALUE)
-    ret = PPM_MIN_VALUE;
+   uint16_t ret = map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
 
-  return ret;
+   // apply PPM bound limitations
+   if(ret > PPM_MAX_VALUE)
+      ret = PPM_MAX_VALUE;
+   if(ret < PPM_MIN_VALUE)
+      ret = PPM_MIN_VALUE;
+
+   return ret;
 }
 
 void ServoCommand::reset()
 {
-  maxOutCurse_ = PPM_MAX_VALUE;
-  minOutCurse_ = PPM_MIN_VALUE;
-  neutral_ = 0;
-  isRevert_ = false; 
+   maxOutCurse_ = PPM_MAX_VALUE;
+   minOutCurse_ = PPM_MIN_VALUE;
+   neutral_ = 0;
+   isRevert_ = false;
 }
 
 uint16_t ServoCommand::saveToEEPROM(uint16_t addr) const
 {
-  EEPROM.put(addr, maxOutCurse_);
-  addr += sizeof(uint16_t);
-  EEPROM.put(addr, minOutCurse_);
-  addr += sizeof(uint16_t);
-  EEPROM.put(addr, neutral_);
-  addr += sizeof(int16_t);
-  EEPROM.put(addr, isRevert_);
-  addr += sizeof(bool);
+   EEPROM.put(addr, maxOutCurse_);
+   addr += sizeof(uint16_t);
+   EEPROM.put(addr, minOutCurse_);
+   addr += sizeof(uint16_t);
+   EEPROM.put(addr, neutral_);
+   addr += sizeof(int16_t);
+   EEPROM.put(addr, isRevert_);
+   addr += sizeof(bool);
 
-  return addr;
+   return addr;
 }
 
 uint16_t ServoCommand::loadFromEEPROM(uint16_t addr)
 {
-  EEPROM.get(addr, maxOutCurse_);
-  addr += sizeof(uint16_t);
-  EEPROM.get(addr, minOutCurse_);
-  addr += sizeof(uint16_t);
-  EEPROM.get(addr, neutral_);
-  addr += sizeof(int16_t);
-  EEPROM.get(addr, isRevert_);
-  addr += sizeof(bool);
+   EEPROM.get(addr, maxOutCurse_);
+   addr += sizeof(uint16_t);
+   EEPROM.get(addr, minOutCurse_);
+   addr += sizeof(uint16_t);
+   EEPROM.get(addr, neutral_);
+   addr += sizeof(int16_t);
+   EEPROM.get(addr, isRevert_);
+   addr += sizeof(bool);
 
-  return addr;
+   return addr;
 }
 
 //////////////////////////////////////////////////////////////
 
 uint16_t OutputChannel::saveToEEPROM(uint16_t addr) const
 {
-  return servo_.saveToEEPROM(addr);
+   return servo_.saveToEEPROM(addr);
 }
 
 uint16_t OutputChannel::loadFromEEPROM(uint16_t addr)
 {
-  return servo_.loadFromEEPROM(addr);
+   return servo_.loadFromEEPROM(addr);
 }
 
 //////////////////////////////////////////////////////////////
@@ -98,65 +98,66 @@ Model::Model()
 
 bool Model::setup()
 {
+   return true;
 }
 
 uint16_t Model::getValue(uint8_t channel, uint16_t rawInputValue)
 {
-  channel_[channel].servo_.getValue(rawInputValue);
+   return channel_[channel].servo_.getValue(rawInputValue);
 }
 
 void Model::setMinValue(uint8_t channel, int value)
 {
-  channel_[channel].servo_.minOutCurse_ = value;
+   channel_[channel].servo_.minOutCurse_ = value;
 }
 
 void Model::setMaxValue(uint8_t channel, int value)
 {
-  channel_[channel].servo_.maxOutCurse_ = value;
+   channel_[channel].servo_.maxOutCurse_ = value;
 }
 
 void Model::setNeutralValue(uint8_t channel, uint16_t value)
 {
-  channel_[channel].servo_.neutral_ = value;
+   channel_[channel].servo_.neutral_ = value;
 }
 
 void Model::setRevertValue(uint8_t channel, bool value)
 {
-  channel_[channel].servo_.isRevert_ = value;
+   channel_[channel].servo_.isRevert_ = value;
 }
 
 void Model::dump()
 {
-  STDOUT << F("Servo\n# Min   Max   Neutral   Rev") << endl;
-  
-  for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-  {
-    STDOUT << idx << " " << channel_[idx].servo_.minOutCurse_ << "\t" << 
-                            channel_[idx].servo_.maxOutCurse_ << "\t" <<
-                            channel_[idx].servo_.neutral_ << "\t" <<
-                            channel_[idx].servo_.isRevert_ << endl;
-  }
+   STDOUT << F("Servo\n# Min   Max   Neutral   Rev") << endl;
+
+   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   {
+      STDOUT << idx << " " << channel_[idx].servo_.minOutCurse_ << "\t" <<
+                channel_[idx].servo_.maxOutCurse_ << "\t" <<
+                channel_[idx].servo_.neutral_ << "\t" <<
+                channel_[idx].servo_.isRevert_ << endl;
+   }
 }
 
 void Model::reset()
 {
-  for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    channel_[idx].servo_.reset();
+   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+      channel_[idx].servo_.reset();
 }
 
 uint16_t Model::saveToEEPROM(uint16_t addr) const
 {
-  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    addr = channel_[idx].saveToEEPROM(addr);
+   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+      addr = channel_[idx].saveToEEPROM(addr);
 
-  return addr;
+   return addr;
 }
 
 uint16_t Model::loadFromEEPROM(uint16_t addr)
 {
-  for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-    addr = channel_[idx].loadFromEEPROM(addr);
+   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+      addr = channel_[idx].loadFromEEPROM(addr);
 
-  return addr;
+   return addr;
 }
 
