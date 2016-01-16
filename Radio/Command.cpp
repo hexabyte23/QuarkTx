@@ -92,6 +92,8 @@ void Command::helpCmd()
                 "s r chan val: Set cur. model servo revert\n"
                 "s t sensorID val: Set sensor trim\n"
                 "s u sensorID val: Set simulate value\n"
+                "s v sensorID val: Set sensor Min\n"
+                "s w sensorID val: Set sensor Max\n"
                 "v: Save to EEPROM\n"
                 "w: Toggle simulation mode\n"
                 );
@@ -219,6 +221,20 @@ void Command::setCmd(const char* param)
       uint8_t sensorID = getSensorID(param+2);
       int val = atoi(param+4);
       tx_->onSetSimulateSensorValue(sensorID, val);
+   }
+      break;
+   case 'v':   // u sensorID val: Set sensor Min value
+   {
+      uint8_t sensorID = getSensorID(param+2);
+      int val = atoi(param+4);
+      tx_->onSetMinSensorValue(sensorID, val);
+   }
+      break;
+   case 'w':   // u sensorID val: Set sensor Max value
+   {
+      uint8_t sensorID = getSensorID(param+2);
+      int val = atoi(param+4);
+      tx_->onSetMaxSensorValue(sensorID, val);
    }
       break;
    default:
