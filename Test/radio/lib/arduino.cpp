@@ -1,34 +1,21 @@
 #include "Arduino.h"
-
-int TCCR1A;
-int TCCR1B;
-int OCR1A;
-int OCIE1A;
-int WGM12;
-int CS11;
-int TIMSK1;
-int TCNT1;
-
-unsigned int __heap_start;
-void *__brkval;
-struct __freelist *__flp;
-
 #include <math.h>   // for isnan() and isinf()
 #include <stdio.h>  // for sprintf()
 #include <iostream>
 
-// only for GCC 4.9+
-#if defined(__GNUC__) && \
-   (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 9))
-#pragma GCC diagnostic ignored "-Wfloat-conversion"
-#endif
+int TCCR1A = 0x00;
+int TCCR1B = 0x00;
+int OCR1A = 0x00;
+int OCIE1A = 0x00;
+int WGM12 = 0x00;
+int CS11 = 0x00;
+int TIMSK1 = 0x00;
+int TCNT1 = 0x00;
 
-// Visual Studo 2012 didn't have isnan, nor isinf
-#if defined(_MSC_VER) && _MSC_VER <= 1700
-#include <float.h>
-#define isnan(x) _isnan(x)
-#define isinf(x) (!_finite(x))
-#endif
+unsigned int __heap_start = 0x00;
+void *__brkval = 0x00;
+struct __freelist *__flp = 0x00;
+
 
 size_t Print::write(uint8_t c)
 {
@@ -42,7 +29,7 @@ size_t Print::print(const char s[])
    while (*s)
    {
       printf("%c", *s++);
-      n += 1;//write(*s++);
+      n += 1;
    }
    return n;
 }
@@ -101,16 +88,16 @@ size_t Print::print(unsigned int value)
 
 size_t Print::println()
 {
-   return printf("\n"); //write('\r') + write('\n');
+   return printf("\n");
 }
-
 
 long map(long x, long in_min, long in_max, long out_min, long out_max)
 {
    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-char *dtostrf (double val, signed char width, unsigned char prec, char *sout) {
+char *dtostrf (double val, signed char width, unsigned char prec, char *sout)
+{
    char fmt[20];
    sprintf(fmt, "%%%d.%df", width, prec);
    sprintf(sout, fmt, val);
@@ -215,12 +202,35 @@ extern char* ultoa( unsigned long value, char *string, int radix )
    return string;
 }
 
-int analogRead(uint8_t) {return 0;}
-int digitalRead(uint8_t) {return 0;}
-void digitalWrite(uint8_t, uint8_t) {}
-void pinMode(uint8_t, uint8_t) {}
+int analogRead(uint8_t)
+{
+   return 0;
+}
 
-long micros() {return 0;}
-long millis() {return 0;}
+int digitalRead(uint8_t)
+{
+   return 0;
+}
+
+void digitalWrite(uint8_t, uint8_t)
+{
+
+}
+
+void pinMode(uint8_t, uint8_t)
+{
+
+}
+
+long micros()
+{
+   return 0L;
+}
+
+long millis()
+{
+   return 0L;
+}
+
 void cli() {}
 void sei() {}

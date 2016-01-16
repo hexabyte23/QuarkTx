@@ -4,13 +4,13 @@ class EEPROMClass
 {
 public:
 
-    template< typename T > T &get( int idx, T &t )
+    template< typename T > T &get(int idx, T &t )
     {
         idx = 0;
         return t;
     }
 
-    template< typename T > const T &put( int idx, const T &t )
+    template< typename T > const T &put(int idx, const T &t )
     {
         idx = 0;
         return t;

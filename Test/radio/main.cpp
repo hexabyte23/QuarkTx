@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     tx.setup();
+
+
     tx.onNewCommand("s l 0 i0");
     tx.onNewCommand("s l 1 i1");
     tx.onNewCommand("s l 2 i2");
