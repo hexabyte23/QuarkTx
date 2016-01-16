@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 class EEPROMClass
 {
 public:
@@ -18,6 +20,8 @@ public:
 
     int length() {return 0;}
     int read(int ) {return 0;}
+    void write( int , uint8_t  )   {}
+    void update( int , uint8_t  )  {}
 
 };
 
