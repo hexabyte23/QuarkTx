@@ -60,6 +60,8 @@ public:
    virtual Variant evaluate() const = 0;
    virtual void dump() const = 0;
    virtual bool couldBeDeleted() const {return true;}
+//   virtual void saveToEEPROM(uint16_t &addr) const {}
+//   virtual void loadFromEEPROM(uint16_t &addr) {}
 };
 
 class SubExpression : public Expression
@@ -82,6 +84,8 @@ public:
    virtual Variant evaluate() const {Variant v (sensor_->getValue()); return v;}
    virtual void dump() const;
    virtual bool couldBeDeleted() const {return false;}
+//   virtual void saveToEEPROM(uint16_t &addr) const;
+//   virtual void loadFromEEPROM(uint16_t &addr);
 };
 
 class ConstantExp: public Expression
@@ -90,9 +94,9 @@ class ConstantExp: public Expression
 
 public:
    ConstantExp() {}
-   void setup(uint16_t data) {data_.iData_ = data; }
-   void setup(float data) {data_.fData_ = data; }
-   void setup(bool data) {data_.bData_ = data; }
+   void setup(uint16_t data) {data_ = data; }
+   void setup(float data) {data_ = data; }
+   void setup(bool data) {data_ = data; }
    virtual Variant evaluate() const {return data_;}
    virtual void dump() const;
 };

@@ -450,8 +450,20 @@ void Tx::resetSensor()
 
 void Tx::resetRCL()
 {
+   char buf[3];
+   buf[0] = 'i';
+   buf[2] = 0;
+
+   // clean all
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
       rcl_.clearRCL(idx);
+
+   // set to default
+   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   {
+      buf[1] = '0'+idx;
+      rcl_.setupRCL(idx, buf);
+   }
 }
 
 void Tx::onSoftwareReset(const char* param)
@@ -520,16 +532,28 @@ void Tx::onToggleSimulation()
    }
 }
 
-void Tx::onSetSimulateSensorValue(uint8_t sensorID, uint16_t value)
-{
-   if(sensorID < 0) return;
-   sensor_[sensorID]->setSimulateValue(value);
-}
-
 void Tx::onSetTrimSensorValue(uint8_t sensorID, int value)
 {
    if(sensorID < 0) return;
    sensor_[sensorID]->setTrim(value);
+}
+
+void Tx::onSetMinSensorValue(uint8_t sensorID, uint16_t value)
+{
+   if(sensorID < 0) return;
+   sensor_[sensorID]->setMin(value);
+}
+
+void Tx::onSetMaxSensorValue(uint8_t sensorID, uint16_t value)
+{
+   if(sensorID < 0) return;
+   sensor_[sensorID]->setMax(value);
+}
+
+void Tx::onSetSimulateSensorValue(uint8_t sensorID, uint16_t value)
+{
+   if(sensorID < 0) return;
+   sensor_[sensorID]->setSimulateValue(value);
 }
 
 void Tx::onSetRCL(uint8_t chan, const char* rclCode)

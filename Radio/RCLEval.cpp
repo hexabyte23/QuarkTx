@@ -471,10 +471,29 @@ extern Tx tx;     // Horrible, must be cleaned
 void SensorInputExp::dump() const
 {
    enterDump();
-   STDOUT << addChar('i') << addChar((uint16_t)tx.getSensorIndex(sensor_->getPin()));
+   
+   addChar('i');
+   addChar((uint16_t)tx.getSensorIndex(sensor_->getPin()));
+   
+   STDOUT << 'i' << tx.getSensorIndex(sensor_->getPin());
    leaveDump();
 }
+/*
+void SensorInputExp::saveToEEPROM(uint16_t &addr) const
+{
+  EEPROM.put(addr, 'i');
+  addr++;
+}
 
+void SensorInputExp::loadFromEEPROM(uint16_t &addr)
+{
+  char c;
+  EEPROM.get(addr, c);
+  addr++;
+  EEPROM.get(addr, c);
+  addr++;
+}
+*/
 //////////////////////////////////////////////////////////////////////////
 
 IfExp::~IfExp() 
@@ -1028,9 +1047,8 @@ void RCLEval::saveToEEPROM(uint16_t &addr) const
 
       dump(idx);
 
-      //STDOUT << g_dump  << endl;
       EEPROM.put(addr, g_dump);
-      addr += strlen(g_dump);
+      addr += MAX_SERIAL_INPUT_BUFFER;
    }
 
    g_hierachyDump = true;
@@ -1038,6 +1056,15 @@ void RCLEval::saveToEEPROM(uint16_t &addr) const
 
 void RCLEval::loadFromEEPROM(uint16_t &addr)
 {
+   char buffer[MAX_SERIAL_INPUT_BUFFER];
+
+   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   {
+      EEPROM.get(addr, buffer);
+      addr += MAX_SERIAL_INPUT_BUFFER;
+
+      setupRCL(idx, buffer);
+   }
 }
 
 void RCLEval::clearRCL(uint8_t chan)

@@ -47,6 +47,8 @@ public:
    void setSimulation(bool isSimu) {isSimu_ = isSimu;}
    bool isSimulation() const {return isSimu_;}
    void setTrim(int trim) {trim_ = trim;}
+   void setMin(uint16_t calibrMin) {calibrMin_ = calibrMin;}
+   void setMax(uint16_t calibrMax) {calibrMax_ = calibrMax;}
    int getTrim() const {return trim_;}
 
    virtual void dump() const;
