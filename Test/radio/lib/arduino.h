@@ -16,12 +16,12 @@
 #define OUTPUT 0x1
 #define INPUT_PULLUP 0x2
 #define A0 0
-#define A1 0
-#define A2 0
-#define A3 0
-#define A4 0
-#define A5 0
-#define A7 0
+#define A1 1
+#define A2 2
+#define A3 3
+#define A4 4
+#define A5 5
+#define A7 7
 
 #define DEC 0
 #define HEX 1
@@ -58,7 +58,7 @@ class Print
 public:
     virtual ~Print() {}
 
-    virtual size_t write(uint8_t) = 0;
+    virtual size_t write(uint8_t c);
 
     size_t print(const char arg[]);
     size_t print(double value, int digits = 2);
@@ -84,7 +84,7 @@ class SerialClass : public Stream
 public:
     SerialClass() {}
 
-    virtual size_t write(uint8_t) {return 0;}
+    //virtual size_t write(uint8_t) {return 0;}
 };
 
 static SerialClass Serial;
