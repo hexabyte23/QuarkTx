@@ -3,16 +3,18 @@
 
 #include <QQmlContext>
 #include "batterymodel.h"
+#include "RadioLink.h"
 
 class MainModel
 {
     BatteryModel batteryModel_;
+    RadioLink radioLink_;
 
 public:
     MainModel();
     virtual ~MainModel();
 
-    void Init(QQmlContext *context);
+    void init(QQmlContext *context);
 };
 
 #endif // MAINMODEL_H

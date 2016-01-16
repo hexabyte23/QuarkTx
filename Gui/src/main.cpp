@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
         app.installTranslator(&qtTranslator);
 
     QQmlApplicationEngine engine;
-    g_model.Init(engine.rootContext());
+    g_model.init(engine.rootContext());
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
     int ret = app.exec();
