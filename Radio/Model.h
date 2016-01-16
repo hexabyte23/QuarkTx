@@ -34,16 +34,16 @@ struct ServoCommand
 
    uint16_t getValue(uint16_t rawInputValue);
    void reset();
-   uint16_t saveToEEPROM(uint16_t addr) const;
-   uint16_t loadFromEEPROM(uint16_t addr);
+   void saveToEEPROM(uint16_t &addr) const;
+   void loadFromEEPROM(uint16_t &addr);
 };
 
 struct OutputChannel
 {
    ServoCommand servo_;      // next step, put many servo per channel
 
-   uint16_t saveToEEPROM(uint16_t addr) const;
-   uint16_t loadFromEEPROM(uint16_t addr);
+   void saveToEEPROM(uint16_t &addr) const;
+   void loadFromEEPROM(uint16_t &addr);
 };
 
 class Model
@@ -63,8 +63,8 @@ public:
    void setMaxValue(uint8_t channel, int value);
    void setNeutralValue(uint8_t channel, uint16_t value);
    void setRevertValue(uint8_t channel, bool value);
-   uint16_t saveToEEPROM(uint16_t addr) const;
-   uint16_t loadFromEEPROM(uint16_t addr);
+   void saveToEEPROM(uint16_t &addr) const;
+   void loadFromEEPROM(uint16_t &addr);
 };
 
 #endif

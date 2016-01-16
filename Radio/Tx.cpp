@@ -391,8 +391,8 @@ void Tx::calibrateSensor()
 
 void Tx::onLoadFromEEPROM()
 {
-   uint8_t i;
    uint16_t addr = 0L;
+   uint8_t i;
 
    // get current model used index
    EEPROM.get(addr, i);
@@ -407,33 +407,32 @@ void Tx::onLoadFromEEPROM()
 
    // get Model data
    for(uint8_t idx=0; idx < MAX_MODEL; idx++)
-      addr = modelList_[idx].loadFromEEPROM(addr);
+      modelList_[idx].loadFromEEPROM(addr);
 
    // get Sensors data
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-      addr = sensor_[idx]->loadFromEEPROM(addr);
+      sensor_[idx]->loadFromEEPROM(addr);
 
    rcl_.loadFromEEPROM(addr);
 }
 
 void Tx::onSaveToEEPROM()
 {
-
-   uint8_t i = getModelIndex(currentModel_);
    uint16_t addr = 0L;
-   /*
-  // save current model index
-  EEPROM.put(addr, i);
-  addr += sizeof(uint8_t);
+   uint8_t i = getModelIndex(currentModel_);
 
-  // save Model data
-  for(uint8_t idx=0; idx < MAX_MODEL; idx++)
-    addr = modelList_[idx].saveToEEPROM(addr);
+   // save current model index
+   EEPROM.put(addr, i);
+   addr += sizeof(uint8_t);
 
-  // save Sensor data
-  for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
-    addr = sensor_[idx]->saveToEEPROM(addr);
-*/
+   // save Model data
+   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+      modelList_[idx].saveToEEPROM(addr);
+
+   // save Sensor data
+   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+      sensor_[idx]->saveToEEPROM(addr);
+
    rcl_.saveToEEPROM(addr);
 }
 

@@ -233,8 +233,8 @@ public:
    RCLEval();
    void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
    bool setupRCL(uint8_t chan, const char *expStr);
-   bool saveToEEPROM(uint16_t addr) const;
-   bool loadFromEEPROM(uint16_t addr);
+   void saveToEEPROM(uint16_t &addr) const;
+   void loadFromEEPROM(uint16_t &addr);
    void clearRCL(uint8_t chan);
    void idle();
    uint16_t evaluate();

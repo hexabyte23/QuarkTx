@@ -50,7 +50,7 @@ void ServoCommand::reset()
    isRevert_ = false;
 }
 
-uint16_t ServoCommand::saveToEEPROM(uint16_t addr) const
+void ServoCommand::saveToEEPROM(uint16_t &addr) const
 {
    EEPROM.put(addr, maxOutCurse_);
    addr += sizeof(uint16_t);
@@ -60,11 +60,9 @@ uint16_t ServoCommand::saveToEEPROM(uint16_t addr) const
    addr += sizeof(int16_t);
    EEPROM.put(addr, isRevert_);
    addr += sizeof(bool);
-
-   return addr;
 }
 
-uint16_t ServoCommand::loadFromEEPROM(uint16_t addr)
+void ServoCommand::loadFromEEPROM(uint16_t &addr)
 {
    EEPROM.get(addr, maxOutCurse_);
    addr += sizeof(uint16_t);
@@ -74,20 +72,18 @@ uint16_t ServoCommand::loadFromEEPROM(uint16_t addr)
    addr += sizeof(int16_t);
    EEPROM.get(addr, isRevert_);
    addr += sizeof(bool);
-
-   return addr;
 }
 
 //////////////////////////////////////////////////////////////
 
-uint16_t OutputChannel::saveToEEPROM(uint16_t addr) const
+void OutputChannel::saveToEEPROM(uint16_t &addr) const
 {
-   return servo_.saveToEEPROM(addr);
+   servo_.saveToEEPROM(addr);
 }
 
-uint16_t OutputChannel::loadFromEEPROM(uint16_t addr)
+void OutputChannel::loadFromEEPROM(uint16_t &addr)
 {
-   return servo_.loadFromEEPROM(addr);
+   servo_.loadFromEEPROM(addr);
 }
 
 //////////////////////////////////////////////////////////////
@@ -145,19 +141,16 @@ void Model::reset()
       channel_[idx].servo_.reset();
 }
 
-uint16_t Model::saveToEEPROM(uint16_t addr) const
+void Model::saveToEEPROM(uint16_t &addr) const
 {
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-      addr = channel_[idx].saveToEEPROM(addr);
-
-   return addr;
+      channel_[idx].saveToEEPROM(addr);
 }
 
-uint16_t Model::loadFromEEPROM(uint16_t addr)
+void Model::loadFromEEPROM(uint16_t &addr)
 {
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-      addr = channel_[idx].loadFromEEPROM(addr);
+      channel_[idx].loadFromEEPROM(addr);
 
-   return addr;
 }
 

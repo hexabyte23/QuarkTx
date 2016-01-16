@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 //////////////////////////////////////////////////////////////////////////
 // 
-// Some Misc funtions
+// Some Misc. funtions
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -1031,22 +1031,27 @@ bool RCLEval::setupRCL(uint8_t chan, const char *expStr)
    return (expression_[chan] != NULL);
 }
 
-bool RCLEval::saveToEEPROM(uint16_t addr) const
+void RCLEval::saveToEEPROM(uint16_t &addr) const
 {
-   STDOUT << F("Save RCL") << endl;
    g_hierachyDump = false;
-   memset((void*)g_dump,0,sizeof(g_dump));
-   dump(4);
+
+   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   {
+      g_idxDump = 0;
+      memset((void*)g_dump,0,sizeof(g_dump));
+
+      dump(idx);
+
+      //STDOUT << g_dump  << endl;
+      EEPROM.put(addr, g_dump);
+      addr += strlen(g_dump);
+   }
+
    g_hierachyDump = true;
-
-   STDOUT << g_dump  << endl;
-
-   return false;
 }
 
-bool RCLEval::loadFromEEPROM(uint16_t addr)
+void RCLEval::loadFromEEPROM(uint16_t &addr)
 {
-   return false;
 }
 
 void RCLEval::clearRCL(uint8_t chan)
