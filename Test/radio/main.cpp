@@ -41,10 +41,11 @@ int main(int argc, char *argv[])
    tx.onNewCommand("s l 2 i2");
    tx.onNewCommand("s l 3 i3");
    tx.onNewCommand("s l 4 i4[0;512]+i5[512;0]");
+   tx.onNewCommand("s l 5 i6");
 
-   tx.onNewCommand("v");
+   //tx.onNewCommand("v");
 
-   //tx.onNewCommand("d l");
+   tx.onNewCommand("d l");
 
    return a.exec();
 }
