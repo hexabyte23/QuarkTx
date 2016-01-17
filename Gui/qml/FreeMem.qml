@@ -14,9 +14,9 @@ Item
 
     Column
     {
-        spacing: 10
         anchors.fill: parent
         anchors.topMargin: 12
+        spacing: 10
 
         Text
         {
