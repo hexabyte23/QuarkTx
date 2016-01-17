@@ -2,7 +2,8 @@
 #include <QThread>
 
 RadioLink::RadioLink()
-   : serialPort_(NULL), serialPortInfo_(NULL)
+   : serialPort_(NULL),
+     serialPortInfo_(NULL)
 {
 }
 
@@ -57,7 +58,7 @@ bool RadioLink::searchForSerialLink()
             if(line.startsWith("Quark Tx v"))
             {
                txVersion_ = line.mid(sizeof("Quark Tx v")-1);
-               qDebug() << "QuarkTx device detected " << txVersion_;
+               qDebug() << "Quark Tx device detected " << txVersion_;
                foundCnx = true;
                serialPortInfo_ = serialPortInfo;
                break;
@@ -87,15 +88,13 @@ bool RadioLink::searchForSerialLink()
 
    if(!foundCnx)
    {
-      qWarning() << "No QuartTx device found";
+      qWarning() << "No Quart Tx device found";
       return false;
    }
 #endif
 
-
-   QString l2 = getNextLine();
-   QString l3 = getNextLine();
-
+   writeData(TX_CMD_HELP);
+   //writeData(TX_CMD_DUMP_SENSOR);
 
    return true;
 }
@@ -132,6 +131,11 @@ const QByteArray RadioLink::readData()
 
 // QML
 
+bool RadioLink::findTxAndConnect()
+{
+   return searchForSerialLink();
+}
+
 QString RadioLink::getNextLine()
 {
    QString ret;
@@ -139,7 +143,11 @@ QString RadioLink::getNextLine()
    int i = 0;
    while(output_[i] != '\n')
    {
-      ret.append((char)output_[i]);
+      char c = output_[i];
+      if(c == '\r')
+         continue;
+
+      ret.append(c);
       output_.remove(0,1);
 
       if(output_.isEmpty())
@@ -151,11 +159,13 @@ QString RadioLink::getNextLine()
 
 bool RadioLink::sendCommand(const QString &cmd)
 {
-   QByteArray cmdData;
-   cmdData.fromStdString(cmd.toStdString());
-   writeData(cmdData);
+   //QByteArray cmdData;
+   //cmdData.fromStdString(cmd.toStdString());
+   writeData(cmd.toLatin1());
    return true;
 }
+
+// Callbacks
 
 void RadioLink::serialPortReadyRead()
 {

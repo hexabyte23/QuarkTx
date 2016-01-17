@@ -38,7 +38,7 @@ ApplicationWindow
         Component.onCompleted:
         {
             addPage("About", "QuarkTx v 0.0.0.3",  "");
-            addPage("Connect", "Connect to RadioControl",  Qt.resolvedUrl("qrc:/qml/Link.qml"));
+            addPage("Link", "Connect to Tx",  Qt.resolvedUrl("qrc:/qml/Link.qml"));
             addPage("System", "EEPROM, Dump, free memory ...",  Qt.resolvedUrl("qrc:/qml/System.qml"));
             addPage("Tx sensors", "Calibrate, trim, simulate ...",  Qt.resolvedUrl("qrc:/qml/Sensors.qml"));
             addPage("Models", "Change current, neutral, reverse",  Qt.resolvedUrl("qrc:/qml/Models.qml"));

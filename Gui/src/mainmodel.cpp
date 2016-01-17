@@ -12,6 +12,7 @@ MainModel::~MainModel()
 void MainModel::init(QQmlContext *context)
 {
     context->setContextProperty("batteryModel", &batteryModel_);
-    radioLink_.init();
+    context->setContextProperty("radioLinkModel", &radioLink_);
+    //radioLink_.init();
 }
 

@@ -37,5 +37,11 @@
         <file>qml/Sensors.qml</file>
         <file>qml/System.qml</file>
         <file>qml/Rcl.qml</file>
+        <file>qml/Button.qml</file>
+        <file>qml/Link.qml</file>
+        <file>qml/CheckBox.qml</file>
+        <file>qml/Slider.qml</file>
+        <file>qml/TabSet.qml</file>
+        <file>qml/TextField.qml</file>
     </qresource>
 </RCC>

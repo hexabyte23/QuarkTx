@@ -42,3 +42,6 @@ SOURCES = qml/*.qml \
           qml/*.js \
           src/*.cpp
 }
+
+DISTFILES += \
+    qml/Button.qml
