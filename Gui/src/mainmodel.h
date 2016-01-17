@@ -4,11 +4,13 @@
 #include <QQmlContext>
 #include "batterymodel.h"
 #include "RadioLink.h"
+#include "TxCommand.h"
 
 class MainModel
 {
     BatteryModel batteryModel_;
     RadioLink radioLink_;
+    TxCommand txCommand_;
 
 public:
     MainModel();

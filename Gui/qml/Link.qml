@@ -46,6 +46,12 @@ Item
     width: 320
     height: 480
 
+    Component.onCompleted:
+    {
+        cnxStatus.text = radioLinkModel.getConnexionStatus();
+        versionTx.text = radioLinkModel.getTxVersion();
+    }
+
     Column
     {
         spacing: 10
@@ -81,14 +87,21 @@ Item
                 if(radioLinkModel.findTxAndConnect())
                 {
                     versionTx.text = radioLinkModel.getTxVersion()
+                    cnxStatus.text = radioLinkModel.getConnexionStatus();
                 }
             }
         }
 
         Row
         {
+            Text {text: "Cnx status: "}
+            Text {id:cnxStatus}
+        }
+
+        Row
+        {
             Text {text: "Tx version: "}
-            Text {id:versionTx;text: "NA"}
+            Text {id:versionTx}
         }
 
         /*

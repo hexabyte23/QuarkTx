@@ -2,7 +2,9 @@
 #include <QThread>
 
 RadioLink::RadioLink()
-   : serialPort_(NULL),
+   : cnxStatusStr_("Not connected"),
+     txVersion_("NA"),
+     serialPort_(NULL),
      serialPortInfo_(NULL)
 {
 }
@@ -91,12 +93,13 @@ bool RadioLink::searchForSerialLink()
       qWarning() << "No Quart Tx device found";
       return false;
    }
-#endif
 
-   writeData(TX_CMD_HELP);
-   //writeData(TX_CMD_DUMP_SENSOR);
+   cnxStatusStr_ = serialPortInfo_.portName();
 
    return true;
+#else
+   return false;
+#endif
 }
 
 bool RadioLink::searchForBlueToothLink()
@@ -106,39 +109,62 @@ bool RadioLink::searchForBlueToothLink()
 
 void RadioLink::init()
 {
-   if(!searchForSerialLink())
-   {
-      if(!searchForBlueToothLink())
-      {
-         qWarning() << "No device found";
-      }
-   }
 }
 
 void RadioLink::writeData(const QByteArray &data)
 {
+   if(serialPort_ == NULL)
+   {
+      qWarning() << "Cnx with Quark Tx device not established";
+      return;
+   }
+
    input_ = data;
    serialPort_->write(data);
 }
 
 const QByteArray RadioLink::readData()
 {
-   QByteArray recNow = serialPort_->readAll();
-   output_ += recNow;
-   return recNow;
+   QByteArray ret;
+
+   if(serialPort_ == NULL)
+   {
+      qWarning() << "Cnx with Quark Tx device not established";
+      return ret;
+   }
+
+   ret = serialPort_->readAll();
+   output_ += ret;
+
+   return ret;
 }
 
 
 // QML
 
 bool RadioLink::findTxAndConnect()
-{
-   return searchForSerialLink();
+{ 
+   if(!searchForSerialLink())
+   {
+      if(!searchForBlueToothLink())
+      {
+         qWarning() << "No device found";
+         return false;
+      }
+   }
+
+   return true;
 }
 
 QString RadioLink::getNextLine()
 {
    QString ret;
+
+   if(serialPort_ == NULL)
+   {
+      qWarning() << "Cnx with Quark Tx device not established";
+      return ret;
+   }
 
    int i = 0;
    while(output_[i] != '\n')
@@ -159,8 +185,6 @@ QString RadioLink::getNextLine()
 
 bool RadioLink::sendCommand(const QString &cmd)
 {
-   //QByteArray cmdData;
-   //cmdData.fromStdString(cmd.toStdString());
    writeData(cmd.toLatin1());
    return true;
 }
@@ -174,6 +198,12 @@ void RadioLink::serialPortReadyRead()
 
 void RadioLink::serialPortHandleError(QSerialPort::SerialPortError error)
 {
+   if(serialPort_ == NULL)
+   {
+      qWarning() << "Cnx with Quark Tx device not established";
+      return;
+   }
+
    if(error != QSerialPort::NoError)
       qWarning() << "Cnx error: '" << error << "' " << serialPort_->errorString();
 }

@@ -10,13 +10,14 @@ QT += qml quick widgets bluetooth
 SOURCES +=  src/main.cpp \
     src/MainModel.cpp \
     src/BatteryModel.cpp \
-    src/RadioLink.cpp
+    src/RadioLink.cpp \
+    src/TxCommand.cpp
 HEADERS +=  src/global.h \
             src/main.h \
     src/MainModel.h \
     src/BatteryModel.h \
-    qml/shared/shared.h \
-    src/RadioLink.h
+    src/RadioLink.h \
+    src/TxCommand.h
 
 RESOURCES += qml.qrc
 
