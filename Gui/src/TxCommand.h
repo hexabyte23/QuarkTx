@@ -12,8 +12,8 @@
 #define TX_CMD_DUMP_EEPROM          "d e\r"
 #define TX_CMD_DUMP_SENSOR          "d s\r"
 #define TX_CMD_DUMP_RCL             "d l\r"
+#define TX_CMD_FREE_MEMORY          "f\r"
 #define TX_CMD_HELP                 "h\r"
-
 
 class TxCommand : public QObject
 {
@@ -29,6 +29,7 @@ public:
 
    // QML
    Q_INVOKABLE bool sendCommand(const QString &cmd);
+   Q_INVOKABLE QString getFreeMemoryStr();
 };
 
 #endif // TX_COMMAND_H

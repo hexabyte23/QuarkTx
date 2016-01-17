@@ -43,5 +43,6 @@
         <file>qml/Slider.qml</file>
         <file>qml/TabSet.qml</file>
         <file>qml/TextField.qml</file>
+        <file>qml/FreeMem.qml</file>
     </qresource>
 </RCC>

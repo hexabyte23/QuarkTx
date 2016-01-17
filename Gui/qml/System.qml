@@ -34,7 +34,7 @@ Item
             addPage("Load from EEPROM", "",  Qt.resolvedUrl("xx.qml"));
             addPage("Save to EEPROM", "",  Qt.resolvedUrl("xx.qml"));
             addPage("Dump", "Sensor, Model, EEPROM",  Qt.resolvedUrl("xx.qml"));
-            addPage("Display free memory", "",  Qt.resolvedUrl("xx.qml"));
+            addPage("Display free memory", "",  Qt.resolvedUrl("FreeMem.qml"));
             addPage("Display input", "Sensors",  Qt.resolvedUrl("xx.qml"));
             addPage("Display output", "Channels",  Qt.resolvedUrl("xx.qml"));
             addPage("Toggle Tx mode", "Transmit, Debug",  Qt.resolvedUrl("xx.qml"));

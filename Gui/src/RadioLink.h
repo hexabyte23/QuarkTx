@@ -40,7 +40,7 @@ public:
    QSerialPortInfo getFirstAvailableSerialConnexionInfo() {return serialPortInfo_;}
 #endif
 
-   void writeData(const QByteArray &data);
+   bool writeData(const QByteArray &data);
    const QByteArray readData();
    QString getNextLine();
    bool sendCommand(const QString &cmd);

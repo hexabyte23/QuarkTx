@@ -101,6 +101,8 @@ bool RadioLink::searchForSerialLink()
    transportStatusStr = "serial";
    cnxStatusStr_ = serialPortInfo_.portName();
 
+   output_.clear();
+
    return true;
 #else
    return false;
@@ -116,16 +118,22 @@ void RadioLink::init()
 {
 }
 
-void RadioLink::writeData(const QByteArray &data)
+bool RadioLink::writeData(const QByteArray &data)
 {
    if(serialPort_ == NULL)
    {
       qWarning() << "Cnx with Quark Tx device not established";
-      return;
+      return false;
    }
 
    input_ = data;
-   serialPort_->write(data);
+   if(serialPort_->write(data) != -1)
+   {
+      qDebug() << "< " << data;
+      return true;
+   }
+
+   return false;
 }
 
 const QByteArray RadioLink::readData()
@@ -184,18 +192,20 @@ QString RadioLink::getNextLine()
       return ret;
    }
 
-   int i = 0;
-   while(output_[i] != '\n')
+   while(1)
    {
-      char c = output_[i];
-      if(c == '\r')
-         continue;
-
-      ret.append(c);
-      output_.remove(0,1);
-
       if(output_.isEmpty())
          serialPort_->waitForReadyRead(-1);
+
+      char c = output_[0];
+      output_.remove(0,1);
+
+      if(c == '\r')
+         continue;
+      else if(c == '\n')
+         break;
+
+      ret.append(c);
    }
 
    return ret;
@@ -203,8 +213,8 @@ QString RadioLink::getNextLine()
 
 bool RadioLink::sendCommand(const QString &cmd)
 {
-   writeData(cmd.toLatin1());
-   return true;
+   output_.clear();
+   return writeData(cmd.toLatin1());
 }
 
 // Callbacks

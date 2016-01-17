@@ -33,6 +33,8 @@ Item
         {
             addPage("Calibrate", "Setup",  Qt.resolvedUrl("xx.qml"));
             addPage("Trim", "Setup",  Qt.resolvedUrl("xx.qml"));
+            addPage("Min", "Setup",  Qt.resolvedUrl("xx.qml"));
+            addPage("Max", "Setup",  Qt.resolvedUrl("xx.qml"));
             addPage("Simulate", "Setup",  Qt.resolvedUrl("xx.qml"));
         }
     }
