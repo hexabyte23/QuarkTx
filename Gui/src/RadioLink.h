@@ -16,6 +16,7 @@ class RadioLink : public QObject
    Q_OBJECT
 
    QByteArray input_, output_;
+   QString txVersion_;
 
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
    QSerialPort *serialPort_;
@@ -42,8 +43,9 @@ public:
    const QByteArray readData();
 
    // QML
-   Q_INVOKABLE QString getNextLine() const;
+   Q_INVOKABLE QString getNextLine();
    Q_INVOKABLE bool sendCommand(const QString &cmd);
+   Q_INVOKABLE QString getTxVersion() {return txVersion_;}
 
 private slots:
    void serialPortReadyRead();
