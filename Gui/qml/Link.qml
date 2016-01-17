@@ -85,13 +85,5 @@ Item
             Text {text: "Tx version: "}
             Text {id:versionTx}
         }
-
-        /*
-        Slider {id:elevatorStick; min:-100; max:100; name:"Elevator";minLabelWidth:50}
-        Slider {id:aileronStick; min:0; max:200; name:"Aileron";minLabelWidth:50}
-        Slider {id:rudderStick; min:0; max:200; name:"Rudder";minLabelWidth:50}
-        Slider {id:throttleStick; min:0; max:200; name:"Throttle";minLabelWidth:50}
-        */
     }
-
 }

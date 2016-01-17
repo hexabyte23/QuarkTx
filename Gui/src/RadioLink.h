@@ -47,15 +47,18 @@ public:
 
    // QML
    Q_INVOKABLE bool findTxAndConnect();
-   Q_INVOKABLE bool txDisconnect();
+   Q_INVOKABLE void txDisconnect();
    Q_INVOKABLE bool isTxConnected() {return isTxConnected_;}
    Q_INVOKABLE QString getTransportStatusStr() {return transportStatusStr;}
    Q_INVOKABLE QString getConnexionStatusStr() {return cnxStatusStr_;}
    Q_INVOKABLE QString getTxVersionStr() {return txVersionStr_;}
 
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
 private slots:
    void serialPortReadyRead();
    void serialPortHandleError(QSerialPort::SerialPortError error);
+#endif
+
 };
 
 #endif // RADIOLINK_H

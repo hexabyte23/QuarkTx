@@ -169,7 +169,7 @@ bool RadioLink::findTxAndConnect()
    return true;
 }
 
-bool RadioLink::txDisconnect()
+void RadioLink::txDisconnect()
 {
    closeSerialLink();
    closeBlueToothLink();

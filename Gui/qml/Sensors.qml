@@ -32,10 +32,10 @@ Item
         Component.onCompleted:
         {
             addPage("Calibrate", "Setup",  Qt.resolvedUrl("xx.qml"));
-            addPage("Trim", "Setup",  Qt.resolvedUrl("xx.qml"));
-            addPage("Min", "Setup",  Qt.resolvedUrl("xx.qml"));
-            addPage("Max", "Setup",  Qt.resolvedUrl("xx.qml"));
-            addPage("Simulate", "Setup",  Qt.resolvedUrl("xx.qml"));
+            addPage("Trim", "Setup",  Qt.resolvedUrl("SensorTrim.qml"));
+            addPage("Min", "Setup",  Qt.resolvedUrl("SensorMin.qml"));
+            addPage("Max", "Setup",  Qt.resolvedUrl("SensorMax.qml"));
+            addPage("Simulate", "Setup",  Qt.resolvedUrl("SensorSim.qml"));
         }
     }
 }

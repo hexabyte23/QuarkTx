@@ -44,5 +44,8 @@
         <file>qml/TabSet.qml</file>
         <file>qml/TextField.qml</file>
         <file>qml/FreeMem.qml</file>
+        <file>qml/SensorMax.qml</file>
+        <file>qml/SensorMin.qml</file>
+        <file>qml/SensorTrim.qml</file>
     </qresource>
 </RCC>

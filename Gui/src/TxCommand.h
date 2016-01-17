@@ -2,6 +2,7 @@
 #define TX_COMMAND_H
 
 #include <QQmlContext>
+#include <QVariantMap>
 #include "RadioLink.h"
 
 
@@ -20,16 +21,25 @@ class TxCommand : public QObject
    Q_OBJECT
 
    RadioLink *radioLinkRef_;
+   QStringList sensorCache_;
+   bool refreshSensorCache_;
+
+   void fillSensorCache();
 
 public:
    TxCommand();
    virtual ~TxCommand();
 
    void init(RadioLink *radioLinkRef);
+   bool sendCommand(const QString &cmd);
+   QString getNextLine();
 
    // QML
-   Q_INVOKABLE bool sendCommand(const QString &cmd);
    Q_INVOKABLE QString getFreeMemoryStr();
+
+   Q_INVOKABLE QVariantMap getSensorData(int sensorID);
+   Q_INVOKABLE void setSensorData(int sensorID, QVariantMap data);
+
 };
 
 #endif // TX_COMMAND_H
