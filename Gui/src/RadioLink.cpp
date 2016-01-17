@@ -2,8 +2,11 @@
 #include <QThread>
 
 RadioLink::RadioLink()
-   : cnxStatusStr_("Not connected"),
-     txVersion_("NA"),
+   :
+     isTxConnected_(false),
+     transportStatusStr("No transport"),
+     cnxStatusStr_("Not connected"),
+     txVersionStr_("NA"),
      serialPort_(NULL),
      serialPortInfo_(NULL)
 {
@@ -21,16 +24,22 @@ void RadioLink::closeSerialLink()
 
    if(serialPort_)
    {
+      serialPort_->close();
+      disconnect(serialPort_, SIGNAL(readyRead()), this, SLOT(serialPortReadyRead()));
+      disconnect(serialPort_, SIGNAL(error(QSerialPort::SerialPortError)), this,
+                 SLOT(serialPortHandleError(QSerialPort::SerialPortError)));
+
       delete serialPort_;
       serialPort_ = NULL;
-   }
 
+      QSerialPortInfo i;
+      serialPortInfo_ = i;
+   }
 #endif
 }
 
 void RadioLink::closeBlueToothLink()
 {
-
 }
 
 bool RadioLink::searchForSerialLink()
@@ -59,8 +68,8 @@ bool RadioLink::searchForSerialLink()
             QString line = getNextLine();
             if(line.startsWith("Quark Tx v"))
             {
-               txVersion_ = line.mid(sizeof("Quark Tx v")-1);
-               qDebug() << "Quark Tx device detected " << txVersion_;
+               txVersionStr_ = line.mid(sizeof("Quark Tx v")-1);
+               qDebug() << "Quark Tx device detected " << txVersionStr_;
                foundCnx = true;
                serialPortInfo_ = serialPortInfo;
                break;
@@ -74,13 +83,7 @@ bool RadioLink::searchForSerialLink()
             qDebug() << "Cnx is not anwsering since 3 sec";
 
          qDebug() << "Close cnx: " << serialPortInfo.portName();
-         serialPort_->close();
-         disconnect(serialPort_, SIGNAL(readyRead()), this, SLOT(serialPortReadyRead()));
-         disconnect(serialPort_, SIGNAL(error(QSerialPort::SerialPortError)), this,
-                    SLOT(serialPortHandleError(QSerialPort::SerialPortError)));
-
-         delete serialPort_;
-         serialPort_ = NULL;
+         closeSerialLink();
       }
       else
       {
@@ -94,6 +97,8 @@ bool RadioLink::searchForSerialLink()
       return false;
    }
 
+   isTxConnected_ = true;
+   transportStatusStr = "serial";
    cnxStatusStr_ = serialPortInfo_.portName();
 
    return true;
@@ -154,6 +159,19 @@ bool RadioLink::findTxAndConnect()
    }
 
    return true;
+}
+
+bool RadioLink::txDisconnect()
+{
+   closeSerialLink();
+   closeBlueToothLink();
+
+   isTxConnected_ = false;
+   transportStatusStr = "No transport";
+   cnxStatusStr_ = "Not connected";
+   txVersionStr_ = "NA";
+
+   qDebug() << "Disconnect Tx";
 }
 
 QString RadioLink::getNextLine()

@@ -16,8 +16,8 @@ class RadioLink : public QObject
    Q_OBJECT
 
    QByteArray input_, output_;
-   QString cnxStatusStr_;
-   QString txVersion_;
+   bool isTxConnected_;
+   QString transportStatusStr,cnxStatusStr_, txVersionStr_;
 
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
    QSerialPort *serialPort_;
@@ -47,8 +47,11 @@ public:
 
    // QML
    Q_INVOKABLE bool findTxAndConnect();
-   Q_INVOKABLE QString getConnexionStatus() {return cnxStatusStr_;}
-   Q_INVOKABLE QString getTxVersion() {return txVersion_;}
+   Q_INVOKABLE bool txDisconnect();
+   Q_INVOKABLE bool isTxConnected() {return isTxConnected_;}
+   Q_INVOKABLE QString getTransportStatusStr() {return transportStatusStr;}
+   Q_INVOKABLE QString getConnexionStatusStr() {return cnxStatusStr_;}
+   Q_INVOKABLE QString getTxVersionStr() {return txVersionStr_;}
 
 private slots:
    void serialPortReadyRead();

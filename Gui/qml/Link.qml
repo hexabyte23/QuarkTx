@@ -48,8 +48,9 @@ Item
 
     Component.onCompleted:
     {
-        cnxStatus.text = radioLinkModel.getConnexionStatus();
-        versionTx.text = radioLinkModel.getTxVersion();
+        cnxStatus.text = radioLinkModel.getConnexionStatusStr();
+        transportStatus.text = radioLinkModel.getTransportStatusStr();
+        versionTx.text = radioLinkModel.getTxVersionStr();
     }
 
     Column
@@ -70,7 +71,6 @@ Item
 
     Column
     {
-        id: column1
         anchors.left: parent.left
         anchors.leftMargin: 21
         anchors.top: parent.top
@@ -80,15 +80,30 @@ Item
         Button
         {
             id: connectButton
-            text: "Connect to Tx"
+
+            Component.onCompleted:
+            {
+                if(radioLinkModel.isTxConnected())
+                    text = "Close cnx";
+                else
+                    text = "Connect";
+            }
 
             onClicked:
             {
-                if(radioLinkModel.findTxAndConnect())
-                {
-                    versionTx.text = radioLinkModel.getTxVersion()
-                    cnxStatus.text = radioLinkModel.getConnexionStatus();
-                }
+                if(radioLinkModel.isTxConnected())
+                    radioLinkModel.txDisconnect();
+                else
+                    radioLinkModel.findTxAndConnect();
+
+                if(radioLinkModel.isTxConnected())
+                    text = "Close cnx";
+                else
+                    text = "Connect";
+
+                cnxStatus.text = radioLinkModel.getConnexionStatusStr();
+                transportStatus.text = radioLinkModel.getTransportStatusStr();
+                versionTx.text = radioLinkModel.getTxVersionStr();
             }
         }
 
@@ -96,6 +111,12 @@ Item
         {
             Text {text: "Cnx status: "}
             Text {id:cnxStatus}
+        }
+
+        Row
+        {
+            Text {text: "Transport status: "}
+            Text {id:transportStatus}
         }
 
         Row
