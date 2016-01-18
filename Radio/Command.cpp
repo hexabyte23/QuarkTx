@@ -54,11 +54,11 @@ void Command::onNewCommand(const char* cmdStr)
    case 'd': dumpCmd(cmdStr+2);break;
    case 'f': getFreeMemoryCmd();break;
    case 'h': helpCmd();break;
-   case 'i': toggleDisplayInputUpdateCmd();break;
+   case 'i': toggleDisplayInputUpdateCmd(cmdStr+2);break;
    case 'l': changeCurrentModelCmd(cmdStr+2);break;
    case 'm': toggleTxModeCmd();break;
    case 'n': displayVersionCmd();break;
-   case 'o': toggleDisplayOutputUpdateCmd();break;
+   case 'o': toggleDisplayOutputUpdateCmd(cmdStr+2);break;
    case 'r': resetCmd(cmdStr+2);break;
    case 's': setCmd(cmdStr+2);break;
    case 'v': saveToEEPROMCmd();break;
@@ -79,11 +79,11 @@ void Command::helpCmd()
                 "d [m]|[e]|[s]|[l]: Dump model, EEPROM, sensor or RCL\n"
                 "f: Get free memory\n"
                 "h: Help\n"
-                "i: Toggle input sensor update\n"
-                "l [0..1]: Load cur. model\n"
+                "i [freq]: Toggle input sensor update\n"
+                "l (0..1): Load cur. model\n"
                 "m: Toggle Tx mode (transmit or debug)\n"
                 "n: Display version\n"
-                "o: Toggle output PPM update\n"
+                "o [freq]: Toggle output PPM update\n"
                 "r [m]|[s]|[l]: Clean model, sensor or RCL\n"
                 "s a chan val: Set cur. model servo max\n"
                 "s i chan val: Set cur. model servo min\n"
@@ -118,14 +118,20 @@ void Command::dumpCmd(const char* param)
    tx_->onDump(param);
 }
 
-void Command::toggleDisplayInputUpdateCmd()
+void Command::toggleDisplayInputUpdateCmd(const char* param)
 {
-   tx_->onToggleDisplayInputUpdate();
+   int freq = -1;
+   if(param)
+      freq = atoi(param);
+   tx_->onToggleDisplayInputUpdate(freq);
 }
 
-void Command::toggleDisplayOutputUpdateCmd()
+void Command::toggleDisplayOutputUpdateCmd(const char* param)
 {
-   tx_->onToggleDisplayOutputUpdate();
+   int freq = -1;
+   if(param)
+      freq = atoi(param);
+   tx_->onToggleDisplayOutputUpdate(freq);
 }
 
 void Command::toggleCalibrateAnalogicSensorCmd()

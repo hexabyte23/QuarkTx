@@ -48,6 +48,7 @@ class Tx
    Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
 #endif
    uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+   int inFreq_, outFreq_, inCurFreq_, outCurFreq_;
 
    // For mixers, dual rate, expo...
    RCLEval rcl_;
@@ -96,8 +97,8 @@ public:
    void onChangeCurrentModel(int idx);
    void onDump(const char* param);
    void onToggleTxMode();
-   void onToggleDisplayInputUpdate();
-   void onToggleDisplayOutputUpdate();
+   void onToggleDisplayInputUpdate(int freq);
+   void onToggleDisplayOutputUpdate(int freq);
    void onToggleCalibrateSensor();
    void onToggleSimulation();
    void onLoadFromEEPROM();

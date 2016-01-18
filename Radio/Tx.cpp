@@ -30,7 +30,11 @@ Tx::Tx()
      toggleDisplayInputUpdate_(false),
      toggleDisplayOutputUpdate_(false),
      toggleCalibrateSensor_(false),
-     toggleSimulation_(false)
+     toggleSimulation_(false),
+     inFreq_(-1),
+     outFreq_(-1),
+     inCurFreq_(0),
+     outCurFreq_(0)
 {
    onSoftwareReset("");
 }
@@ -229,6 +233,13 @@ void Tx::ledBlinkIdle()
 
 void Tx::displayInputUpdate()
 {
+   if(inFreq_ > 0)
+   {
+      if(inCurFreq_++ < inFreq_)
+        return;
+      inCurFreq_ = 0;
+   }
+   
    STDOUT << F("<\t");
 
    for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
@@ -237,13 +248,22 @@ void Tx::displayInputUpdate()
    STDOUT << endl;
 }
 
-void Tx::onToggleDisplayInputUpdate()
+void Tx::onToggleDisplayInputUpdate(int freq)
 {
+   inCurFreq_ = 0;
+   inFreq_ = freq;
    toggleDisplayInputUpdate_ = !toggleDisplayInputUpdate_;
 }
 
 void Tx::displayOutputUpdate()
 {
+   if(outFreq_ > 0)
+   {
+      if(outCurFreq_++ < outFreq_)
+        return;
+      outCurFreq_ = 0;
+   }
+   
    STDOUT << F(">\t");
 
    for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
@@ -252,8 +272,9 @@ void Tx::displayOutputUpdate()
    STDOUT << endl;
 }
 
-void Tx::onToggleDisplayOutputUpdate()
+void Tx::onToggleDisplayOutputUpdate(int freq)
 {
+   outFreq_ = freq;
    toggleDisplayOutputUpdate_ = !toggleDisplayOutputUpdate_;
 }
 

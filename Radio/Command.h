@@ -34,8 +34,8 @@ class Command
    void helpCmd();
    void toggleTxModeCmd();
    void displayVersionCmd();
-   void toggleDisplayInputUpdateCmd();
-   void toggleDisplayOutputUpdateCmd();
+   void toggleDisplayInputUpdateCmd(const char* param);
+   void toggleDisplayOutputUpdateCmd(const char* param);
    void changeCurrentModelCmd(const char* modelIdx);
    void dumpCmd(const char* param);
    void toggleCalibrateAnalogicSensorCmd();
