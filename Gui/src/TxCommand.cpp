@@ -123,7 +123,14 @@ QVariantMap TxCommand::getSensorData(int sensorID)
 
 void TxCommand::setSensorData(int sensorID, QVariantMap data)
 {
-   sendCommand(QString("s t %1 %2\r").arg(sensorID).arg(data["trim"].toInt()));
+   if(data.contains("trim"))
+      sendCommand(QString("s t %1 %2\r").arg(sensorID).arg(data["trim"].toInt()));
+
+   if(data.contains("min"))
+      sendCommand(QString("s i %1 %2\r").arg(sensorID).arg(data["min"].toInt()));
+
+   if(data.contains("max"))
+      sendCommand(QString("s a %1 %2\r").arg(sensorID).arg(data["max"].toInt()));
 
    refreshSensorCache_ = true;
 }

@@ -36,7 +36,7 @@ class RadioLink : public QObject
 
    QByteArray input_, output_;
    bool isTxConnected_;
-   QString transportStatusStr,cnxStatusStr_, txVersionStr_;
+   QString transportStatusStr, cnxStatusStr_, txVersionStr_;
 
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
    QSerialPort *serialPort_;

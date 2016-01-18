@@ -34,7 +34,7 @@ Item
         Text
         {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "Calibrate Trim"
+            text: "Setup Trim"
             font.pointSize: 24
             font.bold: true
             color: "#777"
