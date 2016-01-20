@@ -1,6 +1,6 @@
 /*
 Config.h - QuarkTx
-Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2016 Thierry & Bertrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.0.21"
+#define QUARKTX_VERSION         "0.1.0"
 #define SERIAL_SPEED            9600
 
 #define MAX_MODEL               2

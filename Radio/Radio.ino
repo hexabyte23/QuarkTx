@@ -1,6 +1,6 @@
 /*
 Radio.ino - QuarkTx
-Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2016 Thierry & Bertrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "SerialLink.h"
 #include "Tx.h"
 
 Tx tx;
@@ -27,10 +26,12 @@ void setup()
    STDOUT << (tx.setup()?F("Ready\n>"):F("Failed\n>")) << endl;
 }
 
+#ifdef USE_TIMER1
 ISR(TIMER1_COMPA_vect)
 {
    tx.onIrqTimerChange();
 }
+#endif
 
 void loop()
 {
