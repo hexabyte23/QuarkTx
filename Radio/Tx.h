@@ -85,7 +85,6 @@ class Tx
    volatile boolean irqStartPulse_;
    volatile byte irqCurrentChannelNumber_;
 
-
 public:
 
    Tx();

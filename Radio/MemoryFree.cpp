@@ -1,9 +1,28 @@
+/*
+Mesure.cpp - QuarkTx
+Copyright (c) 2015-2016 Thierry & Bertrand WILMOT.  All rights reserved.
 
-#if (ARDUINO >= 100)
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#endif
+#include "MemoryFree.h"
+
+
+#ifndef __MK20DX256__
 
 extern unsigned int __heap_start;
 extern void *__brkval;
@@ -21,8 +40,6 @@ struct __freelist
 /* The head of the free list structure */
 extern struct __freelist *__flp;
 
-#include "MemoryFree.h"
-
 /* Calculates the size of the free list */
 int freeListSize()
 {
@@ -37,9 +54,12 @@ int freeListSize()
    return total;
 }
 
+#endif
+
+
 int freeMemory()
 {
-#ifdef QT_CORE_LIB
+#if defined(QT_CORE_LIB) || defined(__MK20DX256__)
    return 0;
 #else
    int free_memory;
@@ -55,3 +75,4 @@ int freeMemory()
    return free_memory;
 #endif
 }
+

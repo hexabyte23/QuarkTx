@@ -71,7 +71,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SWITCH2_PIN             3
 #define SWITCH3_PIN             4
 
-#define LED_PIN                 6
+#define LED_PIN                 13
 
 #define BT_RX_PIN               9
 #define BT_TX_PIN               8

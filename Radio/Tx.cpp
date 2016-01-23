@@ -24,23 +24,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 Tx::Tx()
-   :currentModel_(&modelList_[0]),
-     ledState_(LOW),
-     toggleTxMode_(tTransmit),
-     toggleDisplayInputUpdate_(false),
-     toggleDisplayOutputUpdate_(false),
-     toggleCalibrateSensor_(false),
-     toggleSimulation_(false),
-     inFreq_(-1),
-     outFreq_(-1),
-     inCurFreq_(0),
-     outCurFreq_(0)
+:
+currentModel_(&modelList_[0]),
+inFreq_(-1),
+outFreq_(-1),
+inCurFreq_(0), 
+outCurFreq_(0),
+ledState_(HIGH),
+toggleTxMode_(tTransmit),
+toggleDisplayInputUpdate_(false),
+toggleDisplayOutputUpdate_(false),
+toggleCalibrateSensor_(false),
+toggleSimulation_(false)
 {
    onSoftwareReset("");
 }
 
 void Tx::setupInputDevice()
 {
+#if __MK20DX256__
+#else
    //const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
    //const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
    //const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
@@ -49,6 +52,7 @@ void Tx::setupInputDevice()
    // set up the ADC
    //ADCSRA &= ~PS_128;  // remove bits set by Arduino library
    //ADCSRA |= PS_64;    // set our own prescaler to 64
+#endif
 
    elevator_.setup(A0);
    aileron_.setup(A1);
@@ -70,6 +74,8 @@ void Tx::setupOutputDevice()
 
    cli();
 
+#if __MK20DX256__
+#else
    TCCR1A = 0;               // set entire TCCR1 register to 0
    TCCR1B = 0;
 
@@ -79,8 +85,9 @@ void Tx::setupOutputDevice()
    TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0.5 microseconds at 16mhz
 
    TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
+#endif
 
-   // init irq variables
+   // Init irq variables
    irqStartPulse_ = true;
    irqCurrentChannelNumber_ = 0;
 
@@ -88,13 +95,14 @@ void Tx::setupOutputDevice()
 
    // LED
    pinMode(LED_PIN, OUTPUT);
+   digitalWrite(LED_PIN, HIGH);
 }
 
 bool Tx::setup()
 {
    mesure_.start();
 
-   // for battery extended duration put all unused pin off
+   // For battery extended duration put all unused pin off
    pinMode(2, INPUT_PULLUP);
    pinMode(3, INPUT_PULLUP);
    pinMode(4, INPUT_PULLUP);
@@ -129,7 +137,7 @@ bool Tx::setup()
 
    onLoadFromEEPROM();
 
-   /*
+/*
   rcl_.setupRCL(0, "i0");
   rcl_.setupRCL(1, "i1");
   rcl_.setupRCL(2, "i2");
@@ -146,8 +154,11 @@ bool Tx::setup()
    return ret1 | ret2;
 }
 
+
 void Tx::onIrqTimerChange()
 {
+#if __MK20DX256__
+#else
    /*
    * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint
    * (as HF modules can now sent more than 8 channels) but just care about 2 times:
@@ -187,6 +198,7 @@ void Tx::onIrqTimerChange()
       else
          OCR1A = PPM_INTER_CHANNEL_TIME*2;
    }
+#endif
 }
 
 void Tx::idle()

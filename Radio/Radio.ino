@@ -26,7 +26,12 @@ void setup()
    STDOUT << (tx.setup()?F("Ready\n>"):F("Failed\n>")) << endl;
 }
 
-#ifdef USE_TIMER1
+#if __MK20DX256__
+void pit0_isr()
+{
+   tx.onIrqTimerChange();
+}
+#else
 ISR(TIMER1_COMPA_vect)
 {
    tx.onIrqTimerChange();

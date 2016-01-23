@@ -51,9 +51,9 @@ bool SerialLink::setup(Command *cmd)
    Serial.begin(SERIAL_SPEED);
 #endif
 
-   // reroute printf() output to currentStream_
 #ifndef QT_CORE_LIB
-   stdout = stderr = fdevopen(serialWrite, NULL);
+   // reroute printf() output to currentStream_
+   //stdout = stderr = fdevopen(serialWrite, NULL);
 #endif
 
    STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << F("\nBooting...") << endl;
