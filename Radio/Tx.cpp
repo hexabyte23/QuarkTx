@@ -96,16 +96,20 @@ void Tx::setupOutputDevice()
    irqStartPulse_ = true;
    irqCurrentChannelNumber_ = 0;
 
-   cli();
-
 #if __MK20DX256__
-/*   PIT_MCR = 0x0;            // turn on PIT
-   PIT_LDVAL0 = floor(F_BUS*PPM_INTER_FRAME_TIME) -1;
 
-   PIT_TCTRL1 = 0x02;        // enable Timer 1 interrupts
-   PIT_TCTRL1 |= 0x01;       // start Timer 1
-   */
+   SIM_SCGC6 |= SIM_SCGC6_PIT;  // Enable PIT clock
+   PIT_MCR = 0x00;              // turn on PIT
+   PIT_TCTRL1 = 0x00;           // stop Timer 0
+   PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_FRAME_TIME-1;
+   PIT_TCTRL1 = 0x03;           // enable Timer 0 interrupts + start
+   NVIC_SET_PRIORITY(1, 128);
+   NVIC_ENABLE_IRQ(IRQ_PIT_CH1);
+   
 #else
+
+   cli();
+   
    TCCR1A = 0;               // set entire TCCR1 register to 0
    TCCR1B = 0;
 
@@ -115,9 +119,10 @@ void Tx::setupOutputDevice()
    TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0.5 microseconds at 16mhz
 
    TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
-#endif
 
    sei();
+   
+#endif
 }
 
 bool Tx::setup()
@@ -158,7 +163,7 @@ bool Tx::setup()
    rcl_.setup(sensor_, ppmOutputValue_, currentModel_);
 
    onLoadFromEEPROM();
-
+/*
   rcl_.setupRCL(0, "i0");
   rcl_.setupRCL(1, "i1");
   rcl_.setupRCL(2, "i2");
@@ -167,9 +172,15 @@ bool Tx::setup()
 #ifdef TERRATOP
   rcl_.setupRCL(5, "(i2>512)?i0:0");
 #endif
-
+*/
    mesure_.stop();
    STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;
+
+#if __MK20DX256__
+  STDOUT << F("Teensy 3.2") << endl; // Teensy signnature
+#else
+  STDOUT << F("Nano") << endl; // Nano signnature
+#endif
 
    return ret1 | ret2;
 }
@@ -184,15 +195,16 @@ void Tx::onIsrTimerChange()
    */
    
 #if __MK20DX256__
-/*
+
+  PIT_TFLG1 = 1;
+
   if(irqStartPulse_)
   {
       // Falling edge of a channel pulse (in negative shape)
       if(toggleTxMode_ == tTransmit)
          digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
       
-      // All time must be x2, as prescale is set to 0.5 microseconds at 16 Mhz
-      PIT_LDVAL0 = floor(F_BUS*ppmOutputValue_[irqCurrentChannelNumber_]) -1;
+      PIT_LDVAL1 = (F_BUS / 1000000) * ppmOutputValue_[irqCurrentChannelNumber_] - 1;
       irqCurrentChannelNumber_++;
       irqStartPulse_ = false;
   }
@@ -203,18 +215,16 @@ void Tx::onIsrTimerChange()
          digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
 
       // Calculate when the next pulse will start
-      // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
       if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
       {
          irqCurrentChannelNumber_ = 0;
-         PIT_LDVAL0 = floor(F_BUS*PPM_INTER_FRAME_TIME)-1;
+         PIT_LDVAL1 = (F_BUS / 1000000) * PPM_INTER_FRAME_TIME - 1;
       }
       else
-         PIT_LDVAL0 = floor(F_BUS*PPM_INTER_CHANNEL_TIME)-1;
+         PIT_LDVAL1 = (F_BUS / 1000000) * PPM_INTER_CHANNEL_TIME - 1;
 
       irqStartPulse_ = true;
   }
-*/
 #else
    /*
    * We successfully test with a Jeti TU2 RF module up to 17 channels

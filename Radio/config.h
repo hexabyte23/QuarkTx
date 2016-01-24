@@ -101,7 +101,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef JETI_TU2_MODULE
 
-#define PPM_SHAPE_SIGNAL        1       // 0 is positive, 1 is negative
+#define PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
 #define PPM_INTER_CHANNEL_TIME  500     // microsec
 #define PPM_INTER_FRAME_TIME    4500    // microsec
 

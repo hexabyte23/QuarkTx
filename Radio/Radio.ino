@@ -30,7 +30,7 @@ void setup()
 }
 
 #if __MK20DX256__
-void pit0_isr()
+void pit1_isr()
 {
    tx.onIsrTimerChange();
 }
