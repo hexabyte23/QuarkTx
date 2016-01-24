@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // General definitions
 
 #define QUARKTX_VERSION         "0.1.0"
-#define SERIAL_SPEED            9600
+#define QUARKTX_SERIAL_SPEED    9600
 
 #define MAX_MODEL               2
 #define MAX_SERIAL_INPUT_BUFFER 40      // warning: dont set too small value for RCL commands

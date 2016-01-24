@@ -42,4 +42,45 @@ public:
    void idle();
 };
 
+#if __MK20DX256__
+class MacAddress
+{
+    uint8_t mac_[6];
+
+    void setup(uint8_t word, uint8_t loc) 
+    {
+        // "Kinetis Peripheral Module Quick Reference" page 85 and
+        // "K20 Sub-Family Reference Manual" page 548.
+        cli();
+        FTFL_FCCOB0 = 0x41;             // READONCE command
+        FTFL_FCCOB1 = word;             // read the given word of read once area
+                                        // -- this is one half of the mac addr.
+        FTFL_FSTAT = FTFL_FSTAT_CCIF;   // Launch command
+
+        // Wait for command completion
+        while(!(FTFL_FSTAT & FTFL_FSTAT_CCIF));
+
+        // Skip FTFL_FCCOB4 always 0
+        mac_[loc] =   FTFL_FCCOB5;       // collect only the top three bytes (big endian)
+        mac_[loc+1] = FTFL_FCCOB6;       
+        mac_[loc+2] = FTFL_FCCOB7;       
+        sei();
+    }
+    
+public:
+
+    MacAddress() {}
+
+    uint8_t operator[](int index) const {return mac_[index];}
+    uint8_t& operator[](int index) {return mac_[index];}
+
+    void setup()
+    {
+        setup(0x0E, 0);
+        setup(0x0F, 3);
+    }
+};
+
+#endif
+
 #endif

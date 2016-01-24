@@ -204,7 +204,7 @@ public:
 class RCLEval
 {    
    Sensor **sensorRef_;
-   uint16_t *outputValueRef_;
+   volatile uint16_t *outputValueRef_;
    Model *currentModel_;
    Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
    SensorInputExp *inputTab_[MAX_INPUT_CHANNEL];
@@ -216,7 +216,7 @@ class RCLEval
 public:
 
    RCLEval();
-   void setup(Sensor **sensorRef, uint16_t *outputValueRef, Model *currentModel);
+   void setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, Model *currentModel);
    bool setupRCL(uint8_t chan, const char *expStr);
    void saveToEEPROM(uint16_t &addr) const;
    void loadFromEEPROM(uint16_t &addr);

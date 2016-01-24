@@ -26,11 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Stream *SerialLink::currentStream_ = NULL;
 
-int serialWrite(char c, FILE *)
-{
-   return SerialLink::currentStream_->write(c);
-}
-
 SerialLink::SerialLink()
    : cmd_(NULL)
 {
@@ -45,15 +40,11 @@ bool SerialLink::setup(Command *cmd)
    pinMode(BT_RX_PIN, INPUT);
    pinMode(BT_TX_PIN, OUTPUT);
    currentStream_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
-   ((SoftwareSerial*)currentStream_)->begin(SERIAL_SPEED);
+   ((SoftwareSerial*)currentStream_)->begin(QUARKTX_SERIAL_SPEED);
 #else
    currentStream_ = &Serial;
-   Serial.begin(SERIAL_SPEED);
-#endif
-
-#ifndef QT_CORE_LIB
-   // reroute printf() output to currentStream_
-   //stdout = stderr = fdevopen(serialWrite, NULL);
+   Serial.begin(QUARKTX_SERIAL_SPEED);
+   delay(300);
 #endif
 
    STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << F("\nBooting...") << endl;

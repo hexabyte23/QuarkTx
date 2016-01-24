@@ -37,17 +37,16 @@ class Tx
    Model modelList_[MAX_MODEL];
    Model *currentModel_;
 
-   // Input & output datas
+   // Sensors
    Stick elevator_, aileron_, rudder_, throttle_;
-   BatteryMeter battery_;
-#ifdef TERRATOP
-   Switch s1_, s2_, s3_;
-   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_, &s3_};
-#else
    Switch s1_, s2_;
-   Sensor *sensor_[MAX_INPUT_CHANNEL] = { &elevator_, &aileron_, &rudder_, &throttle_, &s1_, &s2_};
+#ifdef TERRATOP
+   Switch s3_;
 #endif
-   uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+   BatteryMeter battery_;
+   Sensor *sensor_[MAX_INPUT_CHANNEL];
+
+   volatile uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
    int inFreq_, outFreq_, inCurFreq_, outCurFreq_;
 
    // For mixers, dual rate, expo...
@@ -92,7 +91,7 @@ public:
    bool setup();
 
    // Signals
-   void onIrqTimerChange();
+   void onIsrTimerChange();
    void onChangeCurrentModel(int idx);
    void onDump(const char* param);
    void onToggleTxMode();

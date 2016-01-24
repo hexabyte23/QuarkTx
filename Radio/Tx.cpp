@@ -18,6 +18,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <EEPROM.h>
+#if __MK20DX256__
+#include "mk20dx128.h"
+#endif
 #include "Config.h"
 #include "SerialLink.h"
 #include "Tx.h"
@@ -37,6 +40,16 @@ toggleDisplayOutputUpdate_(false),
 toggleCalibrateSensor_(false),
 toggleSimulation_(false)
 {
+   sensor_[0] = &elevator_;
+   sensor_[1] = &aileron_;
+   sensor_[2] = &rudder_;
+   sensor_[3] = &throttle_;
+   sensor_[4] = &s1_;
+   sensor_[5] = &s2_;
+#ifdef TERRATOP
+   sensor_[6] = &s3_;
+#endif
+
    onSoftwareReset("");
 }
 
@@ -44,14 +57,17 @@ void Tx::setupInputDevice()
 {
 #if __MK20DX256__
 #else
-   //const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
-   //const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
-   //const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
-   //const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // 125 KHz
+/*
+   // Modify input scan frequence
+   const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
+   const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
+   const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
+   const unsigned char PS_128 = (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);  // 125 KHz
 
    // set up the ADC
-   //ADCSRA &= ~PS_128;  // remove bits set by Arduino library
-   //ADCSRA |= PS_64;    // set our own prescaler to 64
+   ADCSRA &= ~PS_128;  // remove bits set by Arduino library
+   ADCSRA |= PS_64;    // set our own prescaler to 64
+*/
 #endif
 
    elevator_.setup(A0);
@@ -71,15 +87,29 @@ void Tx::setupOutputDevice()
    // PPM for RF module
    pinMode(PPM_PIN, OUTPUT);
    digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
+   
+   // LED
+   pinMode(LED_PIN, OUTPUT);
+   digitalWrite(LED_PIN, HIGH);
+
+   // Init irq variables
+   irqStartPulse_ = true;
+   irqCurrentChannelNumber_ = 0;
 
    cli();
 
 #if __MK20DX256__
+/*   PIT_MCR = 0x0;            // turn on PIT
+   PIT_LDVAL0 = floor(F_BUS*PPM_INTER_FRAME_TIME) -1;
+
+   PIT_TCTRL1 = 0x02;        // enable Timer 1 interrupts
+   PIT_TCTRL1 |= 0x01;       // start Timer 1
+   */
 #else
    TCCR1A = 0;               // set entire TCCR1 register to 0
    TCCR1B = 0;
 
-   OCR1A = PPM_INTER_FRAME_TIME;  // compare match register, initial value
+   OCR1A = PPM_INTER_FRAME_TIME*2;  // compare match register, initial value
 
    TCCR1B |= (1 << WGM12);   // turn on CTC mode
    TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0.5 microseconds at 16mhz
@@ -87,15 +117,7 @@ void Tx::setupOutputDevice()
    TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 #endif
 
-   // Init irq variables
-   irqStartPulse_ = true;
-   irqCurrentChannelNumber_ = 0;
-
    sei();
-
-   // LED
-   pinMode(LED_PIN, OUTPUT);
-   digitalWrite(LED_PIN, HIGH);
 }
 
 bool Tx::setup()
@@ -137,7 +159,6 @@ bool Tx::setup()
 
    onLoadFromEEPROM();
 
-/*
   rcl_.setupRCL(0, "i0");
   rcl_.setupRCL(1, "i1");
   rcl_.setupRCL(2, "i2");
@@ -146,7 +167,6 @@ bool Tx::setup()
 #ifdef TERRATOP
   rcl_.setupRCL(5, "(i2>512)?i0:0");
 #endif
-*/
 
    mesure_.stop();
    STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;
@@ -154,17 +174,49 @@ bool Tx::setup()
    return ret1 | ret2;
 }
 
-
-void Tx::onIrqTimerChange()
+void Tx::onIsrTimerChange()
 {
-#if __MK20DX256__
-#else
    /*
    * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint
    * (as HF modules can now sent more than 8 channels) but just care about 2 times:
    * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME)
    * The minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
-   *
+   */
+   
+#if __MK20DX256__
+/*
+  if(irqStartPulse_)
+  {
+      // Falling edge of a channel pulse (in negative shape)
+      if(toggleTxMode_ == tTransmit)
+         digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
+      
+      // All time must be x2, as prescale is set to 0.5 microseconds at 16 Mhz
+      PIT_LDVAL0 = floor(F_BUS*ppmOutputValue_[irqCurrentChannelNumber_]) -1;
+      irqCurrentChannelNumber_++;
+      irqStartPulse_ = false;
+  }
+  else
+  {
+      // Raising edge of a channel pulse (in negative shape)
+      if(toggleTxMode_ == tTransmit)
+         digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
+
+      // Calculate when the next pulse will start
+      // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
+      if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
+      {
+         irqCurrentChannelNumber_ = 0;
+         PIT_LDVAL0 = floor(F_BUS*PPM_INTER_FRAME_TIME)-1;
+      }
+      else
+         PIT_LDVAL0 = floor(F_BUS*PPM_INTER_CHANNEL_TIME)-1;
+
+      irqStartPulse_ = true;
+  }
+*/
+#else
+   /*
    * We successfully test with a Jeti TU2 RF module up to 17 channels
    */
 
@@ -186,7 +238,6 @@ void Tx::onIrqTimerChange()
       // Raising edge of a channel pulse (in negative shape)
       if(toggleTxMode_ == tTransmit)
          digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
-      irqStartPulse_ = true;
 
       // Calculate when the next pulse will start
       // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
@@ -197,6 +248,8 @@ void Tx::onIrqTimerChange()
       }
       else
          OCR1A = PPM_INTER_CHANNEL_TIME*2;
+         
+      irqStartPulse_ = true;
    }
 #endif
 }

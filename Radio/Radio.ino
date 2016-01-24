@@ -23,23 +23,26 @@ Tx tx;
 
 void setup()
 {
-   STDOUT << (tx.setup()?F("Ready\n>"):F("Failed\n>")) << endl;
+   if(tx.setup())
+      STDOUT << F("Ready\n>") << endl;
+   else
+      STDOUT << F("Failed\n>") << endl;
 }
 
 #if __MK20DX256__
 void pit0_isr()
 {
-   tx.onIrqTimerChange();
+   tx.onIsrTimerChange();
 }
 #else
 ISR(TIMER1_COMPA_vect)
 {
-   tx.onIrqTimerChange();
+   tx.onIsrTimerChange();
 }
 #endif
 
 void loop()
-{
+{   
    tx.idle();
 }
 
