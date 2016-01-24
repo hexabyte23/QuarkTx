@@ -100,9 +100,10 @@ void Tx::setupOutputDevice()
 
    SIM_SCGC6 |= SIM_SCGC6_PIT;  // Enable PIT clock
    PIT_MCR = 0x00;              // turn on PIT
-   PIT_TCTRL1 = 0x00;           // stop Timer 0
+   PIT_TCTRL1 = 0x00;           // stop Timer
    PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_FRAME_TIME-1;
-   PIT_TCTRL1 = 0x03;           // enable Timer 0 interrupts + start
+   PIT_TCTRL1 = 0x03;           // enable Timer interrupts + start
+   PIT_TFLG1 = 1;
    NVIC_SET_PRIORITY(1, 128);
    NVIC_ENABLE_IRQ(IRQ_PIT_CH1);
    
@@ -151,18 +152,20 @@ bool Tx::setup()
    pinMode(A5, INPUT_PULLUP);    // reseved for future use
    pinMode(A7, INPUT_PULLUP);    // Battery level
 
+   // serial must always be first to initialize
+   bool ret1 = serialLink_.setup(&command_);
+   
    // Setup input sensors
    setupInputDevice();
 
    // Setup Timer for PPM signal generation
    setupOutputDevice();
-
-   bool ret1 = serialLink_.setup(&command_);
    bool ret2 = command_.setup(this);
-
+   
    rcl_.setup(sensor_, ppmOutputValue_, currentModel_);
-
+   
    onLoadFromEEPROM();
+   
 /*
   rcl_.setupRCL(0, "i0");
   rcl_.setupRCL(1, "i1");
@@ -193,38 +196,40 @@ void Tx::onIsrTimerChange()
    * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME)
    * The minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
    */
+
+   if(toggleTxMode_ != tTransmit)
+    return;
    
 #if __MK20DX256__
 
-  PIT_TFLG1 = 1;
-
   if(irqStartPulse_)
-  {
+  {   
       // Falling edge of a channel pulse (in negative shape)
-      if(toggleTxMode_ == tTransmit)
-         digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
+      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
       
-      PIT_LDVAL1 = (F_BUS / 1000000) * ppmOutputValue_[irqCurrentChannelNumber_] - 1;
+      PIT_LDVAL1 = (F_BUS/1000000)*ppmOutputValue_[irqCurrentChannelNumber_]-1;
       irqCurrentChannelNumber_++;
       irqStartPulse_ = false;
   }
   else
   {
       // Raising edge of a channel pulse (in negative shape)
-      if(toggleTxMode_ == tTransmit)
-         digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
+      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
       // Calculate when the next pulse will start
       if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
       {
          irqCurrentChannelNumber_ = 0;
-         PIT_LDVAL1 = (F_BUS / 1000000) * PPM_INTER_FRAME_TIME - 1;
+         PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_FRAME_TIME-1;
       }
       else
-         PIT_LDVAL1 = (F_BUS / 1000000) * PPM_INTER_CHANNEL_TIME - 1;
+         PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_CHANNEL_TIME-1;
 
       irqStartPulse_ = true;
   }
+
+  PIT_TFLG1 = 1;
+    
 #else
    /*
    * We successfully test with a Jeti TU2 RF module up to 17 channels
@@ -235,8 +240,7 @@ void Tx::onIsrTimerChange()
    if(irqStartPulse_)
    {
       // Falling edge of a channel pulse (in negative shape)
-      if(toggleTxMode_ == tTransmit)
-         digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
+      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
       // All time must be x2, as prescale is set to 0.5 microseconds at 16mhz
       OCR1A = ppmOutputValue_[irqCurrentChannelNumber_]*2;
@@ -246,8 +250,7 @@ void Tx::onIsrTimerChange()
    else
    {
       // Raising edge of a channel pulse (in negative shape)
-      if(toggleTxMode_ == tTransmit)
-         digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
+      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
 
       // Calculate when the next pulse will start
       // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
