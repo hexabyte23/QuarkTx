@@ -22,7 +22,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "MemoryFree.h"
 
 
-#ifndef __MK20DX256__
+#ifdef __MK20DX256__
+
+extern "C" char* sbrk(int incr);
+
+#else
 
 extern unsigned int __heap_start;
 extern void *__brkval;
@@ -59,20 +63,38 @@ int freeListSize()
 
 int freeMemory()
 {
-#if defined(QT_CORE_LIB) || defined(__MK20DX256__)
+#if defined(QT_CORE_LIB)
+
    return 0;
+
+#elif defined(__MK20DX256__)
+
+    uint32_t stackTop;
+    uint32_t heapTop;
+
+    // current position of the stack.
+    stackTop = (uint32_t) &stackTop;
+
+    // current position of heap.
+    void* hTop = malloc(1);
+    heapTop = (uint32_t) hTop;
+    free(hTop);
+
+    // The difference is the free, available ram.
+    return stackTop - heapTop;
+    
 #else
+
    int free_memory;
    if ((int)__brkval == 0)
-   {
       free_memory = ((int)&free_memory) - ((int)&__heap_start);
-   }
    else
    {
       free_memory = ((int)&free_memory) - ((int)__brkval);
       free_memory += freeListSize();
    }
    return free_memory;
+   
 #endif
 }
 
