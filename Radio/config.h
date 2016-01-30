@@ -63,7 +63,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
 #define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
-#define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti TU2 module
 
 #define PPM_PIN                 10
 
@@ -73,14 +72,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LED_PIN                 13
 
-#define BT_RX_PIN               9
-#define BT_TX_PIN               8
-
 #else
 
 #define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
 #define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
-#define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti module
 
 #define PPM_PIN                 10
 
@@ -89,11 +84,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LED_PIN                 13
 
+#endif
+
+
+#if BLUETOOTH
+
 #define BT_RX_PIN               9
 #define BT_TX_PIN               8
 
 #endif
-
 
 //
 //  HF Modules
@@ -101,6 +100,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef JETI_TU2_MODULE
 
+#define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti TU2 module
 #define PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
 #define PPM_INTER_CHANNEL_TIME  500     // microsec
 #define PPM_INTER_FRAME_TIME    4500    // microsec
