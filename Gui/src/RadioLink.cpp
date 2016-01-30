@@ -68,8 +68,9 @@ bool RadioLink::searchForSerialLink()
 
    bool foundCnx = false;
    QList<QSerialPortInfo> serialPortInfoList = QSerialPortInfo::availablePorts();
-   foreach (const QSerialPortInfo &serialPortInfo, serialPortInfoList)
+   for (int i = 0; i < serialPortInfoList.size(); i++)
    {
+      const QSerialPortInfo &serialPortInfo = serialPortInfoList[i];
       serialPort_ = new QSerialPort(serialPortInfo, this);
       connect(serialPort_, SIGNAL(readyRead()), this, SLOT(serialPortReadyRead()));
       connect(serialPort_, SIGNAL(error(QSerialPort::SerialPortError)), this,
