@@ -43,7 +43,7 @@ class TxCommand : public QObject
    QStringList sensorCache_;
    bool refreshSensorCache_;
 
-   void fillSensorCache();
+   bool fillSensorCache();
 
 public:
    TxCommand();

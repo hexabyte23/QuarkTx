@@ -72,9 +72,11 @@ QString TxCommand::getFreeMemoryStr()
    return ret;
 }
 
-void TxCommand::fillSensorCache()
+bool TxCommand::fillSensorCache()
 {
-   sendCommand("d s\r");
+   bool ret = sendCommand("d s\r");
+   if (ret == false)
+      return false;
 
    sensorCache_.clear();
    qDebug() << "FillSensorCache";
@@ -94,19 +96,24 @@ void TxCommand::fillSensorCache()
    sensorCache_.push_back(getNextLine()); // #6
 
    refreshSensorCache_ = false;
+
+   return true;
 }
 
 QVariantMap TxCommand::getSensorData(int sensorID)
 {
+   QVariantMap map;
+
    if(sensorCache_.isEmpty() || refreshSensorCache_)
-      fillSensorCache();
+   {
+      if(!fillSensorCache())
+         return map;
+   }
 
    QString line = sensorCache_[sensorID];
 
    QStringList l = line.split("\t");
    qDebug() << l;
-
-   QVariantMap map;
 
    if(l.size() < 4)
    {
