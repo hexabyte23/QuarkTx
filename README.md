@@ -1,11 +1,11 @@
 # QuarkTx, up to 17 Channels !!
-Radio Control system based on Arduino Nano ATmega 328, with a simple goal: Provide powerfull embedded functions in a small piece of hardware. 
+Radio Control system based on Arduino Nano ATmega 328 or Teensy 3.2, with a simple goal: Provide powerfull embedded functions in a small piece of hardware. 
 
 ## Gui
-Qt client source code for app running on WIN 10, OSX, Android & IOS
+Qt client source code for WIN 10, OSX, Android & IOS
 
 ## Radio
-Arduino Nano ATmega328 source code
+Arduino Nano ATmega328/Teensy 3.2 source code
 
 ## RF Module
 We just test with a Jeti TU2 2.4 GHz RF module. Smart interrupt code is able to generate up to 17 different PPM channels !!!
