@@ -549,19 +549,24 @@ void Tx::resetSensor()
 
 void Tx::resetRCL()
 {
+   // Clean all
+   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+      rcl_.clearRCL(idx);
+
+   // Set to default
    char buf[3];
    buf[0] = 'i';
    buf[2] = 0;
 
-   // clean all
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
-      rcl_.clearRCL(idx);
-
-   // set to default
+   uint8_t i=0;
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
-      buf[1] = '0'+idx;
+      if(i >= MAX_INPUT_CHANNEL)
+        i = 0;
+        
+      buf[1] = '0'+i;
       rcl_.setupRCL(idx, buf);
+      i++;
    }
 }
 
