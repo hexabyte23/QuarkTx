@@ -67,6 +67,8 @@ bool RadioLink::searchForSerialLink()
 #if defined(Q_OS_MAC) || defined(Q_OS_WIN)
 
    bool foundCnx = false;
+   output_.clear();
+
    QList<QSerialPortInfo> serialPortInfoList = QSerialPortInfo::availablePorts();
    for (int i = 0; i < serialPortInfoList.size(); i++)
    {
@@ -89,6 +91,8 @@ bool RadioLink::searchForSerialLink()
             //QThread::sleep(2);
 
             QString line = getNextLine();
+            qDebug() << "Answer is:" << line;
+
             if(line.startsWith("Quark Tx v"))
             {
                txVersionStr_ = line.mid(sizeof("Quark Tx v")-1);
@@ -98,9 +102,7 @@ bool RadioLink::searchForSerialLink()
                break;
             }
             else
-            {
                qWarning() << "Not a QuartTx device";
-            }
          }
          else
             qDebug() << "Device not anwsering since 3 sec";
@@ -170,6 +172,9 @@ const QByteArray RadioLink::readData()
    }
 
    ret = serialPort_->readAll();
+   if(ret[0] == '\0')
+      ret.remove(0, 1);
+
    output_ += ret;
 
    return ret;
