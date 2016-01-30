@@ -37,7 +37,7 @@ ApplicationWindow
 
         Component.onCompleted:
         {
-            addPage("About", "QuarkTx v 0.0.0.3",  "");
+            addPage("About", "QuarkTx v 0.0.1.0",  "");
             addPage("Link", "Connect to Tx",  Qt.resolvedUrl("qrc:/qml/Link.qml"));
             addPage("System", "EEPROM, Dump, free memory ...",  Qt.resolvedUrl("qrc:/qml/System.qml"));
             addPage("Sensors", "Calibrate, trim, simulate ...",  Qt.resolvedUrl("qrc:/qml/Sensors.qml"));
