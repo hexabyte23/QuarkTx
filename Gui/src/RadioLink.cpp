@@ -76,13 +76,15 @@ bool RadioLink::searchForSerialLink()
       connect(serialPort_, SIGNAL(error(QSerialPort::SerialPortError)), this,
               SLOT(serialPortHandleError(QSerialPort::SerialPortError)));
 
+      qDebug() << "Try open cnx: " << serialPortInfo.portName();
+
       if(serialPort_->open(QIODevice::ReadWrite))
       {
-         qDebug() << "Open cnx: " << serialPortInfo.portName() << " waiting for anwser...";
+         qDebug() << "Waiting for anwser...";
 
-         if(serialPort_->waitForReadyRead(2000))
+         if(serialPort_->waitForReadyRead(QUARKTX_MIN_WAIT_DEVICE))
          {
-            //qDebug() << "Anwsering... Check QuartTx device";
+            qDebug() << "Anwsering... Check if QuarkTx device";
 
             //QThread::sleep(2);
 
@@ -97,11 +99,11 @@ bool RadioLink::searchForSerialLink()
             }
             else
             {
-               qWarning() << "this cnx is no a QuartTx device";
+               qWarning() << "Not a QuartTx device";
             }
          }
          else
-            qDebug() << "Cnx is not anwsering since 3 sec";
+            qDebug() << "Device not anwsering since 3 sec";
 
          qDebug() << "Close cnx: " << serialPortInfo.portName();
          closeSerialLink();
@@ -114,7 +116,7 @@ bool RadioLink::searchForSerialLink()
 
    if(!foundCnx)
    {
-      qWarning() << "No QuarkTx device on serial link found";
+      qWarning() << "No QuarkTx device found on serial link";
       return false;
    }
 
@@ -143,7 +145,7 @@ bool RadioLink::writeData(const QByteArray &data)
 {
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx with QuarkTx device not established";
+      qWarning() << "Cnx not established";
       return false;
    }
 
@@ -163,7 +165,7 @@ const QByteArray RadioLink::readData()
 
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx with QuarkTx device not established";
+      qWarning() << "Cnx not established";
       return ret;
    }
 
@@ -209,7 +211,7 @@ QString RadioLink::getNextLine()
 
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx with QuarkTx device not established";
+      qWarning() << "Cnx not established";
       return ret;
    }
 
@@ -249,7 +251,7 @@ void RadioLink::serialPortHandleError(QSerialPort::SerialPortError error)
 {
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx with QuarkTx device not established";
+      qWarning() << "Cnx not established";
       return;
    }
 

@@ -24,4 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Q_DECLARE_LOGGING_CATEGORY(QT_QUARKTX)
 
+#define QUARKTX_MIN_WAIT_DEVICE  3000
+
 #endif
