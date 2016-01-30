@@ -20,14 +20,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "RadioLink.h"
 #include <QThread>
 
+Q_LOGGING_CATEGORY(QUARKTX_LINK_SERIAL, "quarktx.link.serial")
+Q_LOGGING_CATEGORY(QUARKTX_LINK_BT, "quarktx.link.bt")
+
 RadioLink::RadioLink()
    :
      isTxConnected_(false),
      transportStatusStr("No transport"),
      cnxStatusStr_("Not connected"),
-     txVersionStr_("NA"),
-     serialPort_(NULL),
+     txVersionStr_("NA")
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
+     ,serialPort_(NULL),
      serialPortInfo_(NULL)
+#endif
 {
 }
 
@@ -78,47 +83,46 @@ bool RadioLink::searchForSerialLink()
       connect(serialPort_, SIGNAL(error(QSerialPort::SerialPortError)), this,
               SLOT(serialPortHandleError(QSerialPort::SerialPortError)));
 
-      qDebug() << "Try open cnx: " << serialPortInfo.portName();
+      qCDebug(QUARKTX_LINK_SERIAL) << "Try open cnx: " << serialPortInfo.portName();
 
       if(serialPort_->open(QIODevice::ReadWrite))
       {
-         qDebug() << "Waiting for anwser...";
+         qCDebug(QUARKTX_LINK_SERIAL) << "Waiting for anwser...";
 
          if(serialPort_->waitForReadyRead(QUARKTX_MIN_WAIT_DEVICE))
          {
-            qDebug() << "Anwsering... Check if QuarkTx device";
-
-            //QThread::sleep(2);
+            qCDebug(QUARKTX_LINK_SERIAL) << "Anwsering... Check if QuarkTx device";
 
             QString line = getNextLine();
-            qDebug() << "Answer is:" << line;
+            qCDebug(QUARKTX_LINK_SERIAL) << "Answer is:" << line;
 
             if(line.startsWith("Quark Tx v"))
             {
+               qCDebug(QUARKTX_LINK_SERIAL) << "QuarkTx device detected " << txVersionStr_;
+
                txVersionStr_ = line.mid(sizeof("Quark Tx v")-1);
-               qDebug() << "QuarkTx device detected " << txVersionStr_;
                foundCnx = true;
                serialPortInfo_ = serialPortInfo;
                break;
             }
             else
-               qWarning() << "Not a QuartTx device";
+               qCWarning(QUARKTX_LINK_SERIAL) << "Not a QuartTx device";
          }
          else
-            qDebug() << "Device not anwsering since 3 sec";
+            qCDebug(QUARKTX_LINK_SERIAL) << "Device not anwsering since 3 sec";
 
-         qDebug() << "Close cnx: " << serialPortInfo.portName();
+         qCDebug(QUARKTX_LINK_SERIAL) << "Close cnx: " << serialPortInfo.portName();
          closeSerialLink();
       }
       else
       {
-         qWarning() << "Fail to open: " << serialPortInfo.portName();
+         qCWarning(QUARKTX_LINK_SERIAL) << "Fail to open: " << serialPortInfo.portName();
       }
    }
 
    if(!foundCnx)
    {
-      qWarning() << "No QuarkTx device found on serial link";
+      qCWarning(QUARKTX_LINK_SERIAL) << "No QuarkTx device found on serial link";
       return false;
    }
 
@@ -145,18 +149,20 @@ void RadioLink::init()
 
 bool RadioLink::writeData(const QByteArray &data)
 {
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx not established";
+      qCWarning(QUARKTX_LINK_SERIAL) << "Cnx not established";
       return false;
    }
 
    input_ = data;
    if(serialPort_->write(data) != -1)
    {
-      qDebug() << "< " << data;
+      qCDebug(QUARKTX_LINK_SERIAL) << "< " << data;
       return true;
    }
+#endif
 
    return false;
 }
@@ -165,9 +171,10 @@ const QByteArray RadioLink::readData()
 {
    QByteArray ret;
 
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx not established";
+      qCWarning(QUARKTX_LINK_SERIAL) << "Cnx not established";
       return ret;
    }
 
@@ -176,12 +183,13 @@ const QByteArray RadioLink::readData()
       ret.remove(0, 1);
 
    output_ += ret;
+#endif
 
    return ret;
 }
 
 
-// QML
+// QML functions
 
 bool RadioLink::findTxAndConnect()
 { 
@@ -189,7 +197,7 @@ bool RadioLink::findTxAndConnect()
    {
       if(!searchForBlueToothLink())
       {
-         qWarning() << "No device found";
+         qCWarning(QUARKTX_LINK_SERIAL) << "No device found";
          return false;
       }
    }
@@ -207,16 +215,17 @@ void RadioLink::txDisconnect()
    cnxStatusStr_ = "Not connected";
    txVersionStr_ = "NA";
 
-   qDebug() << "Disconnect Tx";
+   qCDebug(QUARKTX_LINK_SERIAL) << "Disconnect Tx";
 }
 
 QString RadioLink::getNextLine()
 {
    QString ret;
 
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx not established";
+      qCWarning(QUARKTX_LINK_SERIAL) << "Cnx not established";
       return ret;
    }
 
@@ -235,6 +244,7 @@ QString RadioLink::getNextLine()
 
       ret.append(c);
    }
+#endif
 
    return ret;
 }
@@ -247,16 +257,18 @@ bool RadioLink::sendCommand(const QString &cmd)
 
 // Callbacks
 
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
+
 void RadioLink::serialPortReadyRead()
 {
-   qDebug() << "> " << readData();
+   qCDebug(QUARKTX_LINK_SERIAL) << "> " << readData();
 }
 
 void RadioLink::serialPortHandleError(QSerialPort::SerialPortError error)
 {
    if(serialPort_ == NULL)
    {
-      qWarning() << "Cnx not established";
+      qCWarning(QUARKTX_LINK_SERIAL) << "Cnx not established";
       return;
    }
 
@@ -264,6 +276,9 @@ void RadioLink::serialPortHandleError(QSerialPort::SerialPortError error)
    {
       cnxStatusStr_ = serialPort_->errorString();
       transportStatusStr = "Error";
-      qWarning() << "Cnx error: '" << error << "' " << cnxStatusStr_;
+
+      qCWarning(QUARKTX_LINK_SERIAL) << "Cnx error: '" << error << "' " << cnxStatusStr_;
    }
 }
+
+#endif

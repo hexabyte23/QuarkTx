@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "TxCommand.h"
 
+Q_LOGGING_CATEGORY(QUARKTX_LINK_COMMAND, "quarktx.link.command")
+
 TxCommand::TxCommand()
    :
      radioLinkRef_(NULL),
@@ -41,7 +43,7 @@ bool TxCommand::sendCommand(const QString &cmd)
 {
    if(radioLinkRef_ == NULL)
    {
-      qWarning() << "radioLinkRef is NULL";
+      qCWarning(QUARKTX_LINK_COMMAND) << "radioLinkRef is NULL";
       return false;
    }
    return radioLinkRef_->sendCommand(cmd);
@@ -53,7 +55,7 @@ QString TxCommand::getNextLine()
 
    if(radioLinkRef_ == NULL)
    {
-      qWarning() << "radioLinkRef is NULL";
+      qCWarning(QUARKTX_LINK_COMMAND) << "radioLinkRef is NULL";
       return "";
    }
 
@@ -79,7 +81,7 @@ bool TxCommand::fillSensorCache()
       return false;
 
    sensorCache_.clear();
-   qDebug() << "FillSensorCache";
+   qCDebug(QUARKTX_LINK_COMMAND) << "FillSensorCache";
 
    QString line;
    while(!line.startsWith("Dump"))
@@ -113,7 +115,7 @@ QVariantMap TxCommand::getSensorData(int sensorID)
    QString line = sensorCache_[sensorID];
 
    QStringList l = line.split("\t");
-   qDebug() << l;
+   qCDebug(QUARKTX_LINK_COMMAND) << l;
 
    if(l.size() < 4)
    {
