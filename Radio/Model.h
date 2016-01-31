@@ -32,7 +32,7 @@ struct ServoCommand
 
    ServoCommand();
 
-   uint16_t getValue(uint16_t rawInputValue);
+   uint16_t getValue(uint16_t rawInputValue) const;
    void reset();
    void saveToEEPROM(uint16_t &addr) const;
    void loadFromEEPROM(uint16_t &addr);
@@ -58,7 +58,7 @@ public:
    void reset();
    void dump();
 
-   uint16_t getValue(uint8_t channel, uint16_t rawInputValue);
+   uint16_t getValue(uint8_t channel, uint16_t rawInputValue) const;
    void setMinValue(uint8_t channel, int value);
    void setMaxValue(uint8_t channel, int value);
    void setNeutralValue(uint8_t channel, uint16_t value);

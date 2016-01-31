@@ -666,7 +666,6 @@ void Tx::onSetSimulateSensorValue(uint8_t sensorID, uint16_t value)
 
 void Tx::onSetRCL(uint8_t chan, const char* rclCode)
 {
-   if(chan < 0) return;
    if(rclCode[0] == 0)
    {
       STDOUT << chan << F(" cleaned") << endl;

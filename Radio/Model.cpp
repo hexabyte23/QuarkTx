@@ -29,7 +29,7 @@ ServoCommand::ServoCommand()
    reset();
 }
 
-uint16_t ServoCommand::getValue(uint16_t rawInputValue)
+uint16_t ServoCommand::getValue(uint16_t rawInputValue) const
 {
    uint16_t ret = map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
 
@@ -97,7 +97,7 @@ bool Model::setup()
    return true;
 }
 
-uint16_t Model::getValue(uint8_t channel, uint16_t rawInputValue)
+uint16_t Model::getValue(uint8_t channel, uint16_t rawInputValue) const
 {
    return channel_[channel].servo_.getValue(rawInputValue);
 }

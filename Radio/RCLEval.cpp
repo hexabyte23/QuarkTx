@@ -846,7 +846,7 @@ RCLEval::RCLEval()
    memset((void*)expression_, 0, sizeof(expression_));
 }
 
-void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, Model *currentModel)
+void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel)
 {
    sensorRef_ = sensorRef;
    outputValueRef_ = outputValueRef;
