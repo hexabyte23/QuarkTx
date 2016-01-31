@@ -49,24 +49,24 @@ void Command::onNewCommand(const char* cmdStr)
 
    switch(cmdStr[0])
    {
-   case 'a': loadFromEEPROMCmd();break;
-   case 'c': toggleCalibrateAnalogicSensorCmd();break;
-   case 'd': dumpCmd(cmdStr+2);break;
-   case 'f': getFreeMemoryCmd();break;
-   case 'h': helpCmd();break;
-   case 'i': toggleDisplayInputUpdateCmd(cmdStr+2);break;
-   case 'l': changeCurrentModelCmd(cmdStr+2);break;
-   case 'm': toggleTxModeCmd();break;
-   case 'n': displayVersionCmd();break;
-   case 'o': toggleDisplayOutputUpdateCmd(cmdStr+2);break;
-   case 'r': resetCmd(cmdStr+2);break;
-   case 's': setCmd(cmdStr+2);break;
-   case 'v': saveToEEPROMCmd();break;
-   case 'w': toggleSimulation();break;
+      case 'a': loadFromEEPROMCmd();break;
+      case 'c': toggleCalibrateAnalogicSensorCmd();break;
+      case 'd': dumpCmd(cmdStr+2);break;
+      case 'f': getFreeMemoryCmd();break;
+      case 'h': helpCmd();break;
+      case 'i': toggleDisplayInputUpdateCmd(cmdStr+2);break;
+      case 'l': changeCurrentModelCmd(cmdStr+2);break;
+      case 'm': toggleTxModeCmd();break;
+      case 'n': displayVersionCmd();break;
+      case 'o': toggleDisplayOutputUpdateCmd(cmdStr+2);break;
+      case 'r': resetCmd(cmdStr+2);break;
+      case 's': setCmd(cmdStr+2);break;
+      case 'v': saveToEEPROMCmd();break;
+      case 'w': toggleSimulation();break;
 
-   default:
-      STDOUT << F("e-cu ") << cmdStr[0] << endl;   // Command unknown
-      break;
+      default:
+         STDOUT << F("e-cu ") << cmdStr[0] << endl;   // Command unknown
+         break;
    }
 }
 
@@ -181,71 +181,71 @@ void Command::setCmd(const char* param)
 
    switch(param[0])
    {
-   case 'a':   // a chan val: Set cur. model servo max
-   {
-      uint8_t channel = getChannel(param+2);
-      int val = atoi(param+4);
-      currentModel->setMaxValue(channel, val);
-   }
-      break;
-   case 'i':   // i chan val: Set cur. model servo min
-   {
-      uint8_t channel = getChannel(param+2);
-      int val = atoi(param+4);
-      currentModel->setMinValue(channel, val);
-   }
-      break;
-   case 'l':   // l chan rclStr: Set RCL code to PPM chan
-   {
-      uint8_t channel = getChannel(param+2);
-      tx_->onSetRCL(channel, param+4);
-   }
-      break;
-   case 'n':   // n chan val: Set cur. model servo neutral
-   {
-      uint8_t channel = getChannel(param+2);
-      int val = atoi(param+4);
-      currentModel->setNeutralValue(channel, val);
-   }
-      break;
-   case 'r':   // r chan val: Set cur. model servo revert
-   {
-      uint8_t channel = getChannel(param+2);
-      int val = atoi(param+4);
-      currentModel->setRevertValue(channel , val);
-   }
-      break;
-   case 't':   // t sensorID val: Set sensor trim
-   {
-      uint8_t sensorID = getSensorID(param+2);
-      int val = atoi(param+4);
-      tx_->onSetTrimSensorValue(sensorID, val);
-   }
-      break;
-   case 'u':   // u sensorID val: Set simulate value
-   {
-      uint8_t sensorID = getSensorID(param+2);
-      int val = atoi(param+4);
-      tx_->onSetSimulateSensorValue(sensorID, val);
-   }
-      break;
-   case 'v':   // u sensorID val: Set sensor Min value
-   {
-      uint8_t sensorID = getSensorID(param+2);
-      int val = atoi(param+4);
-      tx_->onSetMinSensorValue(sensorID, val);
-   }
-      break;
-   case 'w':   // u sensorID val: Set sensor Max value
-   {
-      uint8_t sensorID = getSensorID(param+2);
-      int val = atoi(param+4);
-      tx_->onSetMaxSensorValue(sensorID, val);
-   }
-      break;
-   default:
-      STDOUT << F("e-bpie") << endl;    // bad parameter: index empty
-      break;
+      case 'a':   // a chan val: Set cur. model servo max
+      {
+         uint8_t channel = getChannel(param+2);
+         int val = atoi(param+4);
+         currentModel->setMaxValue(channel, val);
+      }
+         break;
+      case 'i':   // i chan val: Set cur. model servo min
+      {
+         uint8_t channel = getChannel(param+2);
+         int val = atoi(param+4);
+         currentModel->setMinValue(channel, val);
+      }
+         break;
+      case 'l':   // l chan rclStr: Set RCL code to PPM chan
+      {
+         uint8_t channel = getChannel(param+2);
+         tx_->onSetRCL(channel, param+4);
+      }
+         break;
+      case 'n':   // n chan val: Set cur. model servo neutral
+      {
+         uint8_t channel = getChannel(param+2);
+         int val = atoi(param+4);
+         currentModel->setNeutralValue(channel, val);
+      }
+         break;
+      case 'r':   // r chan val: Set cur. model servo revert
+      {
+         uint8_t channel = getChannel(param+2);
+         int val = atoi(param+4);
+         currentModel->setRevertValue(channel , val);
+      }
+         break;
+      case 't':   // t sensorID val: Set sensor trim
+      {
+         uint8_t sensorID = getSensorID(param+2);
+         int val = atoi(param+4);
+         tx_->onSetTrimSensorValue(sensorID, val);
+      }
+         break;
+      case 'u':   // u sensorID val: Set simulate value
+      {
+         uint8_t sensorID = getSensorID(param+2);
+         int val = atoi(param+4);
+         tx_->onSetSimulateSensorValue(sensorID, val);
+      }
+         break;
+      case 'v':   // u sensorID val: Set sensor Min value
+      {
+         uint8_t sensorID = getSensorID(param+2);
+         int val = atoi(param+4);
+         tx_->onSetMinSensorValue(sensorID, val);
+      }
+         break;
+      case 'w':   // u sensorID val: Set sensor Max value
+      {
+         uint8_t sensorID = getSensorID(param+2);
+         int val = atoi(param+4);
+         tx_->onSetMaxSensorValue(sensorID, val);
+      }
+         break;
+      default:
+         STDOUT << F("e-bpie") << endl;    // bad parameter: index empty
+         break;
    }
 }
 

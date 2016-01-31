@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
    tx.setup();
    tx.onNewCommand("r");
 
-
    tx.onNewCommand("s l 0 i0");
    tx.onNewCommand("s l 1 i1");
    tx.onNewCommand("s l 2 i2");
@@ -43,9 +42,13 @@ int main(int argc, char *argv[])
    tx.onNewCommand("s l 4 i4[0;512]+i5[512;0]");
    tx.onNewCommand("s l 5 i6");
 
+   tx.onNewCommand("s l 5 ia");
+
+   tx.onNewCommand("s l 5 (i0)[0;1]");
+
    //tx.onNewCommand("v");
 
-   tx.onNewCommand("d l");
+   //tx.onNewCommand("d l");
 
    return a.exec();
 }

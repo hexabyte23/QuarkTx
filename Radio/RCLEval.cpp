@@ -122,9 +122,9 @@ uint16_t Variant::convert2Int() const
 {
    switch(type_)
    {
-   case Variant::tInteger: return iData_;
-   case Variant::tFloat: return (uint16_t)fData_;
-   case Variant::tBool: return (uint16_t)bData_;
+      case Variant::tInteger: return iData_;
+      case Variant::tFloat: return (uint16_t)fData_;
+      case Variant::tBool: return (uint16_t)bData_;
    }
 
    return 0;
@@ -134,9 +134,9 @@ float Variant::convert2Float() const
 {
    switch(type_)
    {
-   case Variant::tInteger: return (float)iData_;
-   case Variant::tFloat: return fData_;
-   case Variant::tBool: return (float)bData_;
+      case Variant::tInteger: return (float)iData_;
+      case Variant::tFloat: return fData_;
+      case Variant::tBool: return (float)bData_;
    }
 
    return 0;
@@ -146,9 +146,9 @@ bool Variant::convert2Bool() const
 {
    switch(type_)
    {
-   case Variant::tInteger: return iData_==1;
-   case Variant::tFloat: return fData_==1.0;
-   case Variant::tBool: return bData_;
+      case Variant::tInteger: return iData_==1;
+      case Variant::tFloat: return fData_==1.0;
+      case Variant::tBool: return bData_;
    }
 
    return false;
@@ -158,36 +158,36 @@ Variant operator < (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return l.iData_ < r.iData_;
-      case Variant::tFloat: return l.iData_ < r.fData_;
-      case Variant::tBool: return l.iData_ < r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.iData_ < r.iData_;
+            case Variant::tFloat: return l.iData_ < r.fData_;
+            case Variant::tBool: return l.iData_ < r.bData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ < r.iData_;
-      case Variant::tFloat: return l.fData_ < r.fData_;
-      case Variant::tBool: return l.fData_ < r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ < r.iData_;
+            case Variant::tFloat: return l.fData_ < r.fData_;
+            case Variant::tBool: return l.fData_ < r.bData_;
+         }
       }
-   }
-      break;
-   case Variant::tBool:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tBool:
       {
-      case Variant::tInteger: return l.bData_ < r.iData_;
-      case Variant::tFloat: return l.bData_ < r.fData_;
-      case Variant::tBool: return l.bData_ < r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.bData_ < r.iData_;
+            case Variant::tFloat: return l.bData_ < r.fData_;
+            case Variant::tBool: return l.bData_ < r.bData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return false;
@@ -197,36 +197,36 @@ Variant operator > (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return l.iData_ > r.iData_;
-      case Variant::tFloat: return l.iData_ > r.fData_;
-      case Variant::tBool: return l.iData_ > r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.iData_ > r.iData_;
+            case Variant::tFloat: return l.iData_ > r.fData_;
+            case Variant::tBool: return l.iData_ > r.bData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ > r.iData_;
-      case Variant::tFloat: return l.fData_ > r.fData_;
-      case Variant::tBool: return l.fData_ > r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ > r.iData_;
+            case Variant::tFloat: return l.fData_ > r.fData_;
+            case Variant::tBool: return l.fData_ > r.bData_;
+         }
       }
-   }
-      break;
-   case Variant::tBool:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tBool:
       {
-      case Variant::tInteger: return l.bData_ > r.iData_;
-      case Variant::tFloat: return l.bData_ > r.fData_;
-      case Variant::tBool: return l.bData_ > r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.bData_ > r.iData_;
+            case Variant::tFloat: return l.bData_ > r.fData_;
+            case Variant::tBool: return l.bData_ > r.bData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return false;
@@ -236,24 +236,24 @@ Variant operator + (const Variant &l, const Variant &r)
 {  
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return (uint16_t)(l.iData_ + r.iData_);
-      case Variant::tFloat: return l.iData_ + r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return (uint16_t)(l.iData_ + r.iData_);
+            case Variant::tFloat: return l.iData_ + r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ + r.iData_;
-      case Variant::tFloat: return l.fData_ + r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ + r.iData_;
+            case Variant::tFloat: return l.fData_ + r.fData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return (uint16_t)0;
@@ -263,24 +263,24 @@ Variant operator - (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return (uint16_t)(l.iData_ - r.iData_);
-      case Variant::tFloat: return l.iData_ - r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return (uint16_t)(l.iData_ - r.iData_);
+            case Variant::tFloat: return l.iData_ - r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ - r.iData_;
-      case Variant::tFloat: return l.fData_ - r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ - r.iData_;
+            case Variant::tFloat: return l.fData_ - r.fData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return (uint16_t)0;
@@ -290,24 +290,24 @@ Variant operator * (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return (uint16_t)(l.iData_ * r.iData_);
-      case Variant::tFloat: return l.iData_ * r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return (uint16_t)(l.iData_ * r.iData_);
+            case Variant::tFloat: return l.iData_ * r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ * r.iData_;
-      case Variant::tFloat: return l.fData_ * r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ * r.iData_;
+            case Variant::tFloat: return l.fData_ * r.fData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return (uint16_t)0;
@@ -317,24 +317,24 @@ Variant operator / (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return (uint16_t)(l.iData_ / r.iData_);
-      case Variant::tFloat: return l.iData_ / r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return (uint16_t)(l.iData_ / r.iData_);
+            case Variant::tFloat: return l.iData_ / r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ / r.iData_;
-      case Variant::tFloat: return l.fData_ / r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ / r.iData_;
+            case Variant::tFloat: return l.fData_ / r.fData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return (uint16_t)0;
@@ -344,33 +344,33 @@ Variant operator == (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return l.iData_ == r.iData_;
-      case Variant::tFloat: return l.iData_ == r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.iData_ == r.iData_;
+            case Variant::tFloat: return l.iData_ == r.fData_;
 
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ == r.iData_;
-      case Variant::tFloat: return l.fData_ == r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ == r.iData_;
+            case Variant::tFloat: return l.fData_ == r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tBool:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tBool:
       {
-      case Variant::tBool: return l.bData_ == r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tBool: return l.bData_ == r.bData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return false;
@@ -380,32 +380,32 @@ Variant operator != (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
-   case Variant::tInteger:
-   {
-      switch (r.type_)
+      case Variant::tInteger:
       {
-      case Variant::tInteger: return l.iData_ != r.iData_;
-      case Variant::tFloat: return l.iData_ != r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.iData_ != r.iData_;
+            case Variant::tFloat: return l.iData_ != r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tFloat:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tFloat:
       {
-      case Variant::tInteger: return l.fData_ != r.iData_;
-      case Variant::tFloat: return l.fData_ != r.fData_;
+         switch (r.type_)
+         {
+            case Variant::tInteger: return l.fData_ != r.iData_;
+            case Variant::tFloat: return l.fData_ != r.fData_;
+         }
       }
-   }
-      break;
-   case Variant::tBool:
-   {
-      switch (r.type_)
+         break;
+      case Variant::tBool:
       {
-      case Variant::tBool: return l.bData_ != r.bData_;
+         switch (r.type_)
+         {
+            case Variant::tBool: return l.bData_ != r.bData_;
+         }
       }
-   }
-      break;
+         break;
    }
 
    return false;
@@ -415,9 +415,9 @@ Print & operator << (Print &obj, const Variant &arg)
 { 
    switch(arg.type_)
    {
-   case Variant::tInteger: obj.print(arg.iData_); return obj;
-   case Variant::tFloat: obj.print(arg.fData_); return obj;
-   case Variant::tBool: obj.print(arg.bData_); return obj;
+      case Variant::tInteger: obj.print(arg.iData_); return obj;
+      case Variant::tFloat: obj.print(arg.fData_); return obj;
+      case Variant::tBool: obj.print(arg.bData_); return obj;
    }
 
    return obj;
@@ -457,10 +457,10 @@ void ConstantExp::dump() const
    enterDump();
    switch(data_.type_)
    {
-   case Variant::tNone: STDOUT << F("e-nt");break; // error tNone type
-   case Variant::tInteger: STDOUT << addChar(data_.iData_);break;
-   case Variant::tFloat: STDOUT << addChar(data_.fData_);break;
-   case Variant::tBool: STDOUT << addChar(data_.bData_);break;
+      case Variant::tNone: STDOUT << F("e-nt");break; // error tNone type
+      case Variant::tInteger: STDOUT << addChar(data_.iData_);break;
+      case Variant::tFloat: STDOUT << addChar(data_.fData_);break;
+      case Variant::tBool: STDOUT << addChar(data_.bData_);break;
    }
    leaveDump();
 }
@@ -857,103 +857,103 @@ Expression *RCLEval::parseOperand(char *&in)
 {  
    switch(*in)
    {
-   case '(':
-   {
-      in++; // (
-      Expression *expr = parseExp(in);
-      if(expr == NULL)
-         return NULL;
-
-      in++; // )
-      
-      SubExpression *sexpr = new SubExpression;
-      sexpr->setup(expr);
-      
-      if(*in == '[')
+      case '(':
       {
-        in++; // [
-        
-        Expression *_min = parseOperand(in);
-        if(_min == NULL)
-           return NULL;
-        in++; // ;
-        Expression *_max = parseOperand(in);
-        if(_max == NULL)
-           return NULL;
-        in++; // ]
-        
-        LimitExp *expr = new LimitExp;
-        expr->setup(sexpr, _min, _max );
-        
-        in++; // ]
+         in++; // (
+         Expression *expr = parseExp(in);
+         if(expr == NULL)
+            return NULL;
 
-        return expr;
+         in++; // )
+
+         SubExpression *sexpr = new SubExpression;
+         sexpr->setup(expr);
+
+         if(*in == '[')
+         {
+            in++; // [
+
+            Expression *_min = parseOperand(in);
+            if(_min == NULL)
+               return NULL;
+            in++; // ;
+            Expression *_max = parseOperand(in);
+            if(_max == NULL)
+               return NULL;
+            in++; // ]
+
+            LimitExp *expr = new LimitExp;
+            expr->setup(sexpr, _min, _max );
+
+            in++; // ]
+
+            return expr;
+         }
+
+         return sexpr;
       }
-
-      return sexpr;
-   }
-      break;
-   case 'i': // sensor input
-   {
-      in++; // i
-
-      if(!isdigit(*in))
+         break;
+      case 'i': // sensor input
       {
-         STDOUT << F("e-bp ") << *in << F(" digit expected") << endl;  // Bad parameter
-         return NULL;
+         in++; // i
+
+         if(!isdigit(*in))
+         {
+            STDOUT << F("e-bp ") << *in << F(" digit expected") << endl;  // Bad parameter
+            return NULL;
+         }
+         uint8_t c = in[0] - '0';
+         if(c >= MAX_INPUT_CHANNEL)
+         {
+            STDOUT << F("e-bp ") << c << " " << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
+            return NULL;
+         }
+
+         in++; // x
+
+         // check optionnal limit operator
+         if(*in != '[')
+            return inputTab_[c];
+
+         in++; // [
+
+         Expression *_min = parseOperand(in);
+         if(_min == NULL)
+            return NULL;
+         in++; // ;
+         Expression *_max = parseOperand(in);
+         if(_max == NULL)
+            return NULL;
+         in++; // ]
+
+         LimitExp *expr = new LimitExp;
+         expr->setup(inputTab_[c], _min, _max );
+         return expr;
       }
-      uint8_t c = in[0] - '0';
-      if(c >= MAX_INPUT_CHANNEL)
+         break;
+      case 'T': // true const
       {
-         STDOUT << F("e-bp ") << c << " " << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
-         return NULL;
+         in++; // T
+
+         ConstantExp *expr = new ConstantExp;
+         expr->setup(true);
+         return expr;
       }
+         break;
+      case 'F': // false const
+      {
+         in++; // F
 
-      in++; // x
-
-      // check optionnal limit operator
-      if(*in != '[')
-         return inputTab_[c];
-
-      in++; // [
-
-      Expression *_min = parseOperand(in);
-      if(_min == NULL)
-         return NULL;
-      in++; // ;
-      Expression *_max = parseOperand(in);
-      if(_max == NULL)
-         return NULL;
-      in++; // ]
-      
-      LimitExp *expr = new LimitExp;
-      expr->setup(inputTab_[c], _min, _max );
-      return expr;
-   }
-      break;
-   case 'T': // true const
-   {
-      in++; // T
-
-      ConstantExp *expr = new ConstantExp;
-      expr->setup(true);
-      return expr;
-   }
-      break;
-   case 'F': // false const
-   {
-      in++; // F
-
-      ConstantExp *expr = new ConstantExp;
-      expr->setup(false);
-      return expr;
-   }
-      break;
-   default:
-   {
-      if(isdigit(*in))
-         return parseNumeric(in);
-   }
+         ConstantExp *expr = new ConstantExp;
+         expr->setup(false);
+         return expr;
+      }
+         break;
+      default:
+      {
+         if(isdigit(*in))
+            return parseNumeric(in);
+      }
    }
 
    return NULL;
@@ -973,80 +973,80 @@ Expression *RCLEval::parseExp(char *&in)
 
    switch(op)
    {
-   case '+':
-   {
-      Expression *rightExp = parseOperand(in);
-      if(rightExp == NULL)
-         return NULL;
-      AddExp *expr = new AddExp;
-      expr->setup(leftExp, rightExp);
-      return expr;
-   }
-      break;
-   case '-':
-   {
-      Expression *rightExp = parseOperand(in);
-      if(rightExp == NULL)
-         return NULL;
-      SubExp *expr = new SubExp;
-      expr->setup(leftExp, rightExp);
-      return expr;
-   }
-      break;
-   case '*':
-   {
-      Expression *rightExp = parseOperand(in);
-      if(rightExp == NULL)
-         return NULL;
-      MulExp *expr = new MulExp;
-      expr->setup(leftExp, rightExp);
-      return expr;
-   }
-      break;
-   case '/':
-   {
-      Expression *rightExp = parseOperand(in);
-      if(rightExp == NULL)
-         return NULL;
-      DivExp *expr = new DivExp;
-      expr->setup(leftExp, rightExp);
-      return expr;
-   }
-      break;
-   case '?':
-   {
-      Expression *succeed = parseOperand(in);
-      if(succeed == NULL)
-         return NULL;
-      in++; // :
-      Expression *fail = parseOperand(in);
-      if(fail == NULL)
-         return NULL;
-      IfExp *expr = new IfExp;
-      expr->setup(leftExp, succeed, fail);
-      return expr;
-   }
-      break;
-   case '>':
-   {
-      Expression *rightExp = parseOperand(in);
-      if(rightExp == NULL)
-         return NULL;
-      GreaterThanExp *expr = new GreaterThanExp;
-      expr->setup(leftExp, rightExp);
-      return expr;
-   }
-      break;
-   case '<':
-   {
-      Expression *rightExp = parseOperand(in);
-      if(rightExp == NULL)
-         return NULL;
-      LowerThanExp *expr = new LowerThanExp;
-      expr->setup(leftExp, rightExp);
-      return expr;
-   }
-      break;
+      case '+':
+      {
+         Expression *rightExp = parseOperand(in);
+         if(rightExp == NULL)
+            return NULL;
+         AddExp *expr = new AddExp;
+         expr->setup(leftExp, rightExp);
+         return expr;
+      }
+         break;
+      case '-':
+      {
+         Expression *rightExp = parseOperand(in);
+         if(rightExp == NULL)
+            return NULL;
+         SubExp *expr = new SubExp;
+         expr->setup(leftExp, rightExp);
+         return expr;
+      }
+         break;
+      case '*':
+      {
+         Expression *rightExp = parseOperand(in);
+         if(rightExp == NULL)
+            return NULL;
+         MulExp *expr = new MulExp;
+         expr->setup(leftExp, rightExp);
+         return expr;
+      }
+         break;
+      case '/':
+      {
+         Expression *rightExp = parseOperand(in);
+         if(rightExp == NULL)
+            return NULL;
+         DivExp *expr = new DivExp;
+         expr->setup(leftExp, rightExp);
+         return expr;
+      }
+         break;
+      case '?':
+      {
+         Expression *succeed = parseOperand(in);
+         if(succeed == NULL)
+            return NULL;
+         in++; // :
+         Expression *fail = parseOperand(in);
+         if(fail == NULL)
+            return NULL;
+         IfExp *expr = new IfExp;
+         expr->setup(leftExp, succeed, fail);
+         return expr;
+      }
+         break;
+      case '>':
+      {
+         Expression *rightExp = parseOperand(in);
+         if(rightExp == NULL)
+            return NULL;
+         GreaterThanExp *expr = new GreaterThanExp;
+         expr->setup(leftExp, rightExp);
+         return expr;
+      }
+         break;
+      case '<':
+      {
+         Expression *rightExp = parseOperand(in);
+         if(rightExp == NULL)
+            return NULL;
+         LowerThanExp *expr = new LowerThanExp;
+         expr->setup(leftExp, rightExp);
+         return expr;
+      }
+         break;
    }
 
    return leftExp;

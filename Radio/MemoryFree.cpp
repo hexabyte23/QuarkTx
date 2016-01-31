@@ -65,7 +65,7 @@ int freeMemory()
 {
 #if defined(QT_CORE_LIB)
 
-   return 0;
+   return 1;
 
 #elif defined(__MK20DX256__)
 

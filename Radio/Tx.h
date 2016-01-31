@@ -36,16 +36,8 @@ class Tx
    Command command_;
    Model modelList_[MAX_MODEL];
    Model *currentModel_;
-
-   // Sensors
-   Stick elevator_, aileron_, rudder_, throttle_;
-   Switch s1_, s2_;
-#ifdef TERRATOP
-   Switch s3_;
-#endif
    BatteryMeter battery_;
    Sensor *sensor_[MAX_INPUT_CHANNEL];
-
    volatile uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
    int inFreq_, outFreq_, inCurFreq_, outCurFreq_;
 
@@ -109,7 +101,7 @@ public:
    void onSetRCL(uint8_t chan, const char* rclCode);
 
 #ifdef QT_CORE_LIB
-   // for testing only
+   // For testing only
    void onNewCommand(const char* cmdStr);
    void onEvaluateExpression();
    uint16_t getOutputPPM(uint8_t channel) {return ppmOutputValue_[channel];}

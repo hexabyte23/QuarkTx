@@ -27,38 +27,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 Tx::Tx()
-:
-currentModel_(&modelList_[0]),
-inFreq_(-1),
-outFreq_(-1),
-inCurFreq_(0), 
-outCurFreq_(0),
-ledState_(HIGH),
-toggleTxMode_(tTransmit),
-toggleDisplayInputUpdate_(false),
-toggleDisplayOutputUpdate_(false),
-toggleCalibrateSensor_(false),
-toggleSimulation_(false)
+   :
+     currentModel_(&modelList_[0]),
+     inFreq_(-1),
+     outFreq_(-1),
+     inCurFreq_(0),
+     outCurFreq_(0),
+     ledState_(HIGH),
+     toggleTxMode_(tTransmit),
+     toggleDisplayInputUpdate_(false),
+     toggleDisplayOutputUpdate_(false),
+     toggleCalibrateSensor_(false),
+     toggleSimulation_(false)
 {
-   sensor_[0] = &elevator_;
-   sensor_[1] = &aileron_;
-   sensor_[2] = &rudder_;
-   sensor_[3] = &throttle_;
-   sensor_[4] = &s1_;
-   sensor_[5] = &s2_;
-#ifdef TERRATOP
-   sensor_[6] = &s3_;
-#endif
+   for(uint8_t i=0; i < MAX_ADC_INPUT_CHANNEL; i++)
+      sensor_[i] = new Stick;
+
+   for(uint8_t i=MAX_ADC_INPUT_CHANNEL; i < MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL; i++)
+      sensor_[i] = new Switch;
 
    onSoftwareReset("");
 }
 
 void Tx::setupInputDevice()
 {
-#if __MK20DX256__
-#else
-/*
-   // Modify input scan frequence
+#ifndef __MK20DX256__
+
+   // Speedup input scan frequence on Arduino Nano
+   /*
    const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
    const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
    const unsigned char PS_64 = (1 << ADPS2) | (1 << ADPS1);                  // 250 KHz
@@ -70,15 +66,16 @@ void Tx::setupInputDevice()
 */
 #endif
 
-   elevator_.setup(A0);
-   aileron_.setup(A1);
-   rudder_.setup(A2);
-   throttle_.setup(A3);
-   s1_.setup(SWITCH1_PIN);
-   s2_.setup(SWITCH2_PIN);
+   sensor_[0]->setup(A0);
+   sensor_[1]->setup(A1);
+   sensor_[2]->setup(A2);
+   sensor_[3]->setup(A3);
+   sensor_[4]->setup(SWITCH1_PIN);
+   sensor_[5]->setup(SWITCH2_PIN);
 #ifdef TERRATOP
-   s3_.setup(SWITCH3_PIN);
+   sensor_[6]->setup(SWITCH3_PIN);
 #endif
+
    battery_.setup(A7);
 }
 
@@ -166,7 +163,7 @@ bool Tx::setup()
    
    onLoadFromEEPROM();
    
-/*
+   /*
   rcl_.setupRCL(0, "i0");
   rcl_.setupRCL(1, "i1");
   rcl_.setupRCL(2, "i2");
@@ -180,9 +177,9 @@ bool Tx::setup()
    STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;
 
 #if __MK20DX256__
-  STDOUT << F("Teensy 3.2") << endl; // Teensy signnature
+   STDOUT << F("Teensy 3.2") << endl; // Teensy signnature
 #else
-  STDOUT << F("Nano") << endl; // Nano signnature
+   STDOUT << F("Nano") << endl; // Nano signnature
 #endif
 
    return ret1 | ret2;
@@ -198,21 +195,21 @@ void Tx::onIsrTimerChange()
    */
 
    if(toggleTxMode_ != tTransmit)
-    return;
+      return;
    
 #if __MK20DX256__
 
-  if(irqStartPulse_)
-  {   
+   if(irqStartPulse_)
+   {
       // Falling edge of a channel pulse (in negative shape)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
       
       PIT_LDVAL1 = (F_BUS/1000000)*ppmOutputValue_[irqCurrentChannelNumber_]-1;
       irqCurrentChannelNumber_++;
       irqStartPulse_ = false;
-  }
-  else
-  {
+   }
+   else
+   {
       // Raising edge of a channel pulse (in negative shape)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
@@ -226,10 +223,10 @@ void Tx::onIsrTimerChange()
          PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_CHANNEL_TIME-1;
 
       irqStartPulse_ = true;
-  }
+   }
 
-  PIT_TFLG1 = 1;
-    
+   PIT_TFLG1 = 1;
+
 #else
    /*
    * We successfully test with a Jeti TU2 RF module up to 17 channels
@@ -261,7 +258,7 @@ void Tx::onIsrTimerChange()
       }
       else
          OCR1A = PPM_INTER_CHANNEL_TIME*2;
-         
+
       irqStartPulse_ = true;
    }
 #endif
@@ -314,7 +311,7 @@ void Tx::displayInputUpdate()
    if(inFreq_ > 0)
    {
       if(inCurFreq_++ < inFreq_)
-        return;
+         return;
       inCurFreq_ = 0;
    }
    
@@ -338,7 +335,7 @@ void Tx::displayOutputUpdate()
    if(outFreq_ > 0)
    {
       if(outCurFreq_++ < outFreq_)
-        return;
+         return;
       outCurFreq_ = 0;
    }
    
@@ -459,15 +456,15 @@ void Tx::onDump(const char* param)
 {
    switch(param[0])
    {
-   case 'e': dumpEEPROM();break;
-   case 'l': dumpRCL(param+1);break;
-   case 'm': dumpModel();break;
-   case 's': dumpSensor();break;
-   default:
-      dumpSensor();
-      dumpModel();
-      dumpRCL("");
-      dumpEEPROM();
+      case 'e': dumpEEPROM();break;
+      case 'l': dumpRCL(param+1);break;
+      case 'm': dumpModel();break;
+      case 's': dumpSensor();break;
+      default:
+         dumpSensor();
+         dumpModel();
+         dumpRCL("");
+         dumpEEPROM();
    }
 }
 
@@ -562,8 +559,8 @@ void Tx::resetRCL()
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       if(i >= MAX_INPUT_CHANNEL)
-        i = 0;
-        
+         i = 0;
+
       buf[1] = '0'+i;
       rcl_.setupRCL(idx, buf);
       i++;
@@ -574,13 +571,13 @@ void Tx::onSoftwareReset(const char* param)
 {
    switch(param[0])
    {
-   case 'm': resetModel();break;
-   case 's': resetSensor();break;
-   case 'l': resetRCL();break;
-   default:
-      resetModel();
-      resetSensor();
-      resetRCL();
+      case 'm': resetModel();break;
+      case 's': resetSensor();break;
+      case 'l': resetRCL();break;
+      default:
+         resetModel();
+         resetSensor();
+         resetRCL();
    }
 
    toggleTxMode_ = tTransmit;
