@@ -105,6 +105,7 @@ public:
    void onNewCommand(const char* cmdStr);
    void onEvaluateExpression();
    uint16_t getOutputPPM(uint8_t channel) {return ppmOutputValue_[channel];}
+   Sensor *getSensor(uint8_t idx) { return sensor_[idx];}
 #endif
 
    // Functions

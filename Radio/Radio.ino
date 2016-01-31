@@ -31,9 +31,6 @@ void setup()
 
 #if __MK20DX256__
 void pit1_isr()
-{
-   tx.onIsrTimerChange();
-}
 #else
 ISR(TIMER1_COMPA_vect)
 {
