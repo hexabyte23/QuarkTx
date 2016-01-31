@@ -40,7 +40,7 @@ struct ServoCommand
 
 struct OutputChannel
 {
-   ServoCommand servo_;      // next step, put many servo per channel
+   ServoCommand servo_;      // Next dev: put many servo per channel
 
    void saveToEEPROM(uint16_t &addr) const;
    void loadFromEEPROM(uint16_t &addr);

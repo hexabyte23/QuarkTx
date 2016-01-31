@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Tx::Tx()
    :
-     currentModel_(&modelList_[0]),
      inFreq_(-1),
      outFreq_(-1),
      inCurFreq_(0),
@@ -40,6 +39,11 @@ Tx::Tx()
      toggleCalibrateSensor_(false),
      toggleSimulation_(false)
 {
+//   for(uint8_t i=0; i < MAX_MODEL; i++)
+//      modelList_[i] = new Model;
+
+   currentModel_ = &modelList_[0];
+
    for(uint8_t i=0; i < MAX_ADC_INPUT_CHANNEL; i++)
       sensor_[i] = new Stick;
 
@@ -358,14 +362,14 @@ void Tx::onToggleTxMode()
    if(toggleTxMode_ == tTransmit)
    {
       toggleTxMode_ = tDebug;
-      STDOUT << F("Mode switched to 'debug'") << endl;
+      STDOUT << F("Mode 'debug'") << endl;
 
       mesure_.reset();
    }
    else
    {
       toggleTxMode_ = tTransmit;
-      STDOUT << F("Mode switched to 'transmit'") << endl;
+      STDOUT << F("Mode 'transmit'") << endl;
 
       mesure_.reset();
    }
@@ -375,8 +379,9 @@ void Tx::onChangeCurrentModel(int idx)
 {
    if(idx < MAX_MODEL)
    {
-      STDOUT << F("Load model ") << idx << endl;
+      STDOUT << F("Current model ") << idx << endl;
       currentModel_ = &modelList_[idx];
+      rcl_.changeModel(currentModel_);
    }
    else
       STDOUT << F("e-bp ") << idx << F(" ") << MAX_MODEL-1 << endl;  // Bad parameter
@@ -536,6 +541,8 @@ void Tx::resetModel()
 {
    for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
       modelList_[idx].reset();
+
+   currentModel_ = &modelList_[0];
 }
 
 void Tx::resetSensor()
