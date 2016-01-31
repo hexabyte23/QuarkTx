@@ -33,10 +33,11 @@ void setup()
 void pit1_isr()
 #else
 ISR(TIMER1_COMPA_vect)
+#endif
 {
    tx.onIsrTimerChange();
 }
-#endif
+
 
 void loop()
 {   

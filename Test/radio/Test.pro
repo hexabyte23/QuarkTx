@@ -1,8 +1,9 @@
-QT += core
+
+QT += core testlib
 QT -= gui
 
 TARGET = Test
-CONFIG += console
+CONFIG += console testcase
 CONFIG -= app_bundle
 
 TEMPLATE = app
@@ -29,7 +30,10 @@ HEADERS += \
     ../../Radio/Sensor.h \
     ../../Radio/SerialLink.h \
     ../../Radio/Streaming.h \
-    ../../Radio/Tx.h
+    ../../Radio/Tx.h \
+    lib/arduino.h \
+    lib/EEPROM.h \
+    lib/stream.h
 
 INCLUDEPATH += lib
 
