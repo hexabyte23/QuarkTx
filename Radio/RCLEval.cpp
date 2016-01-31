@@ -828,10 +828,10 @@ Expression *RCLEval::parseNumeric(char *&in)
       if(*in == 0) break;             // end of text
       if(len == sizeof(buf)-1) break; // end of buf
       if(*in == '.')                  // float ?
-         type = 1;                     // this is a float
+         type = 1;                    // this is a float
       else
       {
-         if(!isdigit(*in))             // digit ?
+         if(!isdigit(*in))            // digit ?
             break;                    // no more a digit
       }
 
@@ -865,21 +865,50 @@ Expression *RCLEval::parseOperand(char *&in)
          return NULL;
 
       in++; // )
-
+      
       SubExpression *sexpr = new SubExpression;
       sexpr->setup(expr);
+      
+      if(*in == '[')
+      {
+        in++; // [
+        
+        Expression *_min = parseOperand(in);
+        if(_min == NULL)
+           return NULL;
+        in++; // ;
+        Expression *_max = parseOperand(in);
+        if(_max == NULL)
+           return NULL;
+        in++; // ]
+        
+        LimitExp *expr = new LimitExp;
+        expr->setup(sexpr, _min, _max );
+        
+        in++; // ]
+
+        return expr;
+      }
+
       return sexpr;
    }
       break;
    case 'i': // sensor input
    {
       in++; // i
-      int c = in[0] - '0';
+
+      if(!isdigit(*in))
+      {
+         STDOUT << F("e-bp ") << *in << F(" digit expected") << endl;  // Bad parameter
+         return NULL;
+      }
+      uint8_t c = in[0] - '0';
       if(c >= MAX_INPUT_CHANNEL)
       {
          STDOUT << F("e-bp ") << c << " " << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
          return NULL;
       }
+
       in++; // x
 
       // check optionnal limit operator
@@ -896,6 +925,7 @@ Expression *RCLEval::parseOperand(char *&in)
       if(_max == NULL)
          return NULL;
       in++; // ]
+      
       LimitExp *expr = new LimitExp;
       expr->setup(inputTab_[c], _min, _max );
       return expr;

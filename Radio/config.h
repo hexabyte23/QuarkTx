@@ -54,6 +54,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 #define TERRATOP
+#define NEWRADIO
+
 //#define BLUETOOTH             
 #define JETI_TU2_MODULE
 
@@ -70,7 +72,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SWITCH2_PIN             3
 #define SWITCH3_PIN             4
 
-#define LED_PIN                 13
+#define LED_PIN                 6
 
 #else
 

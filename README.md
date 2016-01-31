@@ -11,6 +11,6 @@ Arduino Nano ATmega328/Teensy 3.2 source code
 We just test with a Jeti TU2 2.4 GHz RF module. Smart interrupt code is able to generate up to 17 different PPM channels !!!
 
 ## RCL: a new language
-We introduce RCL, a real time new Radio Control Language, that include gimbal mode, reverse, dual rate, exponetial and mixer functions per channel.
+We introduce RCL, a real time Radio Control Language, that include gimbal mode, reverse, dual rate, exponetial and mixer functions per channel.
 
 The average update rate of channels is more than 300 Hz for a 6 channels config with simple RCL commands.
