@@ -3,13 +3,13 @@
 //#include <QtTest>
 #include <math.h>
 
-
 #define QCOMPARE(a, b, c)\
 {\
-   float diff = std::abs(a-b);\
-   if(diff > c)\
-      std::cout << __FILE__ <<  "(" << __LINE__ << ") error: comparison failed, value=" << a << " expected " << b << std::endl;\
-}
+   float diff = std::abs(a - b);\
+   if(diff > (float)c)\
+   std::cout << __FILE__ <<  "(" << __LINE__ << ") error: comparison failed, value=" \
+   << a << " expected " << b << " prec=" << c << " " <<  std::endl;\
+   }
 
 
 Tx tx;
@@ -38,7 +38,7 @@ void checkOutput()
    uint16_t c5 = tx.getOutputPPM(5);
    QCOMPARE(c5, PPM_MIN_VALUE, 0.01);
 
-   // then, set simple constant script
+   //Check RCL simple constant script
    tx.onNewCommand("s l 0 0");
 
    tx.getSensor(0)->setSimulateValue(0);
@@ -56,11 +56,11 @@ void checkOutput()
    c0 = tx.getOutputPPM(0);
    QCOMPARE(c0, PPM_MIN_VALUE, 0.01);
 
-   // Then, add input variable
+   // Check RCL input variable
    tx.onNewCommand("s l 0 i0");
 
    // check lower value
-   tx.getSensor(0)->setSimulateValue(0);
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
    tx.onEvaluateExpression();
    c0 = tx.getOutputPPM(0);
    QCOMPARE(c0, PPM_MIN_VALUE, 0.01);
@@ -69,13 +69,56 @@ void checkOutput()
    tx.getSensor(0)->setSimulateValue((ADC_MAX_VALUE-ADC_MIN_VALUE)/2);
    tx.onEvaluateExpression();
    c0 = tx.getOutputPPM(0);
-   QCOMPARE(c0, PPM_MIN_VALUE+(PPM_MAX_VALUE-PPM_MIN_VALUE)/2, 1.1);
+   QCOMPARE(c0, (PPM_MIN_VALUE+(PPM_MAX_VALUE-PPM_MIN_VALUE)/2), 1.1);
 
    // check over the limit
-   tx.getSensor(0)->setSimulateValue(1024);
+   tx.getSensor(0)->setSimulateValue(ADC_MAX_VALUE+10);
    tx.onEvaluateExpression();
    c0 = tx.getOutputPPM(0);
    QCOMPARE(c0, PPM_MAX_VALUE, 0.01);
+
+   // Check RCL limit
+   tx.onNewCommand("s l 0 i0[0;1]");
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, PPM_MIN_VALUE, 0.01);
+
+   tx.getSensor(0)->setSimulateValue(ADC_MAX_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, PPM_MIN_VALUE, 0.01);
+
+   // Check RCL addition
+   tx.onNewCommand("s l 0 10+10");
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0,(PPM_MIN_VALUE+20), 1.1);
+
+   // Check RCL addition
+   tx.onNewCommand("s l 0 i0+10");
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, (PPM_MIN_VALUE+10), 1.1);
+
+   tx.onNewCommand("s l 0 i0+i1");
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
+   tx.getSensor(1)->setSimulateValue(ADC_MIN_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, (PPM_MIN_VALUE), 1.1);
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE+(ADC_MAX_VALUE-ADC_MIN_VALUE)/2);
+   tx.getSensor(1)->setSimulateValue(ADC_MIN_VALUE+(ADC_MAX_VALUE-ADC_MIN_VALUE)/2);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, (PPM_MAX_VALUE), 1.1);
 }
 
 void Init()
@@ -97,7 +140,7 @@ int main(int argc, char *argv[])
 
    checkOutput();
 
-/*
+   /*
    tx.onNewCommand("s l 1 i1");
    tx.onNewCommand("s l 2 i2");
    tx.onNewCommand("s l 3 i3");
