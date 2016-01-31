@@ -122,7 +122,7 @@ uint16_t Variant::convert2Int() const
 {
    switch(type_)
    {
-      case Variant::tNone:break;
+      case Variant::tNone:return 0;
       case Variant::tInteger: return iData_;
       case Variant::tFloat: return (uint16_t)fData_;
       case Variant::tBool: return (uint16_t)bData_;
@@ -135,20 +135,20 @@ float Variant::convert2Float() const
 {
    switch(type_)
    {
-      case Variant::tNone:break;
+      case Variant::tNone:return 0.0;
       case Variant::tInteger: return (float)iData_;
       case Variant::tFloat: return fData_;
       case Variant::tBool: return (float)bData_;
    }
 
-   return 0;
+   return 0.0;
 }
 
 bool Variant::convert2Bool() const
 {
    switch(type_)
    {
-      case Variant::tNone:break;
+      case Variant::tNone:return false;
       case Variant::tInteger: return iData_==1;
       case Variant::tFloat: return fData_==1.0;
       case Variant::tBool: return bData_;
@@ -823,7 +823,8 @@ void LimitExp::setup(const Expression *data, const Expression *min, const Expres
 
 Variant LimitExp::evaluate() const
 {
-   Variant ret((uint16_t)fmap(data_->evaluate().convert2Float(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Float(), max_->evaluate().convert2Float()));
+//   Variant ret((uint16_t)fmap(data_->evaluate().convert2Float(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Float(), max_->evaluate().convert2Float()));
+   Variant ret((uint16_t)map(data_->evaluate().convert2Int(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Int(), max_->evaluate().convert2Int()));
    return ret;
 }
 
@@ -1016,8 +1017,7 @@ Expression *RCLEval::parseExp(char *&in)
    Expression *leftExp = parseOperand(in);
    if(leftExp == NULL)
       return NULL;
-
-   if(*in == 0)
+   if((*in == 0) || (*in == ')'))
       return leftExp;
 
    char op = *in;

@@ -198,10 +198,13 @@ void Tx::onIsrTimerChange()
    * The minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
    */
 
-   if(toggleTxMode_ != tTransmit)
-      return;
    
 #if __MK20DX256__
+
+   PIT_TFLG1 = 1;
+   
+   if(toggleTxMode_ != tTransmit)
+      return;
 
    if(irqStartPulse_)
    {
@@ -229,15 +232,16 @@ void Tx::onIsrTimerChange()
       irqStartPulse_ = true;
    }
 
-   PIT_TFLG1 = 1;
-
 #else
    /*
    * We successfully test with a Jeti TU2 RF module up to 17 channels
    */
 
    TCNT1 = 0;
-
+   
+   if(toggleTxMode_ != tTransmit)
+      return;
+      
    if(irqStartPulse_)
    {
       // Falling edge of a channel pulse (in negative shape)
@@ -289,6 +293,7 @@ void Tx::idle()
       mesure_.stop();
       mesure_.displayStat(1000);
    }
+   
    // 1200 1218 1380
 }
 
@@ -363,16 +368,14 @@ void Tx::onToggleTxMode()
    {
       toggleTxMode_ = tDebug;
       STDOUT << F("Mode 'debug'") << endl;
-
-      mesure_.reset();
    }
    else
    {
       toggleTxMode_ = tTransmit;
       STDOUT << F("Mode 'transmit'") << endl;
-
-      mesure_.reset();
    }
+
+   mesure_.reset();
 }
 
 void Tx::onChangeCurrentModel(int idx)
