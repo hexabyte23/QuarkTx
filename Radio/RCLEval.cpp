@@ -122,6 +122,7 @@ uint16_t Variant::convert2Int() const
 {
    switch(type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger: return iData_;
       case Variant::tFloat: return (uint16_t)fData_;
       case Variant::tBool: return (uint16_t)bData_;
@@ -134,6 +135,7 @@ float Variant::convert2Float() const
 {
    switch(type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger: return (float)iData_;
       case Variant::tFloat: return fData_;
       case Variant::tBool: return (float)bData_;
@@ -146,6 +148,7 @@ bool Variant::convert2Bool() const
 {
    switch(type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger: return iData_==1;
       case Variant::tFloat: return fData_==1.0;
       case Variant::tBool: return bData_;
@@ -158,36 +161,40 @@ Variant operator < (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.iData_ < r.iData_;
             case Variant::tFloat: return l.iData_ < r.fData_;
             case Variant::tBool: return l.iData_ < r.bData_;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ < r.iData_;
             case Variant::tFloat: return l.fData_ < r.fData_;
             case Variant::tBool: return l.fData_ < r.bData_;
          }
       }
-         break;
+      break;
       case Variant::tBool:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.bData_ < r.iData_;
             case Variant::tFloat: return l.bData_ < r.fData_;
             case Variant::tBool: return l.bData_ < r.bData_;
          }
       }
-         break;
+      break;
    }
 
    return false;
@@ -197,36 +204,40 @@ Variant operator > (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.iData_ > r.iData_;
             case Variant::tFloat: return l.iData_ > r.fData_;
             case Variant::tBool: return l.iData_ > r.bData_;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ > r.iData_;
             case Variant::tFloat: return l.fData_ > r.fData_;
             case Variant::tBool: return l.fData_ > r.bData_;
          }
       }
-         break;
+      break;
       case Variant::tBool:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.bData_ > r.iData_;
             case Variant::tFloat: return l.bData_ > r.fData_;
             case Variant::tBool: return l.bData_ > r.bData_;
          }
       }
-         break;
+      break;
    }
 
    return false;
@@ -236,24 +247,30 @@ Variant operator + (const Variant &l, const Variant &r)
 {  
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return (uint16_t)(l.iData_ + r.iData_);
             case Variant::tFloat: return l.iData_ + r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ + r.iData_;
             case Variant::tFloat: return l.fData_ + r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
+      case Variant::tBool:break;
    }
 
    return (uint16_t)0;
@@ -263,24 +280,30 @@ Variant operator - (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return (uint16_t)(l.iData_ - r.iData_);
             case Variant::tFloat: return l.iData_ - r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ - r.iData_;
             case Variant::tFloat: return l.fData_ - r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
+      case Variant::tBool:break;
    }
 
    return (uint16_t)0;
@@ -290,24 +313,30 @@ Variant operator * (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return (uint16_t)(l.iData_ * r.iData_);
             case Variant::tFloat: return l.iData_ * r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ * r.iData_;
             case Variant::tFloat: return l.fData_ * r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
+      case Variant::tBool:break;
    }
 
    return (uint16_t)0;
@@ -317,24 +346,30 @@ Variant operator / (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return (uint16_t)(l.iData_ / r.iData_);
             case Variant::tFloat: return l.iData_ / r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ / r.iData_;
             case Variant::tFloat: return l.fData_ / r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
+      case Variant::tBool:break;
    }
 
    return (uint16_t)0;
@@ -344,33 +379,41 @@ Variant operator == (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.iData_ == r.iData_;
             case Variant::tFloat: return l.iData_ == r.fData_;
+            case Variant::tBool:break;
 
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ == r.iData_;
             case Variant::tFloat: return l.fData_ == r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tBool:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
+            case Variant::tInteger:break;
+            case Variant::tFloat:break;
             case Variant::tBool: return l.bData_ == r.bData_;
          }
       }
-         break;
+      break;
    }
 
    return false;
@@ -380,32 +423,40 @@ Variant operator != (const Variant &l, const Variant &r)
 {
    switch(l.type_)
    {
+      case Variant::tNone:break;
       case Variant::tInteger:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.iData_ != r.iData_;
             case Variant::tFloat: return l.iData_ != r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tFloat:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
             case Variant::tInteger: return l.fData_ != r.iData_;
             case Variant::tFloat: return l.fData_ != r.fData_;
+            case Variant::tBool:break;
          }
       }
-         break;
+      break;
       case Variant::tBool:
       {
          switch (r.type_)
          {
+            case Variant::tNone:break;
+            case Variant::tInteger:break;
+            case Variant::tFloat:break;
             case Variant::tBool: return l.bData_ != r.bData_;
          }
       }
-         break;
+      break;
    }
 
    return false;
@@ -415,6 +466,7 @@ Print & operator << (Print &obj, const Variant &arg)
 { 
    switch(arg.type_)
    {
+      case Variant::tNone:return obj;
       case Variant::tInteger: obj.print(arg.iData_); return obj;
       case Variant::tFloat: obj.print(arg.fData_); return obj;
       case Variant::tBool: obj.print(arg.bData_); return obj;
@@ -892,7 +944,7 @@ Expression *RCLEval::parseOperand(char *&in)
 
          return sexpr;
       }
-         break;
+      break;
       case 'i': // sensor input
       {
          in++; // i
@@ -930,7 +982,7 @@ Expression *RCLEval::parseOperand(char *&in)
          expr->setup(inputTab_[c], _min, _max );
          return expr;
       }
-         break;
+      break;
       case 'T': // true const
       {
          in++; // T
@@ -939,7 +991,7 @@ Expression *RCLEval::parseOperand(char *&in)
          expr->setup(true);
          return expr;
       }
-         break;
+      break;
       case 'F': // false const
       {
          in++; // F
@@ -948,7 +1000,7 @@ Expression *RCLEval::parseOperand(char *&in)
          expr->setup(false);
          return expr;
       }
-         break;
+      break;
       default:
       {
          if(isdigit(*in))
@@ -982,7 +1034,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, rightExp);
          return expr;
       }
-         break;
+      break;
       case '-':
       {
          Expression *rightExp = parseOperand(in);
@@ -992,7 +1044,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, rightExp);
          return expr;
       }
-         break;
+      break;
       case '*':
       {
          Expression *rightExp = parseOperand(in);
@@ -1002,7 +1054,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, rightExp);
          return expr;
       }
-         break;
+      break;
       case '/':
       {
          Expression *rightExp = parseOperand(in);
@@ -1012,7 +1064,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, rightExp);
          return expr;
       }
-         break;
+      break;
       case '?':
       {
          Expression *succeed = parseOperand(in);
@@ -1026,7 +1078,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, succeed, fail);
          return expr;
       }
-         break;
+      break;
       case '>':
       {
          Expression *rightExp = parseOperand(in);
@@ -1036,7 +1088,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, rightExp);
          return expr;
       }
-         break;
+      break;
       case '<':
       {
          Expression *rightExp = parseOperand(in);
@@ -1046,7 +1098,7 @@ Expression *RCLEval::parseExp(char *&in)
          expr->setup(leftExp, rightExp);
          return expr;
       }
-         break;
+      break;
    }
 
    return leftExp;
