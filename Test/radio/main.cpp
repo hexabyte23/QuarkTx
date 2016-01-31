@@ -56,6 +56,20 @@ void checkOutput()
    c0 = tx.getOutputPPM(0);
    QCOMPARE(c0, PPM_MIN_VALUE, 0.01);
 
+   tx.onNewCommand("s l 0 (10)");
+
+   tx.getSensor(0)->setSimulateValue(0);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, map(10, ADC_MIN_VALUE, ADC_MAX_VALUE, PPM_MIN_VALUE, PPM_MAX_VALUE), 0.01);
+
+   tx.onNewCommand("s l 0 (1023)[0;10]");
+
+   tx.getSensor(0)->setSimulateValue(0);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0, map(map(1023, 0, 1023, 0, 10), ADC_MIN_VALUE, ADC_MAX_VALUE, PPM_MIN_VALUE, PPM_MAX_VALUE), 0.01);
+
    // Check RCL input variable
    tx.onNewCommand("s l 0 i0");
 
@@ -65,13 +79,13 @@ void checkOutput()
    c0 = tx.getOutputPPM(0);
    QCOMPARE(c0, PPM_MIN_VALUE, 0.01);
 
-   // check middle
+   // Check middle
    tx.getSensor(0)->setSimulateValue((ADC_MAX_VALUE-ADC_MIN_VALUE)/2);
    tx.onEvaluateExpression();
    c0 = tx.getOutputPPM(0);
-   QCOMPARE(c0, (PPM_MIN_VALUE+(PPM_MAX_VALUE-PPM_MIN_VALUE)/2), 1.1);
+   QCOMPARE(c0, map((ADC_MAX_VALUE-ADC_MIN_VALUE)/2, ADC_MIN_VALUE, ADC_MAX_VALUE, PPM_MIN_VALUE, PPM_MAX_VALUE), 0.01);
 
-   // check over the limit
+   // Check over the limit
    tx.getSensor(0)->setSimulateValue(ADC_MAX_VALUE+10);
    tx.onEvaluateExpression();
    c0 = tx.getOutputPPM(0);
@@ -98,7 +112,20 @@ void checkOutput()
    c0 = tx.getOutputPPM(0);
    QCOMPARE(c0,(PPM_MIN_VALUE+20), 1.1);
 
-   // Check RCL addition
+   tx.onNewCommand("s l 0 10+(10)");
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0,(PPM_MIN_VALUE+20), 1.1);
+
+   tx.onNewCommand("s l 0 10+(512)[0;10]");
+
+   tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
+   tx.onEvaluateExpression();
+   c0 = tx.getOutputPPM(0);
+   QCOMPARE(c0,(PPM_MIN_VALUE+20), 1.1);
+
    tx.onNewCommand("s l 0 i0+10");
 
    tx.getSensor(0)->setSimulateValue(ADC_MIN_VALUE);
