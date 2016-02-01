@@ -5,19 +5,21 @@ DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 DEFINES += APP_NAME=\\\"QUARTTX\\\"
 
 
-QT += qml quick widgets bluetooth
+QT += qml quick widgets bluetooth printsupport
 
 SOURCES +=  src/main.cpp \
     src/MainModel.cpp \
     src/BatteryModel.cpp \
     src/RadioLink.cpp \
+    src/qcustomplot.cpp \
     src/TxCommand.cpp
 HEADERS +=  src/global.h \
             src/main.h \
     src/MainModel.h \
     src/BatteryModel.h \
     src/RadioLink.h \
-    src/TxCommand.h
+    src/TxCommand.h \
+    src/qcustomplot.h
 
 RESOURCES += qml.qrc
 
