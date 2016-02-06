@@ -19,13 +19,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #include <Arduino.h>
+#include "config.h"
 #include "MemoryFree.h"
 
 
-#ifdef __MK20DX256__
+#ifdef QUARKTX_TEENSY
 
 extern "C" char* sbrk(int incr);
-
 #else
 
 extern unsigned int __heap_start;
@@ -63,11 +63,11 @@ int freeListSize()
 
 int freeMemory()
 {
-#if defined(QT_CORE_LIB)
+#ifdef QUARKTX_TEST
 
    return 1;
 
-#elif defined(__MK20DX256__)
+#elif defined(QUARKTX_TEENSY)
 
     uint32_t stackTop;
     uint32_t heapTop;

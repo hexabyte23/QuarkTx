@@ -21,10 +21,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define RCLEVAL_H
 
 #include <arduino.h>
-#include "SerialLink.h"
 #include "Sensor.h"
 #include "Model.h"
-#include "Tx.h"
 
 struct Variant
 {

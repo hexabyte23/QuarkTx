@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <EEPROM.h>
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
 #include "mk20dx128.h"
 #endif
 #include "Config.h"
@@ -55,7 +55,7 @@ Tx::Tx()
 
 void Tx::setupInputDevice()
 {
-#ifndef __MK20DX256__
+#ifndef QUARKTX_TEENSY
 
    // Speedup input scan frequence on Arduino Nano
    /*
@@ -97,7 +97,7 @@ void Tx::setupOutputDevice()
    irqStartPulse_ = true;
    irqCurrentChannelNumber_ = 0;
 
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
 
    SIM_SCGC6 |= SIM_SCGC6_PIT;  // Enable PIT clock
    PIT_MCR = 0x00;              // turn on PIT
@@ -180,7 +180,7 @@ bool Tx::setup()
    mesure_.stop();
    STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;
 
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
    STDOUT << F("Teensy 3.2") << endl; // Teensy signnature
 #else
    STDOUT << F("Nano") << endl; // Nano signnature
@@ -199,7 +199,7 @@ void Tx::onIsrTimerChange()
    */
 
    
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
 
    PIT_TFLG1 = 1;
    
@@ -493,7 +493,7 @@ void Tx::calibrateSensor()
    STDOUT << endl;
 }
 
-void Tx::onLoadFromEEPROM()
+bool Tx::onLoadFromEEPROM()
 {
    uint16_t addr = 0L;
    uint8_t i;
@@ -504,7 +504,7 @@ void Tx::onLoadFromEEPROM()
    {
       i = 0;
       STDOUT << F("e-edic") << endl;    //  EEPROM data is corrupted
-      return;
+      return false;
    }
    currentModel_ = &modelList_[i];
    addr += sizeof(uint8_t);
@@ -518,6 +518,8 @@ void Tx::onLoadFromEEPROM()
       sensor_[idx]->loadFromEEPROM(addr);
 
    rcl_.loadFromEEPROM(addr);
+
+   return true;
 }
 
 void Tx::onSaveToEEPROM()
@@ -682,7 +684,7 @@ void Tx::onSetRCL(uint8_t chan, const char* rclCode)
    }
 }
 
-#ifdef QT_CORE_LIB
+#ifdef QUARKTX_TEST
 
 void Tx::onNewCommand(const char* cmdStr)
 {

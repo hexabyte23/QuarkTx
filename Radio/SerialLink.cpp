@@ -44,7 +44,7 @@ bool SerialLink::setup(Command *cmd)
 #else
    currentStream_ = &Serial;
    Serial.begin(QUARKTX_SERIAL_SPEED);
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
    delay(300);
 #endif
 #endif

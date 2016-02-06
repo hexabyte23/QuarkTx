@@ -91,7 +91,7 @@ public:
    void onToggleDisplayOutputUpdate(int freq);
    void onToggleCalibrateSensor();
    void onToggleSimulation();
-   void onLoadFromEEPROM();
+   bool onLoadFromEEPROM();
    void onSaveToEEPROM();
    void onSoftwareReset(const char* param);
    void onSetTrimSensorValue(uint8_t sensorID, int value);
@@ -100,7 +100,7 @@ public:
    void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
    void onSetRCL(uint8_t chan, const char* rclCode);
 
-#ifdef QT_CORE_LIB
+#ifdef QUARKTX_TEST
    // For testing only
    void onNewCommand(const char* cmdStr);
    void onEvaluateExpression();

@@ -29,7 +29,7 @@ void setup()
       STDOUT << F("Failed\n>") << endl;
 }
 
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
 void pit1_isr()
 #else
 ISR(TIMER1_COMPA_vect)

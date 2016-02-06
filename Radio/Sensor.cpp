@@ -62,7 +62,9 @@ void Sensor::loadFromEEPROM(uint16_t &addr)
 
 void Sensor::dump() const
 {
+#ifndef QUARKTX_TEST
    STDOUT << pin_ << "\t" << trim_ << "\t" << calibrMin_ << "\t" << calibrMax_ << "\t" << simuVal_;
+#endif
 }
 
 void Sensor::reset()

@@ -17,10 +17,17 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "Tx.h"
-#include "RCLEval.h"
-#include "SerialLink.h"
 #include <EEPROM.h>
+#include "RCLEval.h"
+#ifndef QUARKTX_TEST
+#include "Tx.h"
+#include "SerialLink.h"
+#else
+#include <memory>
+#include "Streaming.h"
+#undef STDOUT
+#define STDOUT Serial
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // 
@@ -517,18 +524,21 @@ void ConstantExp::dump() const
    leaveDump();
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////`
+#ifndef QUARKTX_TEST
 extern Tx tx;     // Horrible, must be cleaned
+#endif
 
 void SensorInputExp::dump() const
 {
    enterDump();
-   
+#ifndef QUARKTX_TEST
    addChar('i');
    addChar((uint16_t)tx.getSensorIndex(sensor_->getPin()));
    
    STDOUT << 'i' << tx.getSensorIndex(sensor_->getPin());
    leaveDump();
+#endif
 }
 /*
 void SensorInputExp::saveToEEPROM(uint16_t &addr) const

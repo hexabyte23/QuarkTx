@@ -116,4 +116,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
 #define STDOUT *SerialLink::currentStream_
 
+#if defined(__MK20DX256__)
+#define QUARKTX_TEENSY
+#endif
+
+#if defined(QT_CORE_LIB)
+#define QUARKTX_TEST
+#endif
+
 #endif

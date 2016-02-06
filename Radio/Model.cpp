@@ -124,6 +124,7 @@ void Model::setRevertValue(uint8_t channel, bool value)
 
 void Model::dump()
 {
+#ifndef QUARKTX_TEST
    STDOUT << F("Servo\n# Min   Max   Neutral   Rev") << endl;
 
    for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
@@ -133,6 +134,7 @@ void Model::dump()
                 channel_[idx].servo_.neutral_ << "\t" <<
                 channel_[idx].servo_.isRevert_ << endl;
    }
+#endif
 }
 
 void Model::reset()

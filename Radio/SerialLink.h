@@ -42,7 +42,7 @@ public:
    void idle();
 };
 
-#if __MK20DX256__
+#ifdef QUARKTX_TEENSY
 class MacAddress
 {
     uint8_t mac_[6];
