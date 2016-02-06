@@ -57,7 +57,7 @@ void Tx::setupInputDevice()
 {
 #ifndef QUARKTX_TEENSY
 
-   // Speedup input scan frequence on Arduino Nano
+   // Uncomment below for speedup input scan frequence on Arduino Nano
    /*
    const unsigned char PS_16 = (1 << ADPS2);                                 // 1 MHz
    const unsigned char PS_32 = (1 << ADPS2) | (1 << ADPS0);                  // 500 KHz
@@ -67,7 +67,8 @@ void Tx::setupInputDevice()
    // set up the ADC
    ADCSRA &= ~PS_128;  // remove bits set by Arduino library
    ADCSRA |= PS_64;    // set our own prescaler to 64
-*/
+  */
+  
 #endif
 
    sensor_[0]->setup(A0);
