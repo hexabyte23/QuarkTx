@@ -681,7 +681,7 @@ void Tx::onSetRCL(uint8_t chan, const char* rclCode)
    {
       STDOUT << chan << " " << rclCode << endl;
       if(!rcl_.setupRCL(chan, rclCode))
-         STDOUT << F("e-pf") << endl;       // parse failed
+         STDOUT << F("e-pf") << endl;       // RCL parsing failed
    }
 }
 

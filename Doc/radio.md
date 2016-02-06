@@ -115,21 +115,49 @@ To be define
 To be define
 
 ## <a name"rcl-pane"></a> Radio Control Language
-This new language aim is to describe all sensors dependencies for each channels.
+This new language is able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time, up to 300 times/sec on Arduino Nano board and up to 900 times/sec on Teensy 3.2 board. 
+
+The command `s l chan rclStr` is used to modify the current RCL script of a given output PPM channel `chan`  with the new script `rclStr`. A script could not be longer than **`MAX_SERIAL_INPUT_BUFFER`** (config.h)
+
 
 ### Sensor variable
-To be define
+A sensor variable is define by a single character `i` followed by the sensor index (with index range [O, **`MAX_INPUT_CHANNEL `**]). For exemple `i2` is used for the _third_ sensor, as index started from 0.
+
+By default, the minimal scritp below is present on every PPM channels during the first booting sequence:  `i*x*` (with x range [0, **`MAX_INPUT_CHANNEL`**]). This is the smalest script you can write to associate an input sensor to an output channel.
+
+Every time you use reset command `r`, this minimal script will be setup in all channels.
+
+By default, the range of value od each sensor is [0, 1023].
+
+For exemple we can execute the command below: `s l 1 i3`. This command will associate sensor 3 values with PPM output 1 values in real time.
+
+
+### Constant expression
+Numeric value (integer or float) are available.
+
+For exemple, we can execute the command below: `s l 3 10+i2*1.3`
+
+### Basic arithmetic operator
+The following operator are available: `+`, `-`, `*`, `/`
+
+### Sub expression
+The () modifier is used to define a sub expression. For exemple we execute to command below:  `s l 0 10+(i2-20.3)`. 
 
 ### Dual rate function
-To be define
+The modifier [] is used to modify the output range of a sensor variable or of a sub expression.
+
+For exemple, we can execute the command below: ` sl 0 i1[20;30]`. This will reduce the sensor 1 range from [0, 1023] to [20, 30].
  
 ### Reverse function
-To be define
+The modifier [] is used to reverse a range.
+
+For exemple, we can execute the command below: ` sl 0 i1[1023;0]`. This will change the sensor 1 range from [0, 1023] to [1023, 0], so that reverse the signal.
 
 ### Exponential function
 To be define
 
-### Mixer
+### Mixer function
 To be define
 
 ### Complex functions
+To be define
