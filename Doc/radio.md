@@ -1,10 +1,10 @@
-# Radio documentation
+# Radio user guide
 
 ## First compilation
 
-You must first install the arduino software (IDE) from the official arduino site <http://www.arduino.cc> in download section. then, get a copy of QuarkTx source code from <https://github.com/hexabyte23/QuarkTx> by using `Download ZIP` button or by using [GitHub desktop](https://desktop.github.com).
+You must first install the arduino software (IDE) from the official arduino site <http://www.arduino.cc> in download section. Then, get a copy of QuarkTx source code from <https://github.com/hexabyte23/QuarkTx> by using `Download ZIP` button or by using [GitHub desktop](https://desktop.github.com).
 
-Once the source code put in your local PC/Mac, you can doubleclick on Radio/Radio.ino file. Arduino software will automatically be opened, and Radio.ino source file displayed.
+Once the source code is put in your local PC/Mac, doubleclick on Radio/Radio.ino file. Arduino software will automatically be opened, and Radio.ino source file displayed.
 
 >For **Arduino Nano** user
 >
@@ -14,8 +14,7 @@ or
   
 >For **Teensy** user
 >
->Before compiling code, you must first install [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html) then
->select **Teensy 3.2/3.1** in the Tools/Board type menu. 
+>Before compiling code, you must first install [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html), then select **Teensy 3.2/3.1** in the Tools/Board type menu. 
 
 Once this selection is done, you can plug your device to your local PC/Mac, and press `upload` button.
 
@@ -59,13 +58,13 @@ When its done, you can exit calibrate mode (by execute `c` again).
 
 Its now time to save to EEPROM your settings by executing `v` command. You can check that operation succeed to press the hardware reset button on the board. The e-edic error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
 
-You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) pane for details). 
+You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) pane for details) or use Gui app(still in dev step) for Win 10/OSX/Android or IOS.
 
 Have fun.
 
 ## <a name"commands-pane"></a> Commands
 
-All commands in QuarkTx are only one character long. They can  have some optionnal setting marked by [].
+All commands in QuarkTx are only one character long. Optionnal setting marked by **[]**, alternate option by **|**.
 
 
 * a: Load from EEPROM
@@ -93,14 +92,44 @@ All commands in QuarkTx are only one character long. They can  have some optionn
 
 ## <a name"error-pane"></a> Error messages
 * e-bp Bad parameter
-* e-edic		EEPROM data is corrupted
-* e-sdf		Switch in debug mode first
-* e-pf		RCL parsing failed
-* e-bcf		Bad command format
-* e-cu		Command unknown
+	* You are using a bad parameter in the current command 
+* e-edic EEPROM data is corrupted
+	* Self-explanatory
+* e-sdf Switch in debug mode first
+	* You cannot switch to simulation mode before entering first un debug mode
+* e-pf RCL parsing failed
+	* Usually syntax error in RCL formula
+* e-bcf Bad command format
+* e-cu Command unknown
 
-## Sensors
+## <a name"sensors-pane"></a> Sensors
+Sensors group all physical device (Gimbal, switch, button) you can add in the RC command.
+
+### Gimbal
 To be define
 
-## Channels
+### Switch
 To be define
+
+## <a name"rf-module-pane"></a> RF module
+To be define
+
+## <a name"rcl-pane"></a> Radio Control Language
+This new language aim is to describe all sensors dependencies for each channels.
+
+### Sensor variable
+To be define
+
+### Dual rate function
+To be define
+ 
+### Reverse function
+To be define
+
+### Exponential function
+To be define
+
+### Mixer
+To be define
+
+### Complex functions
