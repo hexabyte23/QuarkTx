@@ -103,7 +103,7 @@ All commands in QuarkTx are only one character long. Optionnal setting marked by
 * e-cu Command unknown
 
 ## <a name"sensors-pane"></a> Sensors
-Sensors group all physical device (Gimbal, switch, button) you can add in the RC command.
+Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
 
 ### Gimbal
 To be define
@@ -112,12 +112,24 @@ To be define
 To be define
 
 ## <a name"rf-module-pane"></a> RF module
+
+### Device tested
 To be define
+
+### Output signal
+Depending of the RF module you use in QuartTx, you can modify 2 constants:
+
+* `PPM_INTER_CHANNEL_TIME` 
+* `PPM_INTER_FRAME_TIME`
+
+![PPM](PPM.png)
 
 ## <a name"rcl-pane"></a> Radio Control Language
 This new language is able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time, up to 300 times/sec on Arduino Nano board and up to 900 times/sec on Teensy 3.2 board. 
 
 _Exemple_: `s l chan rclStr` is used to modify the current RCL script of a given output PPM channel `chan`  with the new script `rclStr`. A script could not be longer than **`MAX_SERIAL_INPUT_BUFFER`** (config.h)
+
+***Warning***: No white space is allowed between identifier/operator/modifier.
 
 
 ### Sensor variable
@@ -138,12 +150,14 @@ Numeric value (integer or float) are available.
 _Exemple_: `s l 3 10+i2*1.3`
 
 ### Basic arithmetic operator
-_Exemple_: `+`, `-`, `*`, `/`
+Operators below are available: `+`, `-`, `*`, `/`
+
+_Exemple_: `s l 0 i3/3.3
 
 ### Sub expression
 The () modifier is used to define a sub expression.
 
-_Exemple_:  `s l 0 10+(i2/3.3)`. 
+_Exemple_:  `s l 0 10+(i2/3.3)`
 
 ### Dual rate function
 The modifier [] is used to modify the output range of a sensor variable or a sub expression.
