@@ -1,5 +1,8 @@
 # QuarkTx, up to 17 Channels !!
-Radio Control system based on Arduino Nano ATmega 328 or Teensy 3.2, with a simple goal: Provide powerfull embedded functions in a small piece of hardware. 
+Radio Control system based on Arduino Nano ATmega 328 or Teensy 3.2, with a simple goal: Provide powerfull embedded functions in a small piece of hardware.
+
+## Doc
+Radio [user guide](https://github.com/hexabyte23/QuarkTx/Doc/radio.md)
 
 ## Gui
 Qt client source code for WIN 10, OSX, Android & IOS
