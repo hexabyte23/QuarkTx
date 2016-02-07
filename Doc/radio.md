@@ -88,21 +88,21 @@ All commands in QuarkTx are only one character long. Optionnal setting marked by
 * s v sensorID val: Set sensor Min
 * s w sensorID val: Set sensor Max
 * v: Save to EEPROM
-* w: Toggle simulation mode
 
 ## <a name"error-pane"></a> Error messages
-By coding standart, all messages started by **e-** is an error message. 
+All serial message starting with **e-** is an error message code. It's not directly human readable but have a very short printfoot in memory (For Arduino board).
 
-* e-bp Bad parameter
-	* You are using a bad parameter in the current command 
-* e-edic EEPROM data is corrupted
-	* Self-explanatory
-* e-sdf Switch in debug mode first
-	* You cannot switch to simulation mode before entering first un debug mode
-* e-pf RCL parsing failed
-	* Usually syntax error in RCL formula
-* e-bcf Bad command format
-* e-cu Command unknown
+Error msg | Short description| Long description
+----------|------------------|-----------------
+e-bp | Bad parameter | You are using a bad parameter in the current command
+e-bpim | Bad parameter: index is missing |
+e-edic | EEPROM data is corrupted | Self-explanatory
+e-pf | RCL parsing failed | Usually syntax error in RCL formula
+e-bcf | Bad command format |
+e-cu | Command unknown |
+e-nt | None type | Bad RCL nodes initialization
+e-cstl | Command string too long
+
 
 ## <a name"sensors-pane"></a> Hardware sensors
 Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.

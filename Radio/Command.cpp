@@ -106,7 +106,7 @@ void Command::changeCurrentModelCmd(const char *idxStr)
    if(strlen(idxStr) != 0)
       tx_->onChangeCurrentModel(atoi(idxStr));
    else
-      STDOUT << F("e-bpie") << endl;    // bad parameter: index empty
+      STDOUT << F("e-bpim") << endl;    // bad parameter: index is missing
 }
 
 void Command::dumpCmd(const char* param)
@@ -237,7 +237,7 @@ void Command::setCmd(const char* param)
       }
          break;
       default:
-         STDOUT << F("e-bpie") << endl;    // bad parameter: index empty
+         STDOUT << F("e-bpim") << endl;    // bad parameter: index is missing
          break;
    }
 }

@@ -198,7 +198,6 @@ void Tx::onIsrTimerChange()
    * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME)
    * The minimum time between 2 PPM frames (PPM_INTER_FRAME_TIME)
    */
-
    
 #ifdef QUARKTX_TEENSY
 

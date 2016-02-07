@@ -55,6 +55,10 @@ class Expression
 {
 public:
    virtual ~Expression() {}
+
+   // About evaluate() base function. Return a plenty Variant object instead 
+   // of a pointer add lot of stack work for the uP. This code is not very efficient 
+   // but quite simple. Must be improved in futur...
    virtual Variant evaluate() const = 0;
    virtual void dump() const = 0;
    virtual bool couldBeDeleted() const {return true;}
