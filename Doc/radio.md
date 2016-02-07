@@ -131,6 +131,12 @@ Depending of the RF module you use in QuartTx, you can modify 2 constants (confi
 
 ![PPM](PPM.png)
 
+Arduino scope screen copy 
+![scope ardiono](ppm-scope-arduino.png)
+
+Teensy scope screen copy
+![scope ardiono](ppm-scope-teensy.png)
+
 ## <a name"rcl-pane"></a> Radio Control Language
 This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board for a simple script.
 
