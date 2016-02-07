@@ -58,7 +58,7 @@ When its done, you can exit calibrate mode (`c`).
 
 Its now time to save to EEPROM your settings by executing `v` command. You can check if that operation succeed by pressing the hardware reset button on the board. The **e-edic** error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
 
-You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) pane for details) or use Gui app(still in dev step) for Win 10/OSX/Android or IOS.
+You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) pane for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
 
 Have fun.
 
@@ -91,6 +91,8 @@ All commands in QuarkTx are only one character long. Optionnal setting marked by
 * w: Toggle simulation mode
 
 ## <a name"error-pane"></a> Error messages
+By coding standart, all messages started by **e-** is an error message. 
+
 * e-bp Bad parameter
 	* You are using a bad parameter in the current command 
 * e-edic EEPROM data is corrupted
@@ -102,7 +104,7 @@ All commands in QuarkTx are only one character long. Optionnal setting marked by
 * e-bcf Bad command format
 * e-cu Command unknown
 
-## <a name"sensors-pane"></a> Sensors
+## <a name"sensors-pane"></a> Hardware sensors
 Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
 
 ### Gimbal
@@ -112,12 +114,17 @@ To be define
 To be define
 
 ## <a name"rf-module-pane"></a> RF module
+QuarkTx is able to generate PPM signal for different type of RF module.
 
-### Device tested
-Jeti TU2 2.4 Ghz
+### Tested modules
+
+Company | Name | # channels | Inter frame | Inter channel
+--------|------|------------|-------------|--------------
+Jeti | TU2 2.4 Ghz | up to 17 | 4500 | 1500
+FrSky | Tests in progress
 
 ### Output PPM signal
-Depending of the RF module you use in QuartTx, you can modify 2 constants:
+Depending of the RF module you use in QuartTx, you can modify 2 constants (config.h):
 
 * `PPM_INTER_CHANNEL_TIME` 
 * `PPM_INTER_FRAME_TIME`
@@ -145,44 +152,52 @@ _Exemple_: `s l 1 i3`. This command will associate sensor 3 values with PPM outp
 
 
 ### Constant expression
-Integer, float or boolean are available.
+Constant types are : Integer (ex: 1023), float (ex: 0.123), boolean (ex: T or F)
 
-_Exemple_: `s l 3 10+i2*1.3`
+_Exemple1_: `s l 3 10+i2*1.3`
+
+
+_Exemple2_: `s l 1 F?i1:i2`
 
 ### Basic arithmetic operator
 
 Operator:
 
 
-*expression1*`+`*expression2*
+*expression1***`+`***expression2*
 
 
-*expression1*`-`*expession2*
+*expression1***`-`***expession2*
 
 
-*expression1*`*`*expression2*
+*expression1***`*`***expression2*
 
 
-*expression1*`/`*expression2*
+*expression1***`/`***expression2*
 
 
 
 _Exemple_: `s l 0 (i3+1)/3.3-22`
 
 ### Sub expression
-The () modifier is used to define a sub expression.
+Command:
+
+
+**(** sub expression**)**
+
+
 
 _Exemple_:  `s l 0 10+(i2/3.3)`
 
 ### Dual rate function
-Modifier [] is used to modify the output range of a sensor variable or a sub expression.
+Operator [] is used to modify the output range of a sensor variable or a sub expression.
 
 _Exemple 1_: `s l 0 i1[20;30]`. This will reduce the sensor 1 range from [0, 1023] to [20, 30].
 
 _Exemple2_: `s l 0 (i1+10)[100;500]`. More complex script to reduce the range of a sub expression result.
 
 ### Reverse function
-Modifier [] is used to reverse the output range of a sensor variable or a sub expression.
+Operator [] is used to reverse the output range of a sensor variable or a sub expression.
 
 _Exemple_: `s l 0 i1[1023;0]`. This will change the output value of sensor 1 range from [0, 1023] to [1023, 0], so the signal will be reversed.
 
@@ -190,9 +205,10 @@ _Exemple_: `s l 0 i1[1023;0]`. This will change the output value of sensor 1 ran
 To be define
 
 ### Mixer function
+To be define
 
 
-### IF functions
+### IF function
 
 Command: *expression***?***action1***:***action2*
 
