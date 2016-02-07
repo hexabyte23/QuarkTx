@@ -36,8 +36,7 @@ Tx::Tx()
      toggleTxMode_(tTransmit),
      toggleDisplayInputUpdate_(false),
      toggleDisplayOutputUpdate_(false),
-     toggleCalibrateSensor_(false),
-     toggleSimulation_(false)
+     toggleCalibrateSensor_(false)
 {
 //   for(uint8_t i=0; i < MAX_MODEL; i++)
 //      modelList_[i] = new Model;
@@ -431,7 +430,7 @@ void Tx::dumpModel()
 
 void Tx::dumpSensor()
 {
-   STDOUT << F("Sensors (") << MAX_INPUT_CHANNEL << F(")\n# Pin   Trim    Min     Max    Simu") << endl;
+   STDOUT << F("Sensors (") << MAX_INPUT_CHANNEL << F(")\n# Pin   Trim    Min     Max") << endl;
 
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
    {

@@ -55,7 +55,6 @@ class Tx
    bool toggleDisplayInputUpdate_;
    bool toggleDisplayOutputUpdate_;
    bool toggleCalibrateSensor_;
-   bool toggleSimulation_;
 
    // Private functions
    void displayInputUpdate();

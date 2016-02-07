@@ -104,13 +104,21 @@ e-nt | None type | Bad RCL nodes initialization
 e-cstl | Command string too long
 
 
-## <a name"sensors-pane"></a> Hardware sensors
-Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
+## <a name"sensors-pane"></a> Hardware
 
-### Gimbal
+### Arduino board
 To be define
 
-### Switch
+### Teensy board
+To be define
+
+### Sensors
+Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
+
+#### Gimbal
+To be define
+
+#### Switch
 To be define
 
 ## <a name"rf-module-pane"></a> RF module
