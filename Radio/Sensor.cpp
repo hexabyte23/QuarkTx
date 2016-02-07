@@ -63,7 +63,7 @@ void Sensor::loadFromEEPROM(uint16_t &addr)
 void Sensor::dump() const
 {
 #ifndef QUARKTX_TEST
-   STDOUT << pin_ << "\t" << trim_ << "\t" << calibrMin_ << "\t" << calibrMax_ << "\t" << simuVal_;
+   STDOUT << pin_ << "\t" << trim_ << "\t" << calibrMin_ << "\t" << calibrMax_;
 #endif
 }
 
@@ -73,8 +73,6 @@ void Sensor::reset()
    calibrMin_ = 0xFFFF;
    calibrMax_ = 0;
    trim_ = 0;
-   simuVal_ = 0;
-   isSimu_ = false;
 }
 
 ////////////////////////////////////////////////////////
@@ -96,10 +94,7 @@ void Stick::calibrate()
 
 uint16_t Stick::getValue() const
 {
-   if(isSimu_)
-      return simuVal_;
-   else
-      return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+   return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 ////////////////////////////////////////////////////////
@@ -126,10 +121,7 @@ void Switch::calibrate()
 
 uint16_t Switch::getValue() const
 {
-   if(isSimu_)
-      return simuVal_;
-   else
-      return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+   return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 
@@ -148,9 +140,6 @@ void BatteryMeter::calibrate()
 
 uint16_t BatteryMeter::getValue() const
 {
-   if(isSimu_)
-      return simuVal_;
-   else
-      return 0;
+   return 0;
 }
 

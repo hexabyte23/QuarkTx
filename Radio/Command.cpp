@@ -62,8 +62,6 @@ void Command::onNewCommand(const char* cmdStr)
       case 'r': resetCmd(cmdStr+2);break;
       case 's': setCmd(cmdStr+2);break;
       case 'v': saveToEEPROMCmd();break;
-      case 'w': toggleSimulation();break;
-
       default:
          STDOUT << F("e-cu ") << cmdStr[0] << endl;   // Command unknown
          break;
@@ -95,7 +93,6 @@ void Command::helpCmd()
                 "s v sensorID val: Set sensor Min\n"
                 "s w sensorID val: Set sensor Max\n"
                 "v: Save to EEPROM\n"
-                "w: Toggle simulation mode\n"
                 );
 }
 
@@ -141,8 +138,11 @@ void Command::toggleCalibrateAnalogicSensorCmd()
 
 void Command::loadFromEEPROMCmd()
 {
-   tx_->onLoadFromEEPROM();
-   STDOUT << F("Load from EEPROM") << endl;
+   STDOUT << F("Load from EEPROM ");
+   if(tx_->onLoadFromEEPROM())
+      STDOUT << F("succeed") << endl;
+   else
+      STDOUT << F("failed") << endl;
 }
 
 void Command::saveToEEPROMCmd()
@@ -222,13 +222,6 @@ void Command::setCmd(const char* param)
          tx_->onSetTrimSensorValue(sensorID, val);
       }
          break;
-      case 'u':   // u sensorID val: Set simulate value
-      {
-         uint8_t sensorID = getSensorID(param+2);
-         int val = atoi(param+4);
-         tx_->onSetSimulateSensorValue(sensorID, val);
-      }
-         break;
       case 'v':   // u sensorID val: Set sensor Min value
       {
          uint8_t sensorID = getSensorID(param+2);
@@ -253,11 +246,6 @@ void Command::resetCmd(const char* param)
 {
    tx_->onSoftwareReset(param);
    STDOUT << F("Ok") << endl;
-}
-
-void Command::toggleSimulation()
-{
-   tx_->onToggleSimulation();
 }
 
 void Command::getFreeMemoryCmd()

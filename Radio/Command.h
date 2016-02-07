@@ -42,7 +42,6 @@ class Command
    void loadFromEEPROMCmd();
    void saveToEEPROMCmd();
    void setCmd(const char* param);
-   void toggleSimulation();
    void resetCmd(const char* param);
    void getFreeMemoryCmd();
    void setRCLCmd(const char* param);

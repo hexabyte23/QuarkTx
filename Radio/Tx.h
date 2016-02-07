@@ -80,8 +80,6 @@ public:
 
    Tx();
 
-   bool setup();
-
    // Signals
    void onIsrTimerChange();
    void onChangeCurrentModel(int idx);
@@ -90,18 +88,15 @@ public:
    void onToggleDisplayInputUpdate(int freq);
    void onToggleDisplayOutputUpdate(int freq);
    void onToggleCalibrateSensor();
-   void onToggleSimulation();
    bool onLoadFromEEPROM();
    void onSaveToEEPROM();
    void onSoftwareReset(const char* param);
    void onSetTrimSensorValue(uint8_t sensorID, int value);
    void onSetMinSensorValue(uint8_t sensorID, uint16_t value);
    void onSetMaxSensorValue(uint8_t sensorID, uint16_t value);
-   void onSetSimulateSensorValue(uint8_t sensorID, uint16_t value);
    void onSetRCL(uint8_t chan, const char* rclCode);
 
 #ifdef QUARKTX_TEST
-   // For testing only
    void onNewCommand(const char* cmdStr);
    void onEvaluateExpression();
    uint16_t getOutputPPM(uint8_t channel) {return ppmOutputValue_[channel];}
@@ -109,6 +104,7 @@ public:
 #endif
 
    // Functions
+   bool setup();
    void idle();
    Model* getCurrentModel() const {return currentModel_;}
    uint8_t getModelIndex(Model *model);

@@ -619,33 +619,6 @@ uint8_t Tx::getModelIndex(Model *model)
    return -1;
 }
 
-void Tx::onToggleSimulation()
-{
-   if(toggleTxMode_ == tTransmit)
-   {
-      STDOUT << F("e-sdf") << endl;    //  switch to simulation failed, switch in debug mode first
-      return;
-   }
-
-   toggleSimulation_ = !toggleSimulation_;
-   mesure_.reset();
-
-   if(toggleSimulation_)
-   {
-      STDOUT << F("Simulation ON") << endl;
-
-      for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
-         sensor_[idx]->setSimulation(true);
-   }
-   else
-   {
-      STDOUT << F("Simulation OFF") << endl;
-
-      for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
-         sensor_[idx]->setSimulation(false);
-   }
-}
-
 void Tx::onSetTrimSensorValue(uint8_t sensorID, int value)
 {
    if(sensorID < 0) return;
@@ -662,12 +635,6 @@ void Tx::onSetMaxSensorValue(uint8_t sensorID, uint16_t value)
 {
    if(sensorID < 0) return;
    sensor_[sensorID]->setMax(value);
-}
-
-void Tx::onSetSimulateSensorValue(uint8_t sensorID, uint16_t value)
-{
-   if(sensorID < 0) return;
-   sensor_[sensorID]->setSimulateValue(value);
 }
 
 void Tx::onSetRCL(uint8_t chan, const char* rclCode)

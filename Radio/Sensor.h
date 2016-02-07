@@ -30,8 +30,6 @@ protected:
    uint16_t calibrMin_;
    uint16_t calibrMax_;
    int trim_;
-   uint16_t simuVal_;
-   bool isSimu_;
 
    void calibration(uint16_t val);
 
@@ -42,10 +40,6 @@ public:
    uint8_t getPin() const {return pin_;}
    uint16_t getMinCalibration() const {return calibrMin_;}
    uint16_t getMaxCalibration() const {return calibrMax_;}
-   void setSimulateValue(uint16_t simuVal) {simuVal_ = simuVal;}
-   uint16_t getSimulateValue() const {return simuVal_;}
-   void setSimulation(bool isSimu) {isSimu_ = isSimu;}
-   bool isSimulation() const {return isSimu_;}
    void setTrim(int trim) {trim_ = trim;}
    void setMin(uint16_t calibrMin) {calibrMin_ = calibrMin;}
    void setMax(uint16_t calibrMax) {calibrMax_ = calibrMax;}
