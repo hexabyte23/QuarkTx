@@ -80,7 +80,7 @@ void Tx::setupInputDevice()
    sensor_[6]->setup(SWITCH3_PIN);
 #endif
 
-   battery_.setup(A7);
+   battMeter_.setup(A7);
 }
 
 void Tx::setupOutputDevice()
@@ -151,7 +151,18 @@ bool Tx::setup()
    pinMode(A3, INPUT);           // gimbal 4
    pinMode(A4, INPUT_PULLUP);    // reseved for future use
    pinMode(A5, INPUT_PULLUP);    // reseved for future use
+   pinMode(A6, INPUT_PULLUP);    // reseved for future use
    pinMode(A7, INPUT_PULLUP);    // Battery level
+
+#ifdef QUARKTX_TEENSY
+   pinMode(A8, INPUT_PULLUP);    // reseved for future use
+   pinMode(A9, INPUT_PULLUP);    // reseved for future use
+   pinMode(A10, INPUT_PULLUP);    // reseved for future use
+   pinMode(A11, INPUT_PULLUP);    // reseved for future use
+   pinMode(A12, INPUT_PULLUP);    // reseved for future use
+   pinMode(A13, INPUT_PULLUP);    // reseved for future use
+   pinMode(A14, INPUT_PULLUP);    // reseved for future use
+#endif
 
    // serial must always be first to initialize
    bool ret1 = serialLink_.setup(&command_);
@@ -326,9 +337,9 @@ void Tx::displayInputUpdate()
    STDOUT << F("<\t");
 
    for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
-      STDOUT << sensor_[idx]->getValue() << "\t";
+      STDOUT << sensor_[idx]->getValue() << F("\t");
 
-   STDOUT << endl;
+   STDOUT << battMeter_.getValue() << F("\t") << endl;
 }
 
 void Tx::onToggleDisplayInputUpdate(int freq)
@@ -432,13 +443,19 @@ void Tx::dumpSensor()
 {
    STDOUT << F("Sensors (") << MAX_INPUT_CHANNEL << F(")\n# Pin   Trim    Min     Max") << endl;
 
+   // Sensors
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
    {
       STDOUT << idx << " ";
       sensor_[idx]->dump();
       STDOUT << endl;
    }
-   STDOUT << endl;
+
+   // Battery meter
+   STDOUT << F("b ");
+   battMeter_.dump();
+   
+   STDOUT << endl << endl;
 }
 
 void Tx::dumpRCL(const char* param)
@@ -553,6 +570,8 @@ void Tx::resetSensor()
 {
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->reset();
+      
+   battMeter_.reset();
 }
 
 void Tx::resetRCL()

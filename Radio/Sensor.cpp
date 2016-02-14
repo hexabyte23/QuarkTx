@@ -131,6 +131,31 @@ void BatteryMeter::setup(uint8_t pin)
 {
    pin_ = pin;
    pinMode(pin_, INPUT_PULLUP);
+
+   /*
+    * R1, R2 resistor choices
+    * 
+    * For Arduino Nano
+    * ----------------
+    * 
+    * Analog pins: VCC = 5v
+    * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 95300 Ohm 1%
+    * 3S battery: VCC = 11.1v, R1 = 47000 Ohm, R2 = 38300 Ohm 1%
+    * 
+    * For Teensy 3.2
+    * --------------
+    * Analog pins: VCC = 3.3v
+    * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 37400 Ohm 1%
+    * 3S battery, VCC = 11.1v, R1 = 47000 Ohm, R2 = 19600 Ohm 1%
+    * 
+    */
+}
+
+void BatteryMeter::reset()
+{
+   calibrMin_ = 0;
+   calibrMax_ = 1023;
+   trim_ = 0;
 }
 
 void BatteryMeter::calibrate()
@@ -140,6 +165,15 @@ void BatteryMeter::calibrate()
 
 uint16_t BatteryMeter::getValue() const
 {
-   return 0;
+   return analogRead(pin_);
+}
+
+float BatteryMeter::getValueInVolt() const
+{
+#ifdef QUARKTX_TEENSY
+   return getValue()/1023*3.3;
+#else
+   return getValue()/1023*5.0;
+#endif
 }
 

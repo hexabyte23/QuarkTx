@@ -36,7 +36,7 @@ class Tx
    Command command_;
    Model modelList_[MAX_MODEL];
    Model *currentModel_;
-   BatteryMeter battery_;
+   BatteryMeter battMeter_;
    Sensor *sensor_[MAX_INPUT_CHANNEL];
    volatile uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
    int inFreq_, outFreq_, inCurFreq_, outCurFreq_;

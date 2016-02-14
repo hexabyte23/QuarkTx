@@ -88,6 +88,8 @@ public:
    virtual void setup(uint8_t pin);
    virtual void calibrate();
    virtual uint16_t getValue() const;
+   virtual void reset();
+   float getValueInVolt() const;
 };
 
 class Gyroscope : public Sensor
