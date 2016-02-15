@@ -54,7 +54,7 @@ Tx::Tx()
 
 void Tx::setupInputDevice()
 {
-#ifndef QUARKTX_TEENSY
+#ifdef QUARKTX_NANO
 
    // Uncomment below for speedup input scan frequence on Arduino Nano
    /*
@@ -74,9 +74,14 @@ void Tx::setupInputDevice()
    sensor_[1]->setup(A1);
    sensor_[2]->setup(A2);
    sensor_[3]->setup(A3);
+   
+#ifdef SWITCH1_PIN
    sensor_[4]->setup(SWITCH1_PIN);
+#endif   
+#ifdef SWITCH2_PIN
    sensor_[5]->setup(SWITCH2_PIN);
-#ifdef TERRATOP
+#endif
+#ifdef SWITCH3_PIN
    sensor_[6]->setup(SWITCH3_PIN);
 #endif
 
@@ -157,19 +162,18 @@ bool Tx::setup()
 #ifdef QUARKTX_TEENSY
    pinMode(A8, INPUT_PULLUP);    // reseved for future use
    pinMode(A9, INPUT_PULLUP);    // reseved for future use
-   pinMode(A10, INPUT_PULLUP);    // reseved for future use
-   pinMode(A11, INPUT_PULLUP);    // reseved for future use
-   pinMode(A12, INPUT_PULLUP);    // reseved for future use
-   pinMode(A13, INPUT_PULLUP);    // reseved for future use
-   pinMode(A14, INPUT_PULLUP);    // reseved for future use
+   pinMode(A10, INPUT_PULLUP);   // reseved for future use
+   pinMode(A11, INPUT_PULLUP);   // reseved for future use
+   pinMode(A12, INPUT_PULLUP);   // reseved for future use
+   pinMode(A13, INPUT_PULLUP);   // reseved for future use
+   pinMode(A14, INPUT_PULLUP);   // reseved for future use
 #endif
 
-  //analogReference(INTERNAL);
-  analogReference(DEFAULT);
+  analogReference(DEFAULT);      // Arduino nano Vref = 5v, Teensy 3.2 Vref = 3.3
 
 #ifdef QUARKTX_TEENSY
-  analogReadRes(10);
-  analogReadAveraging(4);
+  //analogReadRes(10);
+  //analogReadAveraging(4);
 #endif
 
    // serial must always be first to initialize
@@ -186,15 +190,12 @@ bool Tx::setup()
    
    onLoadFromEEPROM();
    
-   /*
+/*
   rcl_.setupRCL(0, "i0");
   rcl_.setupRCL(1, "i1");
   rcl_.setupRCL(2, "i2");
   rcl_.setupRCL(3, "i3");
   rcl_.setupRCL(4, "i4[0;512]+i5[512;0]");
-#ifdef TERRATOP
-  rcl_.setupRCL(5, "(i2>512)?i0:0");
-#endif
 */
    mesure_.stop();
    STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;

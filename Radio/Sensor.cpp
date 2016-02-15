@@ -141,7 +141,7 @@ void BatteryMeter::reset()
 {
    calibrMin_ = 0;
    calibrMax_ = 1023;
-   trim_ = 0;
+   trim_ = 1075;
 
    currentHistoIdx_ = 0;
    oldestHistoIdx_ = 1;
@@ -151,16 +151,12 @@ void BatteryMeter::reset()
 
 uint16_t BatteryMeter::getValue() const
 {
-   return analogRead(pin_) + trim_;
+   return analogRead(pin_);
 }
 
 float BatteryMeter::getValueInVolt() const
 {
-#ifdef QUARKTX_TEENSY
-   return getValue()/1023.0*3.55*(BATTERY_R1+BATTERY_R2)/(float)BATTERY_R2;
-#else
-   return getValue()/1023.0*5.0*(BATTERY_R1+BATTERY_R2)/(float)BATTERY_R2;
-#endif
+   return getValue()/(float)ADC_MAX_VALUE*VREF*trim_/1000.0*(BATTERY_R1+BATTERY_R2)/BATTERY_R2;
 }
 
 float BatteryMeter::getAverageValueInVolt()
@@ -187,7 +183,7 @@ bool BatteryMeter::checkLevelTooLow()
   if(updateRate_ > BATTERY_RATE_UPDATE)
   {
     updateRate_ = 0;
-    if(getAverageValueInVolt() < BATTERY_1S_REF_VOLT*BATTERY_LIPO_TYPE*0.8)
+    if(getAverageValueInVolt() < BATTERY_1S_REF_VOLT*BATTERY_LIPO_TYPE*BATTERY_RAISE_ALARM_LEVEL)
       return true;
   }
   else

@@ -84,7 +84,8 @@ class BatteryMeter : public Sensor
 {
 public:
 
-   float levelSum_, histoLevel_[BATTERY_HISTO_BUFFER_SIZE];
+   float levelSum_;
+   float histoLevel_[BATTERY_HISTO_BUFFER_SIZE];
    uint8_t updateRate_;
    uint8_t currentHistoIdx_, oldestHistoIdx_;
    
