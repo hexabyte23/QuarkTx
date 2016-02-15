@@ -94,12 +94,14 @@ public:
    void onSetMinSensorValue(uint8_t sensorID, uint16_t value);
    void onSetMaxSensorValue(uint8_t sensorID, uint16_t value);
    void onSetRCL(uint8_t chan, const char* rclCode);
+   void onRaiseBatteryAlarm();
 
 #ifdef QUARKTX_TEST
    void onNewCommand(const char* cmdStr);
    void onEvaluateExpression();
    uint16_t getOutputPPM(uint8_t channel) {return ppmOutputValue_[channel];}
    Sensor *getSensor(uint8_t idx) { return sensor_[idx];}
+   BatteryMeter *getBattery() {return &battMeter_;}
 #endif
 
    // Functions

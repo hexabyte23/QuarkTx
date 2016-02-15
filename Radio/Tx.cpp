@@ -164,6 +164,14 @@ bool Tx::setup()
    pinMode(A14, INPUT_PULLUP);    // reseved for future use
 #endif
 
+  //analogReference(INTERNAL);
+  analogReference(DEFAULT);
+
+#ifdef QUARKTX_TEENSY
+  analogReadRes(10);
+  analogReadAveraging(4);
+#endif
+
    // serial must always be first to initialize
    bool ret1 = serialLink_.setup(&command_);
    
@@ -297,6 +305,8 @@ void Tx::idle()
       displayOutputUpdate();
    if(toggleCalibrateSensor_)
       calibrateSensor();
+   if(battMeter_.checkLevelTooLow())
+      onRaiseBatteryAlarm();
 
    if(toggleTxMode_ == tDebug)
    {
@@ -325,6 +335,11 @@ void Tx::ledBlinkIdle()
       digitalWrite(LED_PIN, HIGH);
 }
 
+void Tx::onRaiseBatteryAlarm()
+{
+  //STDOUT << "Low battery" << endl;
+}
+
 void Tx::displayInputUpdate()
 {
    if(inFreq_ > 0)
@@ -339,7 +354,7 @@ void Tx::displayInputUpdate()
    for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       STDOUT << sensor_[idx]->getValue() << F("\t");
 
-   STDOUT << battMeter_.getValue() << F("\t") << endl;
+   STDOUT << battMeter_.getAverageValueInVolt() << F("\t") << endl;
 }
 
 void Tx::onToggleDisplayInputUpdate(int freq)

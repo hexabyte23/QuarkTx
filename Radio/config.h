@@ -22,29 +22,55 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION         "0.1.1"
-#define QUARKTX_SERIAL_SPEED    9600
+#define QUARKTX_VERSION           "0.1.1"
+#define QUARKTX_SERIAL_SPEED      9600
 
-#define MAX_MODEL               2
-#define MAX_SERIAL_INPUT_BUFFER 40      // warning: dont set too small value for RCL commands
+#define MAX_MODEL                 2
+#define MAX_SERIAL_INPUT_BUFFER   40      // warning: dont set too small value for RCL commands
 
-#define ADC_MIN_VALUE           0
-#define ADC_MAX_VALUE           1023
+#define ADC_MIN_VALUE             0
+#define ADC_MAX_VALUE             1023
 
-#define PPM_MIN_VALUE           500
-#define PPM_MAX_VALUE           1500
+#define PPM_MIN_VALUE             500
+#define PPM_MAX_VALUE             1500
 
-#define TRIM_MIN_VALUE          -100
-#define TRIM_MAX_VALUE          100
+#define TRIM_MIN_VALUE            -100
+#define TRIM_MAX_VALUE            100
 
-#define TX_MODE                 1       // mode 1 : left stick operates elevator & rudder, right stick operates throttle & ailerons
-                                        // mode 2 : left stick operates throttle & rudder, right stick operates elevator & ailerons
-                                        // mode 3 : left stick operates elevator & ailerons, right stick operates throttle & rudder
-                                        // mode 4 : left stick operates throttle & ailerons, right stick operates elevator & rudder
+#define TX_MODE                   1       // mode 1 : left stick operates elevator & rudder, right stick operates throttle & ailerons
+                                          // mode 2 : left stick operates throttle & rudder, right stick operates elevator & ailerons
+                                          // mode 3 : left stick operates elevator & ailerons, right stick operates throttle & rudder
+                                          // mode 4 : left stick operates throttle & ailerons, right stick operates elevator & rudder
 
-#define LED_BLINK_PERIOD        500    // millisec
+#define LED_BLINK_PERIOD          500     // millisec
 
-#define SERIAL_END_CMD_CHAR     '\r'
+#define BATTERY_RATE_UPDATE       100     // check battery level
+#define BATTERY_HISTO_BUFFER_SIZE 16      // for average value computing (warning impact RAM size used, for nano, memory is tiny)
+
+  /*
+   * R1, R2 resistor choices
+   * 
+   * For Arduino Nano
+   * ----------------
+   * 
+   * Analog pins: VCC = 5v
+   * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 95300 Ohm 1%
+   * 3S battery: VCC = 11.1v, R1 = 47000 Ohm, R2 = 38300 Ohm 1%
+   * 
+   * For Teensy 3.2
+   * --------------
+   * Analog pins: VCC = 3.3v
+   * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 37400 Ohm 1%
+   * 3S battery, VCC = 11.1v, R1 = 47000 Ohm, R2 = 19600 Ohm 1%
+   * 
+   */
+ 
+#define BATTERY_R1                47000  // Must be modity to you R1 resistor, ex: 47k Ohm
+#define BATTERY_R2                47000  // Must be modity to you R2 resistor, ex: 47k Ohm
+#define BATTERY_LIPO_TYPE         2      // Must be modify to your battery type, ex: 1 -> 1S, 2 -> 2S, 3 -> 3S ...  
+
+
+#define SERIAL_END_CMD_CHAR       '\r'
 
 
 //
@@ -109,12 +135,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-//
-// Never modify lower defines
-//
+//////////////////////////////////////////
+//    WARNING Never modify lower defines
+//////////////////////////////////////////
 
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
-#define STDOUT *SerialLink::currentStream_
+#define STDOUT                  *SerialLink::currentStream_
+
+#define BATTERY_1S_REF_VOLT     3.7    // ref voltage for 1S
 
 #if defined(__MK20DX256__)
 #define QUARKTX_TEENSY

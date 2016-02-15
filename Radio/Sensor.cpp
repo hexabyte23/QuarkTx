@@ -124,31 +124,17 @@ uint16_t Switch::getValue() const
    return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
-
 ////////////////////////////////////////////////////////
 
+BatteryMeter::BatteryMeter()
+{
+  reset();
+}
+  
 void BatteryMeter::setup(uint8_t pin)
 {
    pin_ = pin;
-   pinMode(pin_, INPUT_PULLUP);
-
-   /*
-    * R1, R2 resistor choices
-    * 
-    * For Arduino Nano
-    * ----------------
-    * 
-    * Analog pins: VCC = 5v
-    * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 95300 Ohm 1%
-    * 3S battery: VCC = 11.1v, R1 = 47000 Ohm, R2 = 38300 Ohm 1%
-    * 
-    * For Teensy 3.2
-    * --------------
-    * Analog pins: VCC = 3.3v
-    * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 37400 Ohm 1%
-    * 3S battery, VCC = 11.1v, R1 = 47000 Ohm, R2 = 19600 Ohm 1%
-    * 
-    */
+   pinMode(pin_, INPUT);
 }
 
 void BatteryMeter::reset()
@@ -156,24 +142,57 @@ void BatteryMeter::reset()
    calibrMin_ = 0;
    calibrMax_ = 1023;
    trim_ = 0;
-}
 
-void BatteryMeter::calibrate()
-{
-
+   currentHistoIdx_ = 0;
+   oldestHistoIdx_ = 1;
+   memset((void*)histoLevel_, 0, sizeof(histoLevel_));
+   levelSum_ = 0.0;
 }
 
 uint16_t BatteryMeter::getValue() const
 {
-   return analogRead(pin_);
+   return analogRead(pin_) + trim_;
 }
 
 float BatteryMeter::getValueInVolt() const
 {
 #ifdef QUARKTX_TEENSY
-   return getValue()/1023*3.3;
+   return getValue()/1023.0*3.55*(BATTERY_R1+BATTERY_R2)/(float)BATTERY_R2;
 #else
-   return getValue()/1023*5.0;
+   return getValue()/1023.0*5.0*(BATTERY_R1+BATTERY_R2)/(float)BATTERY_R2;
 #endif
+}
+
+float BatteryMeter::getAverageValueInVolt()
+{
+  //  remove oldest value
+  levelSum_ -= histoLevel_[oldestHistoIdx_];
+
+  // add a new one
+  levelSum_ += histoLevel_[currentHistoIdx_] = getValueInVolt();
+
+  // update indexes
+  currentHistoIdx_++;
+  currentHistoIdx_ %= BATTERY_HISTO_BUFFER_SIZE;
+
+  oldestHistoIdx_++;
+  oldestHistoIdx_  %= BATTERY_HISTO_BUFFER_SIZE;
+
+  // compute the average
+  return levelSum_/BATTERY_HISTO_BUFFER_SIZE;
+}
+
+bool BatteryMeter::checkLevelTooLow()
+{
+  if(updateRate_ > BATTERY_RATE_UPDATE)
+  {
+    updateRate_ = 0;
+    if(getAverageValueInVolt() < BATTERY_1S_REF_VOLT*BATTERY_LIPO_TYPE*0.8)
+      return true;
+  }
+  else
+    updateRate_++;
+  
+  return false;
 }
 

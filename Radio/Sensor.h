@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SENSOR_H
 
 #include <inttypes.h>
+#include "config.h"
 
 class Sensor
 {
@@ -83,13 +84,20 @@ class BatteryMeter : public Sensor
 {
 public:
 
-   BatteryMeter() {}
+   float levelSum_, histoLevel_[BATTERY_HISTO_BUFFER_SIZE];
+   uint8_t updateRate_;
+   uint8_t currentHistoIdx_, oldestHistoIdx_;
+   
+   BatteryMeter();
 
    virtual void setup(uint8_t pin);
-   virtual void calibrate();
+   virtual void calibrate() {}
    virtual uint16_t getValue() const;
    virtual void reset();
+
    float getValueInVolt() const;
+   float getAverageValueInVolt();
+   bool checkLevelTooLow();
 };
 
 class Gyroscope : public Sensor
