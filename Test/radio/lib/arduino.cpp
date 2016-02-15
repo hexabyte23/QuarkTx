@@ -12,6 +12,22 @@ int CS11 = 0x00;
 int TIMSK1 = 0x00;
 int TCNT1 = 0x00;
 
+int FTFL_FCCOB0 = 0x00;
+int FTFL_FCCOB1 = 0x00;
+int FTFL_FCCOB5 = 0x00;
+int FTFL_FCCOB6 = 0x00;
+int FTFL_FCCOB7 = 0x00;
+
+int FTFL_FSTAT = 0x00;
+int FTFL_FSTAT_CCIF = 0x00;
+
+int SIM_SCGC6 = 0x00;
+int SIM_SCGC6_PIT = 0x00;
+int PIT_MCR = 0x00;
+int PIT_TCTRL1 = 0x00;
+int PIT_LDVAL1 = 0x00;
+int PIT_TFLG1 = 0x00;
+
 unsigned int __heap_start = 0x00;
 void *__brkval = 0x00;
 struct __freelist *__flp = 0x00;
@@ -202,22 +218,54 @@ extern char* ultoa( unsigned long value, char *string, int radix )
    return string;
 }
 
-int analogRead(uint8_t)
+static int buffer__[15];
+int analogRead(uint8_t pin)
 {
-   return 0;
+   return buffer__[pin];
 }
 
-int digitalRead(uint8_t)
+int digitalRead(uint8_t pin)
 {
-   return 0;
+   return buffer__[pin];
 }
 
-void digitalWrite(uint8_t, uint8_t)
+void analogWrite(uint8_t pin, int value)
 {
+/*
+   if(value < 0)
+      value = 0;
+   if(value > 1023)
+      value = 1023;
+*/
+   buffer__[pin] = value;
+}
 
+void digitalWrite(uint8_t pin, uint8_t value)
+{
+   buffer__[pin] = value;
 }
 
 void pinMode(uint8_t, uint8_t)
+{
+
+}
+
+void analogReference(uint8_t)
+{
+
+}
+
+void analogReadRes(uint8_t)
+{
+
+}
+
+void analogReadAveraging(uint8_t)
+{
+
+}
+
+void delay(int)
 {
 
 }
