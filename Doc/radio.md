@@ -20,7 +20,7 @@ Once this selection is done, you can plug your device to your local PC/Mac, and 
 
 ## First start
 
-Upload is now complete, open Serial Monitor from Arduino IDE. Th booting sequence messages is as below:
+Upload is now complete, open Serial Monitor from Arduino IDE. The booting sequence messages is as below:
 
 	Quark Tx v0.1.0
 	Booting...	Serial		OK
@@ -32,9 +32,9 @@ Upload is now complete, open Serial Monitor from Arduino IDE. Th booting sequenc
 	Ready
 	>
 
-The booting messages show a line started with **e-**, meaning that an error has been raised during booting sequence. (See [**Error messages**](#error-pane) pane for errors detail).
+The line started with **e-** is an error raised during booting sequence. (See [**Error messages**](#error-pane) pane for errors detail).
 
-This '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected.
+This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption problem or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected, then save the result.
  
 
 ### First calibration
@@ -106,11 +106,14 @@ e-cstl | Command string too long
 
 ## <a name"sensors-pane"></a> Hardware
 
+### Teensy schema
+![schema](teensy_sch.png)
+
 ### Arduino board
 To be define
 
 ### Teensy board
-To be define
+![schema](teensy_board.png)
 
 ### Sensors
 Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
