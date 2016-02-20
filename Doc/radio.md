@@ -106,6 +106,9 @@ e-cstl | Command string too long
 
 ## <a name"sensors-pane"></a> Hardware
 
+### Arduino nano schema
+![schema](nano_sch.png)
+
 ### Teensy schema
 ![schema](teensy_sch.png)
 
