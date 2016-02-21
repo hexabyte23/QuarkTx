@@ -16,7 +16,7 @@ or
 >
 >Before compiling code, you must first install [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html), then select **Teensy 3.2/3.1** in the Tools/Board type menu. 
 
-Once this selection is done, you can plug your device to your local PC/Mac, and press `upload` button.
+Once this selection is done, you can plug your device to your local PC/Mac, and hit `upload` button.
 
 ## First start
 
@@ -56,7 +56,7 @@ To calibrate sensors, you must move all sensors physically from their minimum cu
 
 When its done, you can exit calibrate mode (`c`). 
 
-Its now time to save to EEPROM your settings by executing `v` command. You can check if that operation succeed by pressing the hardware reset button on the board. The **e-edic** error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
+Its now time to save to EEPROM your settings by executing `v` command. You can check if that operation succeed by hiting the hardware reset button on the board. The **e-edic** error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
 
 You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) pane for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
 
