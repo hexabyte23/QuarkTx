@@ -58,7 +58,7 @@ When its done, you can exit calibrate mode (`c`).
 
 Its now time to save to EEPROM your settings by executing `v` command. You can check if that operation succeed by hiting the hardware reset button on the board. The **e-edic** error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
 
-You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) pane for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
+You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
 
 Have fun.
 
@@ -137,7 +137,7 @@ Company | Name | # channels | Inter frame | Inter channel
 Jeti | TU2 2.4 Ghz | tested, up to 17 | 4500 | 1500
 FrSky | DHT 8ch DIY | tested, up to 4 | 4500 | 1500 
 
-### <a name"output-ppm-pane"></a>Output PPM signal
+### Output PPM signal
 To fine tune PPM signal, depending of the RF module you use, you can modify the 2 constants below (config.h):
 
 * `PPM_INTER_CHANNEL_TIME` 
@@ -174,8 +174,8 @@ Name | Description
 `MAX_SERIAL_INPUT_BUFFER`| to be define
 `ADC_MIN_VALUE`| to be define
 `ADC_MAX_VALUE`| to be define
-`PPM_MIN_VALUE`| See [**Output PPM signal**](#output-ppm--pane)
-`PPM_MAX_VALUE`| See [**Output PPM signal**](#output-ppm--pane)
+`PPM_MIN_VALUE`| See [Output PPM signal](#output-ppm-signal)
+`PPM_MAX_VALUE`| See [Output PPM signal](#output-ppm-signal)
 `TRIM_MIN_VALUE`| to be define
 `TRIM_MAX_VALUE`| to be define
 `TX_MODE`| to be define
