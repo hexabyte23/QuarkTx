@@ -32,7 +32,7 @@ Upload is now complete, open Serial Monitor from Arduino IDE. The booting sequen
 	Ready
 	>
 
-The line started with **e-** is an error raised during booting sequence. (See [**Error messages**](#error-pane) pane for errors detail).
+The line started with **e-** is an error raised during booting sequence. (See [Error messages](#error-messages) pane for errors detail).
 
 This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption problem or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected, then save the result.
  
@@ -58,11 +58,11 @@ When its done, you can exit calibrate mode (`c`).
 
 Its now time to save to EEPROM your settings by executing `v` command. You can check if that operation succeed by hiting the hardware reset button on the board. The **e-edic** error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
 
-You can now use one of the 22 commands (for v 0.1.0) available (check [**Commands**](#commands-pane) for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
+You can now use one of the 22 commands (for v 0.1.0) available (check [Commands](#commands) for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
 
 Have fun.
 
-## <a name"commands-pane"></a> Commands
+## Commands
 
 All commands in QuarkTx are only one character long. Optionnal setting marked by **[]**, alternate option by **|**.
 
@@ -89,7 +89,7 @@ All commands in QuarkTx are only one character long. Optionnal setting marked by
 * s w sensorID val: Set sensor Max
 * v: Save to EEPROM
 
-## <a name"error-pane"></a> Error messages
+## Error messages
 All serial message starting with **e-** is an error message code. It's not directly human readable but have a very short printfoot in memory (For Arduino board).
 
 Error msg | Short description| Long description
