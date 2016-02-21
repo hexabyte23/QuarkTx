@@ -134,11 +134,11 @@ QuarkTx is able to generate PPM signal for different type of RF module.
 
 Company | Name | # channels | Inter frame | Inter channel
 --------|------|------------|-------------|--------------
-Jeti | TU2 2.4 Ghz | up to 17 | 4500 | 1500
-FrSky | Tests in progress
+Jeti | TU2 2.4 Ghz | tested, up to 17 | 4500 | 1500
+FrSky | DHT 8ch DIY | tested, up to 4 | 4500 | 1500 
 
-### Output PPM signal
-Depending of the RF module you use in QuartTx, you can modify 2 constants (config.h):
+### <a name"output-ppm-pane"></a>Output PPM signal
+To fine tune PPM signal, depending of the RF module you use, you can modify the 2 constants below (config.h):
 
 * `PPM_INTER_CHANNEL_TIME` 
 * `PPM_INTER_FRAME_TIME`
@@ -163,6 +163,27 @@ Exemple of Teensy scope screen copy with 4 gimbals/3 switches/6 channels hardwar
 
 Exemple of Teensy scope screen copy with 4 gimbals/3 switches/24 channels hardware config
 ![scope ardiono](ppm-scope-teensy-24c.png)
+
+## <a name"config-pane"></a> Configuration
+All constant parameters is group in a single config.h file.
+
+Name | Description 
+--------|------
+`QUARKTX_SERIAL_SPEED`| to be define
+`MAX_MODEL`| to be define
+`MAX_SERIAL_INPUT_BUFFER`| to be define
+`ADC_MIN_VALUE`| to be define
+`ADC_MAX_VALUE`| to be define
+`PPM_MIN_VALUE`| See [**Output PPM signal**](#output-ppm--pane)
+`PPM_MAX_VALUE`| See [**Output PPM signal**](#output-ppm--pane)
+`TRIM_MIN_VALUE`| to be define
+`TRIM_MAX_VALUE`| to be define
+`TX_MODE`| to be define
+`LED_BLINK_PERIOD`| to be define
+`BATTERY_RATE_UPDATE`| to be define
+`BATTERY_HISTO_BUFFER_SIZE`| to be define
+`BATTERY_R1`| to be define
+`BATTERY_R2`| to be define
 
 ## <a name"rcl-pane"></a> Radio Control Language
 This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board for a simple script.
