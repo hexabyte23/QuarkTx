@@ -141,7 +141,7 @@ void BatteryMeter::reset()
 {
    calibrMin_ = 0;
    calibrMax_ = 1023;
-   trim_ = 1075;
+   trim_ = 1082;
 
    currentHistoIdx_ = 0;
    oldestHistoIdx_ = 1;

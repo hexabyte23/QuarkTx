@@ -39,7 +39,7 @@ bool Command::setup(Tx *tx)
 void Command::onNewCommand(const char* cmdStr)
 {
    if(cmdStr[0] == 0)
-      return; // just ignore
+      return; // just ignore, should raise only in \n\r termination char case
 
    if(cmdStr[1] != ' ' && cmdStr[1] != 0)
    {

@@ -65,13 +65,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    * 
    */
  
-#define BATTERY_R1                47000  // Must be modity to you R1 resistor, ex: 47k Ohm
-#define BATTERY_R2                47000  // Must be modity to you R2 resistor, ex: 47k Ohm
+#define BATTERY_R1                27000  // Must be modity to you R1 resistor, ex: 47k Ohm
+#define BATTERY_R2                11000  // Must be modity to you R2 resistor, ex: 47k Ohm
 #define BATTERY_LIPO_TYPE         2      // Must be modify to your battery type, ex: 1 -> 1S, 2 -> 2S, 3 -> 3S ...  
 #define BATTERY_RAISE_ALARM_LEVEL 0.8    // Raise alarm when lower than 80% of max Vcc Battery
-
-
-#define SERIAL_END_CMD_CHAR       '\r'
 
 
 //
