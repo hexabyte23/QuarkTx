@@ -58,36 +58,44 @@ When its done, you can exit calibrate mode (`c`).
 
 Its now time to save to EEPROM your settings by executing `v` command. You can check if that operation succeed by hiting the hardware reset button on the board. The **e-edic** error is now supposed to disappear during booting sequence otherwise you have a real EEPROM data corruption problem.
 
-You can now use one of the 22 commands (for v 0.1.0) available (check [Commands](#commands) for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
+You can now use one of the commands available (check [Commands](#commands) for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
 
 Have fun.
 
 ## Commands
 
-All commands in QuarkTx are only one character long. Optionnal setting marked by **[]**, alternate option by **|**.
+All commands in QuarkTx are only one character long.
 
-
-* a: Load from EEPROM
-* c: Toggle sensors calibration
-* d [m]|[e]|[s]|[l]: Dump model, EEPROM, sensor or RCL
-* f: Get free memory
-* h: Help
-* i [freq]: Toggle input sensor update
-* l (0..1): Load cur. model
-* m: Toggle Tx mode (transmit or debug)
-* n: Display version
-* o [freq]: Toggle output PPM update
-* r [m]|[s]|[l]: Clean model, sensor or RCL
-* s a chan val: Set cur. model servo max
-* s i chan val: Set cur. model servo min
-* s l chan rclStr: Set RCL code to PPM chan
-* s n chan val: Set cur. model servo neutral
-* s r chan val: Set cur. model servo revert
-* s t sensorID val: Set sensor trim
-* s u sensorID val: Set simulate value
-* s v sensorID val: Set sensor Min
-* s w sensorID val: Set sensor Max
-* v: Save to EEPROM
+Command | Sub command | Description
+----------|------------|------
+a||Load settings (calibration, curses, RCL scripts) from EEPROM
+c||Toggle sensors calibration mode
+d||Dump all (Sensor, Model, EEPROM, RCL Script)
+d|m|Dump model
+d|e|Dump EEPROM
+d|s|Dump sensors
+d|l|Dump RCL scripts
+f||Return free memory in byte
+h||Display commands list
+i|[freq]| Toggle input sensor update
+l|idx| Load from EEPROM to current model
+m||Toggle Tx mode (transmit or debug)
+n||Display version
+o||[freq]| Toggle output PPM update
+r||Reset all (Sensor, Model, RCL script)
+r|m|Reset model
+r|s|Reset sensors
+r|l|Reset RCL script
+s|a chan val| Set current model servo max
+s| i chan val| Set current model servo min
+s| l chan rclStr| Set RCL code to PPM chan
+s| n chan val| Set current model servo neutral
+s| r chan val| Set current model servo revert
+s| t sensorID val| Set sensor trim
+s| u sensorID val| Set simulate value
+s| v sensorID val| Set sensor Min
+s| w sensorID val| Set sensor Max
+v||Save to EEPROM
 
 ## Error messages
 All serial message starting with **e-** is an error message code. It's not directly human readable but have a very short printfoot in memory (For Arduino board).
@@ -96,12 +104,12 @@ Error msg | Short description| Long description
 ----------|------------------|-----------------
 e-bp | Bad parameter | You are using a bad parameter in the current command
 e-bpim | Bad parameter: index is missing |
-e-edic | EEPROM data is corrupted | Self-explanatory
+e-edic | EEPROM data is corrupted | Error during EEPROM read
 e-pf | RCL parsing failed | Usually syntax error in RCL formula
-e-bcf | Bad command format |
-e-cu | Command unknown |
+e-bcf | Bad command format | No space found between first command letter and following parameters
+e-cu | Command unknown | Check [Commands](commands) list
 e-nt | None type | Bad RCL nodes initialization
-e-cstl | Command string too long
+e-cstl | Command string too long | Your command line is greater than `MAX_SERIAL_INPUT_BUFFER`
 
 
 ## <a name"sensors-pane"></a> Hardware
