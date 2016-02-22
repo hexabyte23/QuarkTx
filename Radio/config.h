@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION           "0.1.1"
+#define QUARKTX_VERSION           "0.1.2"
 #define QUARKTX_SERIAL_SPEED      9600
 
 #define MAX_MODEL                 2
@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define LED_BLINK_PERIOD          500     // millisec
 
 #define BATTERY_RATE_UPDATE       100     // check battery level
-#define BATTERY_HISTO_BUFFER_SIZE 16      // for average value computing (warning impact RAM size used, for nano, memory is tiny)
+#define BATTERY_HISTO_BUFFER_SIZE 16      // for average value computing (warning consume RAM, for nano, memory is tiny)
 
   /*
    * R1, R2 resistor choices
@@ -79,8 +79,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 //#define TERRATOP
 #define NEWRADIO
-
-//#define BLUETOOTH             
+          
 #define JETI_TU2_MODULE
 
 
@@ -112,13 +111,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-
-#if BLUETOOTH
-
-#define BT_RX_PIN               9
-#define BT_TX_PIN               8
-
-#endif
 
 //
 //  HF Modules

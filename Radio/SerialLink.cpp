@@ -20,9 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <arduino.h>
 #include "SerialLink.h"
 #include "Streaming.h"
-#ifdef BLUETOOTH
-#include <SoftwareSerial.h>
-#endif
+
 
 Stream *SerialLink::currentStream_ = NULL;
 
@@ -36,24 +34,15 @@ bool SerialLink::setup(Command *cmd)
 {
    cmd_ = cmd;
 
-#ifdef BLUETOOTH
-   pinMode(BT_RX_PIN, INPUT);
-   pinMode(BT_TX_PIN, OUTPUT);
-   currentStream_ = new SoftwareSerial(BT_RX_PIN, BT_TX_PIN);
-   ((SoftwareSerial*)currentStream_)->begin(QUARKTX_SERIAL_SPEED);
-#else
    currentStream_ = &Serial;
+   
    Serial.begin(QUARKTX_SERIAL_SPEED);
 #ifdef QUARKTX_TEENSY
    delay(300);
 #endif
-#endif
 
    STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << F("\nBooting...") << endl;
    STDOUT << F("Serial\t\tOK") << endl;
-#ifdef BLUETOOTH
-   STDOUT << F("Bluetooth\tOK") << endl;
-#endif
 
    return true;
 }
@@ -66,7 +55,7 @@ void SerialLink::clearSerialBuffer()
 
 void SerialLink::displayPrompt()
 {
-   Serial << ">" << endl;
+   STDOUT << ">" << endl;
 }
 
 void SerialLink::idle()
@@ -98,7 +87,7 @@ void SerialLink::idle()
             idxBuffer_++;
          else
          {
-            STDOUT << F("e-cstl ") << MAX_SERIAL_INPUT_BUFFER << endl;    // Command string '%s' too long
+            STDOUT << F("e-cstl ") << MAX_SERIAL_INPUT_BUFFER << endl;    // Command string too long
             idxBuffer_ = 0;
             return;
          }
