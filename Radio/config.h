@@ -61,14 +61,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    * --------------
    * Analog pins: VCC = 3.3v
    * 2S battery: VCC = 7.40v, R1 = 47000 Ohm, R2 = 37400 Ohm 1%
-   * 3S battery, VCC = 11.1v, R1 = 47000 Ohm, R2 = 19600 Ohm 1%
+   * 3S battery, VCC = 11.1v, R1 = 27000 Ohm, R2 = 11000 Ohm 1%
    * 
    */
  
-#define BATTERY_R1                27000  // Must be modity to you R1 resistor, ex: 47k Ohm
-#define BATTERY_R2                11000  // Must be modity to you R2 resistor, ex: 47k Ohm
-#define BATTERY_LIPO_TYPE         2      // Must be modify to your battery type, ex: 1 -> 1S, 2 -> 2S, 3 -> 3S ...  
-#define BATTERY_RAISE_ALARM_LEVEL 0.8    // Raise alarm when lower than 80% of max Vcc Battery
+#define BATTERY_R1                27000  // Must be modity to you R1 resistor, ex: 27k Ohm
+#define BATTERY_R2                11000  // Must be modity to you R2 resistor, ex: 11k Ohm
+#define BATTERY_RAISE_ALARM_LEVEL 9.8    // Raise alarm when V batt is lower than 9.80 v
 
 
 //
@@ -131,8 +130,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
 #define STDOUT                  *SerialLink::currentStream_
-
-#define BATTERY_1S_REF_VOLT     3.7    // ref voltage for 1S
 
 #if defined(__MK20DX256__)
 #define QUARKTX_TEENSY

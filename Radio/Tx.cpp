@@ -157,13 +157,13 @@ bool Tx::setup()
    pinMode(A4, INPUT_PULLUP);    // reseved for future use
    pinMode(A5, INPUT_PULLUP);    // reseved for future use
    pinMode(A6, INPUT_PULLUP);    // reseved for future use
-   pinMode(A7, INPUT_PULLUP);    // Battery level
+   pinMode(A7, INPUT);           // Battery level A11
 
 #ifdef QUARKTX_TEENSY
-   pinMode(A8, INPUT_PULLUP);    // reseved for future use
-   pinMode(A9, INPUT_PULLUP);    // reseved for future use
-   pinMode(A10, INPUT_PULLUP);   // reseved for future use
-   pinMode(A11, INPUT_PULLUP);   // reseved for future use
+   pinMode(A8,  INPUT_PULLUP);   // reseved for future use A10
+   pinMode(A9,  INPUT_PULLUP);   // reseved for future use AREF
+   pinMode(A10, INPUT_PULLUP);   // reseved for future use A8
+   pinMode(A11, INPUT);          // reseved for future use A7
    pinMode(A12, INPUT_PULLUP);   // reseved for future use
    pinMode(A13, INPUT_PULLUP);   // reseved for future use
    pinMode(A14, INPUT_PULLUP);   // reseved for future use
@@ -338,7 +338,7 @@ void Tx::ledBlinkIdle()
 
 void Tx::onRaiseBatteryAlarm()
 {
-  //STDOUT << "Low battery" << endl;
+  STDOUT << "Low battery" << endl;
 }
 
 void Tx::displayInputUpdate()
@@ -656,6 +656,11 @@ void Tx::onSetTrimSensorValue(uint8_t sensorID, int value)
 {
    if(sensorID < 0) return;
    sensor_[sensorID]->setTrim(value);
+}
+
+void Tx::onSetTrimBattery(int value)
+{
+  battMeter_.setTrim(value);
 }
 
 void Tx::onSetMinSensorValue(uint8_t sensorID, uint16_t value)

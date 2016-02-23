@@ -91,6 +91,7 @@ public:
    void onSaveToEEPROM();
    void onSoftwareReset(const char* param);
    void onSetTrimSensorValue(uint8_t sensorID, int value);
+   void onSetTrimBattery(int value);
    void onSetMinSensorValue(uint8_t sensorID, uint16_t value);
    void onSetMaxSensorValue(uint8_t sensorID, uint16_t value);
    void onSetRCL(uint8_t chan, const char* rclCode);

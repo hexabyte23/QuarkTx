@@ -217,9 +217,16 @@ void Command::setCmd(const char* param)
          break;
       case 't':   // t sensorID val: Set sensor trim
       {
-         uint8_t sensorID = getSensorID(param+2);
          int val = atoi(param+4);
-         tx_->onSetTrimSensorValue(sensorID, val);
+         if(param[2] == 'b')
+         {
+           tx_->onSetTrimBattery(val);
+         }
+         else
+         {
+           uint8_t sensorID = getSensorID(param+2);
+           tx_->onSetTrimSensorValue(sensorID, val);
+         }
       }
          break;
       case 'v':   // u sensorID val: Set sensor Min value
