@@ -39,7 +39,7 @@ public:
 
    SerialLink();
    bool setup(Command *cmd);
-   void idle();
+   void loop();
 };
 
 #ifdef QUARKTX_TEENSY

@@ -58,7 +58,7 @@ void SerialLink::displayPrompt()
    STDOUT << ">" << endl;
 }
 
-void SerialLink::idle()
+void SerialLink::loop()
 {
    if(currentStream_->available() <= 0)
       return;

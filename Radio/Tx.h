@@ -62,7 +62,7 @@ class Tx
    void setupInputDevice();
    void setupOutputDevice();
    void calibrateSensor();
-   void ledBlinkIdle();
+   void ledBlinkUpdate();
    void dumpEEPROM();
    void dumpModel();
    void dumpSensor();
@@ -71,15 +71,15 @@ class Tx
    void resetSensor();
    void resetRCL();
 
-   // Irq
-   volatile boolean irqStartPulse_;
-   volatile byte irqCurrentChannelNumber_;
+   // used for Isr
+   volatile boolean isrStartPulse_;
+   volatile byte isrCurrentChannelNumber_;
 
 public:
 
    Tx();
 
-   // Signals
+   // Public signals
    void onIsrTimerChange();
    void onChangeCurrentModel(int idx);
    void onDump(const char* param);
@@ -104,12 +104,12 @@ public:
    BatteryMeter *getBattery() {return &battMeter_;}
 #endif
 
-   // Functions
+   // Public functions
    bool setup();
-   void idle();
+   void loop();
    Model* getCurrentModel() const {return currentModel_;}
    uint8_t getModelIndex(Model *model);
-   uint8_t getSensorIndex(uint8_t pinPort);
+   uint8_t getSensorIndex(uint8_t pinPort) const;
 };
 
 #endif

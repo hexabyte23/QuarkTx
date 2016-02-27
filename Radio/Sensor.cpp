@@ -151,7 +151,6 @@ void BatteryMeter::reset()
 
 uint16_t BatteryMeter::getValue() const
 {
-   //return analogRead(pin_);
    return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 

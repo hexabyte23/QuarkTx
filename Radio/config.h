@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION           "0.1.3"
+#define QUARKTX_VERSION           "0.1.4"
 #define QUARKTX_SERIAL_SPEED      9600
 
 #define MAX_MODEL                 2
@@ -127,6 +127,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //////////////////////////////////////////
 //    WARNING Never modify lower defines
 //////////////////////////////////////////
+
+#define QUARKTX_EEPROM_FORMAT   0x0001   // format version for preventing format collision (lost of data)
 
 #define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
 #define STDOUT                  *SerialLink::currentStream_

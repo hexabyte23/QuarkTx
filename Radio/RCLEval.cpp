@@ -20,13 +20,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <EEPROM.h>
 #include "RCLEval.h"
 #ifndef QUARKTX_TEST
+
 #include "Tx.h"
 #include "SerialLink.h"
+
 #else
+
 #include <memory>
 #include "Streaming.h"
 #undef STDOUT
 #define STDOUT Serial
+
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -525,20 +529,24 @@ void ConstantExp::dump() const
 }
 
 //////////////////////////////////////////////////////////////////////////`
-#ifndef QUARKTX_TEST
-extern Tx tx;     // Horrible, must be cleaned
-#endif
+
+const Tx *SensorInputExp::tx_ = NULL;
 
 void SensorInputExp::dump() const
 {
    enterDump();
+   
 #ifndef QUARKTX_TEST
    addChar('i');
-   addChar((uint16_t)tx.getSensorIndex(sensor_->getPin()));
+
+   if(tx_ != NULL)
+   {
+      addChar((uint16_t)tx_->getSensorIndex(sensor_->getPin()));
    
-   STDOUT << 'i' << tx.getSensorIndex(sensor_->getPin());
-   leaveDump();
+      STDOUT << 'i' << tx_->getSensorIndex(sensor_->getPin());
+   }
 #endif
+   leaveDump();
 }
 /*
 void SensorInputExp::saveToEEPROM(uint16_t &addr) const
@@ -857,11 +865,12 @@ RCLEval::RCLEval()
    memset((void*)expression_, 0, sizeof(expression_));
 }
 
-void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel)
+void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel, const Tx *tx)
 {
    sensorRef_ = sensorRef;
    outputValueRef_ = outputValueRef;
    currentModel_ = currentModel;
+   SensorInputExp::tx_ = tx;
 
    for(int8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
    {
@@ -1171,7 +1180,7 @@ void RCLEval::clearRCL(uint8_t chan)
    expression_[chan] = NULL;
 }
 
-void RCLEval::idle()
+void RCLEval::loop()
 {
    // Evaluate expression for all channels
 

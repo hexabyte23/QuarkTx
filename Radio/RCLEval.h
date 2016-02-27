@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Sensor.h"
 #include "Model.h"
 
+class Tx;
+
 struct Variant
 {
    enum Type {tNone, tInteger, tFloat, tBool} type_;
@@ -62,8 +64,6 @@ public:
    virtual Variant evaluate() const = 0;
    virtual void dump() const = 0;
    virtual bool couldBeDeleted() const {return true;}
-//   virtual void saveToEEPROM(uint16_t &addr) const {}
-//   virtual void loadFromEEPROM(uint16_t &addr) {}
 };
 
 class SubExpression : public Expression
@@ -86,8 +86,8 @@ public:
    virtual Variant evaluate() const {Variant v (sensor_->getValue()); return v;}
    virtual void dump() const;
    virtual bool couldBeDeleted() const {return false;}
-//   virtual void saveToEEPROM(uint16_t &addr) const;
-//   virtual void loadFromEEPROM(uint16_t &addr);
+
+   static const Tx *tx_;
 };
 
 class ConstantExp: public Expression
@@ -218,13 +218,13 @@ class RCLEval
 public:
 
    RCLEval();
-   void setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel);
+   void setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel, const Tx *tx);
    bool setupRCL(uint8_t chan, const char *expStr);
    void changeModel(const Model *currentModel) {currentModel_ = currentModel;}
    void saveToEEPROM(uint16_t &addr) const;
    void loadFromEEPROM(uint16_t &addr);
    void clearRCL(uint8_t chan);
-   void idle();
+   void loop();
    void dump(uint8_t outChannelID) const;
    void reset();
 };

@@ -41,6 +41,6 @@ ISR(TIMER1_COMPA_vect)
 
 void loop()
 {   
-   tx.idle();
+   tx.loop();
 }
 

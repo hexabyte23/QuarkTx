@@ -99,8 +99,8 @@ void Tx::setupOutputDevice()
    digitalWrite(LED_PIN, HIGH);
 
    // Init irq variables
-   irqStartPulse_ = true;
-   irqCurrentChannelNumber_ = 0;
+   isrStartPulse_ = true;
+   isrCurrentChannelNumber_ = 0;
 
 #ifdef QUARKTX_TEENSY
 
@@ -186,7 +186,7 @@ bool Tx::setup()
    setupOutputDevice();
    bool ret2 = command_.setup(this);
    
-   rcl_.setup(sensor_, ppmOutputValue_, currentModel_);
+   rcl_.setup(sensor_, ppmOutputValue_, currentModel_, this);
    
    onLoadFromEEPROM();
    
@@ -211,7 +211,7 @@ bool Tx::setup()
 
 void Tx::onIsrTimerChange()
 {
-   /*
+  /*
    * With new 2.4 GHz HF modules, we dont care anymore about 20 ms constraint
    * (as HF modules can now sent more than 8 channels) but just care about 2 times:
    * The minimum time between 2 channels pulses (PPM_INTER_CHANNEL_TIME)
@@ -225,14 +225,14 @@ void Tx::onIsrTimerChange()
    if(toggleTxMode_ != tTransmit)
       return;
 
-   if(irqStartPulse_)
+   if(isrStartPulse_)
    {
       // Falling edge of a channel pulse (in negative shape)
       digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
       
-      PIT_LDVAL1 = (F_BUS/1000000)*ppmOutputValue_[irqCurrentChannelNumber_]-1;
-      irqCurrentChannelNumber_++;
-      irqStartPulse_ = false;
+      PIT_LDVAL1 = (F_BUS/1000000)*ppmOutputValue_[isrCurrentChannelNumber_]-1;
+      isrCurrentChannelNumber_++;
+      isrStartPulse_ = false;
    }
    else
    {
@@ -240,19 +240,19 @@ void Tx::onIsrTimerChange()
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
       // Calculate when the next pulse will start
-      if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
+      if(isrCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
       {
-         irqCurrentChannelNumber_ = 0;
+         isrCurrentChannelNumber_ = 0;
          PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_FRAME_TIME-1;
       }
       else
          PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_CHANNEL_TIME-1;
 
-      irqStartPulse_ = true;
+      isrStartPulse_ = true;
    }
 
 #else
-   /*
+  /*
    * We successfully test with a Jeti TU2 RF module up to 17 channels
    */
 
@@ -291,14 +291,18 @@ void Tx::onIsrTimerChange()
 #endif
 }
 
-void Tx::idle()
+void Tx::loop()
 {
+  /*
+   * This is the main loop, only non blocking code must be put here.
+   */
+   
    if(toggleTxMode_ == tDebug)
       mesure_.start();
 
-   rcl_.idle();
-   ledBlinkIdle();
-   serialLink_.idle();
+   rcl_.loop();
+   ledBlinkUpdate();
+   serialLink_.loop();
    battMeter_.checkLevelTooLow();
 
    if(toggleDisplayInputUpdate_)
@@ -317,15 +321,20 @@ void Tx::idle()
    // 1200 1218 1380
 }
 
-void Tx::ledBlinkIdle()
+void Tx::ledBlinkUpdate()
 {
+  /*
+   * If the Led is blicking every LED_BLINK_PERIOD
+   * Visual check that main loop is not freezed
+   */
+   
    if(toggleTxMode_ == tTransmit)
    {
-      unsigned long cur = millis();
+      unsigned long curMs = millis();
 
-      if(cur - ledPrevMS_ >= LED_BLINK_PERIOD)
+      if(curMs - ledPrevMS_ >= LED_BLINK_PERIOD)
       {
-         ledPrevMS_ = cur;
+         ledPrevMS_ = curMs;
          ledState_ = (ledState_ == LOW)?HIGH:LOW;
 
          digitalWrite(LED_PIN, ledState_);
@@ -412,6 +421,12 @@ void Tx::onChangeCurrentModel(int idx)
 
 void Tx::dumpEEPROM()
 {
+  /*
+   * Warning: on Teensy 3.2 EEPROM.length() is 0x7F0 long.
+   * for() loop could interrupt main refresh update if Serial
+   * is linked to Bluetooth 9600 bauds low baud rate
+   */
+   
    for(int idx=0, i=0; idx < EEPROM.length(); idx++,i++)
    {
       if(i == 0)
@@ -521,8 +536,17 @@ void Tx::calibrateSensor()
 
 bool Tx::onLoadFromEEPROM()
 {
-   uint16_t addr = 0L;
+   uint16_t addr = 0x0000;
+   uint16_t eepromFormatVersion;
    uint8_t i;
+
+   EEPROM.get(addr, eepromFormatVersion);
+   if(eepromFormatVersion != QUARKTX_EEPROM_FORMAT)
+   {
+      STDOUT << F("e-bef ") << eepromFormatVersion << " " << QUARKTX_EEPROM_FORMAT << endl;  // Bad EEPROM format version
+      return false;
+   }
+   addr+= sizeof(uint16_t);
 
    // get current model used index
    EEPROM.get(addr, i);
@@ -543,6 +567,8 @@ bool Tx::onLoadFromEEPROM()
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->loadFromEEPROM(addr);
 
+   battMeter_.loadFromEEPROM(addr);
+
    rcl_.loadFromEEPROM(addr);
 
    return true;
@@ -550,8 +576,12 @@ bool Tx::onLoadFromEEPROM()
 
 void Tx::onSaveToEEPROM()
 {
-   uint16_t addr = 0L;
+   uint16_t addr = 0x0000;
+   uint16_t eepromFormatVersion = QUARKTX_EEPROM_FORMAT;
    uint8_t i = getModelIndex(currentModel_);
+
+   EEPROM.put(addr, eepromFormatVersion);
+   addr += sizeof(uint16_t);
 
    // save current model index
    EEPROM.put(addr, i);
@@ -564,6 +594,8 @@ void Tx::onSaveToEEPROM()
    // save Sensor data
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->saveToEEPROM(addr);
+
+   battMeter_.saveToEEPROM(addr);
 
    rcl_.saveToEEPROM(addr);
 }
@@ -625,7 +657,7 @@ void Tx::onSoftwareReset(const char* param)
    setupInputDevice();
 }
 
-uint8_t Tx::getSensorIndex(uint8_t pinPort)
+uint8_t Tx::getSensorIndex(uint8_t pinPort) const
 {
    for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
    {
