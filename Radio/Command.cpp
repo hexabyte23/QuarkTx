@@ -61,6 +61,7 @@ void Command::onNewCommand(const char* cmdStr)
       case 'o': toggleDisplayOutputUpdateCmd(cmdStr+2);break;
       case 'r': resetCmd(cmdStr+2);break;
       case 's': setCmd(cmdStr+2);break;
+      case 'u': getUUIDCmd();break;
       case 'v': saveToEEPROMCmd();break;
       default:
          STDOUT << F("e-cu ") << cmdStr[0] << endl;   // Command unknown
@@ -92,6 +93,7 @@ void Command::helpCmd()
                 "s u sensorID val: Set simulate value\n"
                 "s v sensorID val: Set sensor Min\n"
                 "s w sensorID val: Set sensor Max\n"
+                "u: getUUID\n"
                 "v: Save to EEPROM\n"
                 );
 }
@@ -99,6 +101,23 @@ void Command::helpCmd()
 void Command::toggleTxModeCmd()
 {
    tx_->onToggleTxMode();
+}
+
+void Command::getUUIDCmd()
+{
+#ifdef QUARKTX_TEENSY
+  MacAddress ma;
+  ma.setup();
+  
+  STDOUT << _HEX(ma[0]) << "."
+         << _HEX(ma[1]) << "."
+         << _HEX(ma[2]) << "."
+         << _HEX(ma[3]) << "."
+         << _HEX(ma[4]) << "."
+         << _HEX(ma[5]) << endl;
+#else
+  STDOUT << F("e-ni") << endl;  // not implemented
+#endif
 }
 
 void Command::changeCurrentModelCmd(const char *idxStr)

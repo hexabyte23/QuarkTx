@@ -127,6 +127,7 @@ s|t sensorID val| Set sensor trim
 s|u sensorID val| Set simulate value
 s|v sensorID val| Set sensor Min
 s|w sensorID val| Set sensor Max
+u|| Get UUID (only for Teensy platform)
 v||Save to EEPROM
 
 ## Error messages
@@ -143,6 +144,7 @@ e-cu | Command unknown | Check [Commands](#commands) list
 e-nt | None type | Bad RCL nodes initialization
 e-cstl | Command string too long | Your command line is greater than `MAX_SERIAL_INPUT_BUFFER`
 e-btl | Battery level too low| Your battery voltage level is lower than  `BATTERY_RAISE_ALARM_LEVEL`
+e-ni| Not implemented |
 
 
 ## Hardware

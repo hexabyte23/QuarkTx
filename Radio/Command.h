@@ -34,6 +34,7 @@ class Command
    void helpCmd();
    void toggleTxModeCmd();
    void displayVersionCmd();
+   void getUUIDCmd();
    void toggleDisplayInputUpdateCmd(const char* param);
    void toggleDisplayOutputUpdateCmd(const char* param);
    void changeCurrentModelCmd(const char* modelIdx);
