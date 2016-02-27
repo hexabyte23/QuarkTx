@@ -142,6 +142,7 @@ e-bcf | Bad command format | No space found between first command letter and fol
 e-cu | Command unknown | Check [Commands](#commands) list
 e-nt | None type | Bad RCL nodes initialization
 e-cstl | Command string too long | Your command line is greater than `MAX_SERIAL_INPUT_BUFFER`
+e-btl | Battery level too low| Your battery voltage level is lower than  `BATTERY_RAISE_ALARM_LEVEL`
 
 
 ## Hardware
