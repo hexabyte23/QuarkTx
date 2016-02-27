@@ -2,7 +2,7 @@
 
 ## First compilation
 
-You should first install the arduino software (IDE) from the official arduino site <http://www.arduino.cc> in download section. Then, get a copy of QuarkTx source code from <https://github.com/hexabyte23/QuarkTx> by using `Download ZIP` button or by using [GitHub desktop](https://desktop.github.com).
+You should first install the Arduino software (IDE) from the official Arduino site <http://www.arduino.cc> in download section. Then, get a copy of QuarkTx source code from <https://github.com/hexabyte23/QuarkTx> by using `Download ZIP` button or by using [GitHub desktop](https://desktop.github.com).
 
 Once the source code is put in your local PC/Mac, doubleclick on Radio/Radio.ino file. Arduino software will automatically be opened, and Radio.ino source file displayed.
 
@@ -16,11 +16,11 @@ or
 >
 >Before compiling code, you must first install [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html), then select **Teensy 3.2/3.1** in the Tools/Board type menu. 
 
-Once this selection is done, you can plug your device to your local PC/Mac, and hit `upload` button.
+Once this selection is done, you can plug your device to your local PC/Mac by USB connector, and hit `upload` button from Arduino IDE.
 
 ## First start
 
-Upload is now complete, open Serial Monitor from Arduino IDE. The booting sequence messages is as below:
+Open Serial Monitor from Arduino IDE. The booting sequence messages should be as below:
 
 	Quark Tx v0.1.0
 	Booting...	Serial		OK
@@ -39,9 +39,9 @@ This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPR
 
 ### First calibration
 
-Sensors calibration would setup limits of all sensors curses. to do so, make sure first that all sensors are connected to the board (as describe on electric diagram), then execute toggle command `c`. This command make you enter in the calibration mode. You must execute `c` command again to exit from this mode.
+Sensors calibration would setup limits of all sensors curses. to do so, make sure first that all sensors are connected to the board (as describe at [electric diagram](#Arduino-Nano-schema)), then execute toggle command `c`. This command make you enter in the calibration mode. You must execute `c` command again to exit from this mode.
 
-In calibration mode you will see real time datas moving like that:
+In calibration mode you will see real time data moving like that:
 
 	{381	627}	{393	631}	{389	635}	{385	627}	{0	1}	{0	1}	{0	1}	
 	{381	627}	{393	631}	{389	635}	{385	627}	{0	1}	{0	1}	{0	1}	
@@ -71,11 +71,11 @@ Command | Sub command | Description
 a||Load settings (calibration, curses, RCL scripts) from EEPROM
 c||Toggle sensors calibration mode
 d||Dump all (Sensor, Model, EEPROM, RCL Script)
-d|m|Dump model
-d|e|Dump EEPROM
-d|s|Dump sensors
-d|l|Dump RCL scripts
-f||Return free memory in byte
+d|m|Dump only model
+d|e|Dump only EEPROM
+d|s|Dump only sensors
+d|l|Dump only RCL scripts
+f||Get free memory (in byte)
 h||Display commands list
 i|[freq]| Toggle input sensor update
 l|idx| Load from EEPROM to current model
@@ -83,18 +83,18 @@ m||Toggle Tx mode (transmit or debug)
 n||Display version
 o||[freq]| Toggle output PPM update
 r||Reset all (Sensor, Model, RCL script)
-r|m|Reset model
-r|s|Reset sensors
-r|l|Reset RCL script
+r|m|Reset only model
+r|s|Reset only sensors
+r|l|Reset only RCL script
 s|a chan val| Set current model servo max
-s| i chan val| Set current model servo min
-s| l chan rclStr| Set RCL code to PPM chan
-s| n chan val| Set current model servo neutral
-s| r chan val| Set current model servo revert
-s| t sensorID val| Set sensor trim
-s| u sensorID val| Set simulate value
-s| v sensorID val| Set sensor Min
-s| w sensorID val| Set sensor Max
+s|i chan val| Set current model servo min
+s|l chan rclStr| Set RCL code to PPM chan
+s|n chan val| Set current model servo neutral
+s|r chan val| Set current model servo revert
+s|t sensorID val| Set sensor trim
+s|u sensorID val| Set simulate value
+s|v sensorID val| Set sensor Min
+s|w sensorID val| Set sensor Max
 v||Save to EEPROM
 
 ## Error messages
@@ -107,12 +107,15 @@ e-bpim | Bad parameter: index is missing |
 e-edic | EEPROM data is corrupted | Error during EEPROM read
 e-pf | RCL parsing failed | Usually syntax error in RCL formula
 e-bcf | Bad command format | No space found between first command letter and following parameters
-e-cu | Command unknown | Check [Commands](commands) list
+e-cu | Command unknown | Check [Commands](#commands) list
 e-nt | None type | Bad RCL nodes initialization
 e-cstl | Command string too long | Your command line is greater than `MAX_SERIAL_INPUT_BUFFER`
 
 
-## <a name"sensors-pane"></a> Hardware
+## Hardware
+
+### RC Box
+To be define
 
 ### Arduino Nano schema
 ![schema](nano_sch.png)
@@ -135,7 +138,7 @@ To be define
 #### Switch
 To be define
 
-## <a name"rf-module-pane"></a> RF module
+## RF module
 QuarkTx is able to generate PPM signal for different type of RF module.
 
 ### Tested modules
@@ -172,18 +175,26 @@ Exemple of Teensy scope screen copy with 4 gimbals/3 switches/6 channels hardwar
 Exemple of Teensy scope screen copy with 4 gimbals/3 switches/24 channels hardware config
 ![scope ardiono](ppm-scope-teensy-24c.png)
 
-## <a name"config-pane"></a> Configuration
+## Bluetooth
+QuartTx support HC-06 electronic module below:
+
+Brand name| Voltage|QuartTx type
+----------|--------|---------------
+Itead studio| 3.3 V DC| Teensy 3.2 board
+
+
+## Configuration
 All constant parameters is group in a single config.h file.
 
-Name | Description 
---------|------
-`QUARKTX_SERIAL_SPEED`| to be define
-`MAX_MODEL`| to be define
+Name | Description| Default
+--------|---------|--------
+`QUARKTX_SERIAL_SPEED`| Serial speed for USB console or BT|9600
+`MAX_MODEL`| Max number of models store in EEPROM|2
 `MAX_SERIAL_INPUT_BUFFER`| to be define
-`ADC_MIN_VALUE`| to be define
-`ADC_MAX_VALUE`| to be define
-`PPM_MIN_VALUE`| See [Output PPM signal](#output-ppm-signal)
-`PPM_MAX_VALUE`| See [Output PPM signal](#output-ppm-signal)
+`ADC_MIN_VALUE`| Sensors value|0
+`ADC_MAX_VALUE`| Sensors value|1023
+`PPM_MIN_VALUE`| See [Output PPM signal](#output-ppm-signal)|500 usec
+`PPM_MAX_VALUE`| See [Output PPM signal](#output-ppm-signal)|1500 usec
 `TRIM_MIN_VALUE`| to be define
 `TRIM_MAX_VALUE`| to be define
 `TX_MODE`| to be define
@@ -193,7 +204,7 @@ Name | Description
 `BATTERY_R1`| to be define
 `BATTERY_R2`| to be define
 
-## <a name"rcl-pane"></a> Radio Control Language
+## Radio Control Language
 This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board clocked to 96 MHz for a simple script.
 
 _Exemple_: `s l chan rclStr` will modify the current RCL script of a given output PPM channel `chan`  with the new script string `rclStr`. A script could not be longer than **`MAX_SERIAL_INPUT_BUFFER`** characters (config.h)
