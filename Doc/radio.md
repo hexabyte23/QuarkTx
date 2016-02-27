@@ -124,7 +124,7 @@ e-cstl | Command string too long | Your command line is greater than `MAX_SERIAL
 To be define
 
 ### Teensy board
-![schema](teensy_board.png)
+![schema](teensy_pcb.png)
 
 ### Sensors
 Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
