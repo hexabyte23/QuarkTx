@@ -37,11 +37,12 @@ The line started with **e-** is an error raised during booting sequence. (See [E
 This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption problem or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected, then save the result.
  
 
-### First calibration
+### Calibration
 
+#### Gimbal & switches calibration
 Sensors calibration would setup limits of all sensors curses. to do so, make sure first that all sensors are connected to the board (as describe at [electric diagram](#Arduino-Nano-schema)), then execute toggle command `c`. This command make you enter in the calibration mode. You must execute `c` command again to exit from this mode.
 
-In calibration mode you will see real time data moving like that:
+In calibration mode you will see real time data moving as:
 
 	{381	627}	{393	631}	{389	635}	{385	627}	{0	1}	{0	1}	{0	1}	
 	{381	627}	{393	631}	{389	635}	{385	627}	{0	1}	{0	1}	{0	1}	
@@ -60,7 +61,38 @@ Its now time to save to EEPROM your settings by executing `v` command. You can c
 
 You can now use one of the commands available (check [Commands](#commands) for details) or use Gui app (still in dev) for Win 10/OSX/Android or IOS.
 
+#### Battery level calibration
+
+Depending of [R1 & R2 resistors](# Arduino Nano schema) quality (5% or less), you must calibrate Battery sensor.
+
+As you may see when you send dump sensors command `d s`, there a special sensor at the end of the list with a ***b*** pin ID
+
+	Dump
+	Sensors (6)
+	# Pin   Trim    Min     Max
+	0 14	0	0	1023
+	1 15	0	0	1023
+	2 16	0	0	1023
+	3 17	0	0	1023
+	4 2	0	1	1
+	5 3	0	1	1
+	b 21	55	0	1023
+
+
+This sensor measure de battery level and must be calibrate to make sure that radio will raise a error signal at the rigth voltage level if battery goes down `BATTERY_RAISE_ALARM_LEVEL` (check [Configuration](#Configuration))
+
+To do so you must plug a voltmeter between Vcc and GND of your battery connector, then send `i` toggle command to display the voltage level (last colomn), then fine tune the trim xx value by sending as many command `s t b xx` as needed to match the voltmeter value with the last column value.
+
+The best approach is to make this calibration a little bit upper `BATTERY_RAISE_ALARM_LEVEL` you setup by using a stab power supply. 
+
+***Warning***:: Do not forget to save to EPPROM once calibration step seems ok for you.
+
 Have fun.
+
+## Audio settings
+For Teensy 3.2 only
+
+To be define
 
 ## Commands
 
@@ -203,6 +235,7 @@ Name | Description| Default
 `BATTERY_HISTO_BUFFER_SIZE`| to be define
 `BATTERY_R1`| to be define
 `BATTERY_R2`| to be define
+`BATTERY_RAISE_ALARM_LEVEL`| Battery min voltage level|Depend of your batt pack(S1, S2..)
 
 ## Radio Control Language
 This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board clocked to 96 MHz for a simple script.

@@ -299,6 +299,7 @@ void Tx::idle()
    rcl_.idle();
    ledBlinkIdle();
    serialLink_.idle();
+   battMeter_.checkLevelTooLow();
 
    if(toggleDisplayInputUpdate_)
       displayInputUpdate();
@@ -306,8 +307,6 @@ void Tx::idle()
       displayOutputUpdate();
    if(toggleCalibrateSensor_)
       calibrateSensor();
-   if(battMeter_.checkLevelTooLow())
-      onRaiseBatteryAlarm();
 
    if(toggleTxMode_ == tDebug)
    {
@@ -334,11 +333,6 @@ void Tx::ledBlinkIdle()
    }
    else
       digitalWrite(LED_PIN, HIGH);
-}
-
-void Tx::onRaiseBatteryAlarm()
-{
-  STDOUT << "Low battery" << endl;
 }
 
 void Tx::displayInputUpdate()

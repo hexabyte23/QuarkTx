@@ -141,7 +141,7 @@ void BatteryMeter::reset()
 {
    calibrMin_ = 0;
    calibrMax_ = ADC_MAX_VALUE;
-   trim_ = ADC_MAX_VALUE;
+   trim_ = 0;
 
    currentHistoIdx_ = 0;
    oldestHistoIdx_ = 1;
@@ -151,12 +151,13 @@ void BatteryMeter::reset()
 
 uint16_t BatteryMeter::getValue() const
 {
-   return analogRead(pin_);
+   //return analogRead(pin_);
+   return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
 }
 
 float BatteryMeter::getValueInVolt() const
 {
-   return getValue()/(float)trim_*VREF*(BATTERY_R1+BATTERY_R2)/BATTERY_R2;
+   return getValue()/(float)ADC_MAX_VALUE*VREF*(BATTERY_R1 + BATTERY_R2)/BATTERY_R2;
 }
 
 float BatteryMeter::getAverageValueInVolt()
@@ -183,8 +184,12 @@ bool BatteryMeter::checkLevelTooLow()
   if(updateRate_ > BATTERY_RATE_UPDATE)
   {
     updateRate_ = 0;
-    if(getAverageValueInVolt() < BATTERY_RAISE_ALARM_LEVEL)
+    float bl = getAverageValueInVolt();
+    if( bl < BATTERY_RAISE_ALARM_LEVEL)
+    {
+      STDOUT << "e-btl " << bl << endl;
       return true;
+    }
   }
   else
     updateRate_++;
