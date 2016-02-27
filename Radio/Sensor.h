@@ -86,8 +86,7 @@ public:
 
    float levelSum_;
    float histoLevel_[BATTERY_HISTO_BUFFER_SIZE];
-   uint8_t updateRate_;
-   uint8_t currentHistoIdx_, oldestHistoIdx_;
+   uint16_t currentHistoIdx_, oldestHistoIdx_;
    
    BatteryMeter();
 
@@ -98,7 +97,7 @@ public:
 
    float getValueInVolt() const;
    float getAverageValueInVolt();
-   bool checkLevelTooLow();
+   void checkLevelTooLow();
 };
 
 class Gyroscope : public Sensor

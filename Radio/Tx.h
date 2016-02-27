@@ -39,16 +39,22 @@ class Tx
    BatteryMeter battMeter_;
    Sensor *sensor_[MAX_INPUT_CHANNEL];
    volatile uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
-   int inFreq_, outFreq_, inCurFreq_, outCurFreq_;
+   unsigned int displayInputPeriod_, displayInputPrevMs_, displayOutputPeriod_, displayOutputPrevMs_;
+   unsigned long currentMs_;
 
    // For mixers, dual rate, expo...
    RCLEval rcl_;
 
    Mesure mesure_;
 
+   // Battery level chack
+   int battPrevMs_;
+   void battLevelCheck();
+
    // LED
    int ledState_;
-   unsigned long ledPrevMS_;
+   unsigned long ledPrevMs_;
+   void ledBlinkUpdate();
 
    // toggles
    enum {tTransmit, tDebug} toggleTxMode_;
@@ -62,7 +68,6 @@ class Tx
    void setupInputDevice();
    void setupOutputDevice();
    void calibrateSensor();
-   void ledBlinkUpdate();
    void dumpEEPROM();
    void dumpModel();
    void dumpSensor();
@@ -84,8 +89,8 @@ public:
    void onChangeCurrentModel(int idx);
    void onDump(const char* param);
    void onToggleTxMode();
-   void onToggleDisplayInputUpdate(int freq);
-   void onToggleDisplayOutputUpdate(int freq);
+   void onToggleDisplayInputUpdate(int period);
+   void onToggleDisplayOutputUpdate(int period);
    void onToggleCalibrateSensor();
    bool onLoadFromEEPROM();
    void onSaveToEEPROM();

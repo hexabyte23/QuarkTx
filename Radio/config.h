@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LED_BLINK_PERIOD          500     // millisec
 
-#define BATTERY_RATE_UPDATE       100     // check battery level
-#define BATTERY_HISTO_BUFFER_SIZE 16      // for average value computing (warning consume RAM, for nano, memory is tiny)
+#define BATTERY_RATE_PERIOD       1000    // check battery level every 1000 mSec
+#define BATTERY_HISTO_BUFFER_SIZE 16      // for average value computing (warning the higher value the more RAM is consumed, Nano memory is tiny)
 
   /*
    * R1, R2 resistor choices
@@ -67,7 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  
 #define BATTERY_R1                27000  // Must be modity to you R1 resistor, ex: 27k Ohm
 #define BATTERY_R2                11000  // Must be modity to you R2 resistor, ex: 11k Ohm
-#define BATTERY_RAISE_ALARM_LEVEL 9.8    // Raise alarm when V batt is lower than 9.80 v
+#define BATTERY_RAISE_ALARM_LEVEL 9.6    // Raise alarm when V batt is lower than 9.60 v
 
 
 //

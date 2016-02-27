@@ -178,21 +178,11 @@ float BatteryMeter::getAverageValueInVolt()
   return levelSum_/BATTERY_HISTO_BUFFER_SIZE;
 }
 
-bool BatteryMeter::checkLevelTooLow()
+void BatteryMeter::checkLevelTooLow()
 {
-  if(updateRate_ > BATTERY_RATE_UPDATE)
-  {
-    updateRate_ = 0;
-    float bl = getAverageValueInVolt();
-    if( bl < BATTERY_RAISE_ALARM_LEVEL)
-    {
-      STDOUT << "e-btl " << bl << endl;
-      return true;
-    }
-  }
-  else
-    updateRate_++;
+  float bl = getAverageValueInVolt();
   
-  return false;
+  if(bl < BATTERY_RAISE_ALARM_LEVEL)
+    STDOUT << "e-btl " << bl << endl;
 }
 

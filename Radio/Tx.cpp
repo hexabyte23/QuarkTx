@@ -28,10 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Tx::Tx()
    :
-     inFreq_(-1),
-     outFreq_(-1),
-     inCurFreq_(0),
-     outCurFreq_(0),
      ledState_(HIGH),
      toggleTxMode_(tTransmit),
      toggleDisplayInputUpdate_(false),
@@ -296,6 +292,7 @@ void Tx::loop()
   /*
    * This is the main loop, only non blocking code must be put here.
    */
+   currentMs_ = millis();
    
    if(toggleTxMode_ == tDebug)
       mesure_.start();
@@ -303,7 +300,7 @@ void Tx::loop()
    rcl_.loop();
    ledBlinkUpdate();
    serialLink_.loop();
-   battMeter_.checkLevelTooLow();
+   battLevelCheck();
 
    if(toggleDisplayInputUpdate_)
       displayInputUpdate();
@@ -330,11 +327,9 @@ void Tx::ledBlinkUpdate()
    
    if(toggleTxMode_ == tTransmit)
    {
-      unsigned long curMs = millis();
-
-      if(curMs - ledPrevMS_ >= LED_BLINK_PERIOD)
+      if(currentMs_ - ledPrevMs_ >= LED_BLINK_PERIOD)
       {
-         ledPrevMS_ = curMs;
+         ledPrevMs_ = currentMs_;
          ledState_ = (ledState_ == LOW)?HIGH:LOW;
 
          digitalWrite(LED_PIN, ledState_);
@@ -344,14 +339,21 @@ void Tx::ledBlinkUpdate()
       digitalWrite(LED_PIN, HIGH);
 }
 
+void Tx::battLevelCheck()
+{
+  if(currentMs_ - battPrevMs_ >= BATTERY_RATE_PERIOD)
+  {
+    battPrevMs_ = currentMs_;
+    battMeter_.checkLevelTooLow();
+  }
+}
+
 void Tx::displayInputUpdate()
 {
-   if(inFreq_ > 0)
-   {
-      if(inCurFreq_++ < inFreq_)
-         return;
-      inCurFreq_ = 0;
-   }
+   if(currentMs_ - displayInputPrevMs_ < displayInputPeriod_)
+      return;
+   
+   displayInputPrevMs_ = currentMs_;
    
    STDOUT << F("<\t");
 
@@ -361,33 +363,30 @@ void Tx::displayInputUpdate()
    STDOUT << battMeter_.getAverageValueInVolt() << F("\t") << endl;
 }
 
-void Tx::onToggleDisplayInputUpdate(int freq)
+void Tx::onToggleDisplayInputUpdate(int period)
 {
-   inCurFreq_ = 0;
-   inFreq_ = freq;
+   displayInputPeriod_ = period;
    toggleDisplayInputUpdate_ = !toggleDisplayInputUpdate_;
 }
 
 void Tx::displayOutputUpdate()
 {
-   if(outFreq_ > 0)
-   {
-      if(outCurFreq_++ < outFreq_)
-         return;
-      outCurFreq_ = 0;
-   }
-   
-   STDOUT << F(">\t");
-
-   for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   if(currentMs_ - displayOutputPrevMs_ < displayOutputPeriod_)
+      return;
+      
+    displayOutputPrevMs_ = currentMs_;
+    
+    STDOUT << F(">\t");
+    
+    for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
       STDOUT << ppmOutputValue_[idx] << "\t";
-
-   STDOUT << endl;
+    
+    STDOUT << endl;
 }
 
-void Tx::onToggleDisplayOutputUpdate(int freq)
+void Tx::onToggleDisplayOutputUpdate(int period)
 {
-   outFreq_ = freq;
+   displayOutputPeriod_ = period;
    toggleDisplayOutputUpdate_ = !toggleDisplayOutputUpdate_;
 }
 

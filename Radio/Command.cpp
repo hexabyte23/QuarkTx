@@ -117,18 +117,18 @@ void Command::dumpCmd(const char* param)
 
 void Command::toggleDisplayInputUpdateCmd(const char* param)
 {
-   int freq = -1;
+   int period = -1;
    if(param)
-      freq = atoi(param);
-   tx_->onToggleDisplayInputUpdate(freq);
+      period = atoi(param);
+   tx_->onToggleDisplayInputUpdate(period);
 }
 
 void Command::toggleDisplayOutputUpdateCmd(const char* param)
 {
-   int freq = -1;
+   int period = -1;
    if(param)
-      freq = atoi(param);
-   tx_->onToggleDisplayOutputUpdate(freq);
+      period = atoi(param);
+   tx_->onToggleDisplayOutputUpdate(period);
 }
 
 void Command::toggleCalibrateAnalogicSensorCmd()
