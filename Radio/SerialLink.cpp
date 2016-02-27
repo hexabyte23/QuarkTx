@@ -25,26 +25,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Stream *SerialLink::currentStream_ = NULL;
 
 SerialLink::SerialLink()
-   : cmd_(NULL)
+   : cmd_(NULL),
+   isBootSeqAlreadyDisplayed_(false)
 {
    clearSerialBuffer();
 }
 
-bool SerialLink::setup(Command *cmd)
+void SerialLink::setup(Command *cmd)
 {
    cmd_ = cmd;
 
-   currentStream_ = &Serial;
+   currentStream_ = &QUARKTX_SERIAL;
    
-   Serial.begin(QUARKTX_SERIAL_SPEED);
+   QUARKTX_SERIAL.begin(QUARKTX_SERIAL_SPEED);
 #ifdef QUARKTX_TEENSY
    delay(300);
 #endif
-
-   STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << F("\nBooting...") << endl;
-   STDOUT << F("Serial\t\tOK") << endl;
-
-   return true;
 }
 
 void SerialLink::clearSerialBuffer() 
@@ -58,16 +54,42 @@ void SerialLink::displayPrompt()
    STDOUT << ">" << endl;
 }
 
+void SerialLink::displayBootingSequence()
+{
+   if(isBootSeqAlreadyDisplayed_ == true)
+      return;
+
+   isBootSeqAlreadyDisplayed_ = true;
+
+   STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << endl;
+#ifdef QUARKTX_TEENSY
+   STDOUT << F("Teensy 3.2 platform") << endl;
+#else
+   STDOUT << F("Nano platform") << endl;
+#endif
+   STDOUT << F("Booting...\nSerial\t\tOK") << endl;
+   STDOUT << F("Command\t\tOK") << endl;
+   STDOUT << F("Tx\t\tOK\n") << F("Ready") << endl;
+
+  displayPrompt();
+}
+
 void SerialLink::loop()
 {
+   if(! QUARKTX_SERIAL) 
+      return;
+   else
+    displayBootingSequence();
+   
    if(currentStream_->available() <= 0)
       return;
 
-   while (currentStream_->available())
+   while(currentStream_->available())
    {
       char c = (char)currentStream_->read();
-      
-      if ((c == '\r') || (c == '\n'))
+
+      // accept both
+      if((c == '\r') || (c == '\n'))
       {
          serialBuffer_[idxBuffer_] = 0;
          serialBuffer_[idxBuffer_+1] = 0;

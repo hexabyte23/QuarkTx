@@ -23,10 +23,7 @@ Tx tx;
 
 void setup()
 {
-   if(tx.setup())
-      STDOUT << F("Ready\n>") << endl;
-   else
-      STDOUT << F("Failed\n>") << endl;
+  tx.setup();
 }
 
 #ifdef QUARKTX_TEENSY

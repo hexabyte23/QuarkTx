@@ -51,7 +51,7 @@ public:
 
    Command();
 
-   bool setup(Tx *tx);
+   void setup(Tx *tx);
 
    // signals
    void onNewCommand(const char* cmdStr);

@@ -66,10 +66,27 @@ void Tx::setupInputDevice()
   
 #endif
 
-   sensor_[0]->setup(A0);
-   sensor_[1]->setup(A1);
-   sensor_[2]->setup(A2);
-   sensor_[3]->setup(A3);
+#if QUARKTX_TX_MODE == 1
+   sensor_[0]->setup(A0);   // elevators
+   sensor_[1]->setup(A1);   // rudder
+   sensor_[2]->setup(A2);   // throttle
+   sensor_[3]->setup(A3);   // ailerons
+#elif QUARKTX_TX_MODE == 2
+   sensor_[0]->setup(A2);   // throttle
+   sensor_[1]->setup(A1);   // rudder
+   sensor_[2]->setup(A0);   // elevators
+   sensor_[3]->setup(A3);   // ailerons
+#elif QUARKTX_TX_MODE == 3
+   sensor_[0]->setup(A0);   // elevators
+   sensor_[1]->setup(A3);   // ailerons
+   sensor_[2]->setup(A2);   // throttle
+   sensor_[3]->setup(A1);   // rudder
+#else
+   sensor_[0]->setup(A2);   // throttle
+   sensor_[1]->setup(A3);   // ailerons
+   sensor_[2]->setup(A0);   // elevators
+   sensor_[3]->setup(A1);   // rudder
+#endif
    
 #ifdef SWITCH1_PIN
    sensor_[4]->setup(SWITCH1_PIN);
@@ -128,10 +145,8 @@ void Tx::setupOutputDevice()
 #endif
 }
 
-bool Tx::setup()
+void Tx::setup()
 {
-   mesure_.start();
-
    // For battery extended duration put all unused pin off
    pinMode(2, INPUT_PULLUP);
    pinMode(3, INPUT_PULLUP);
@@ -173,14 +188,14 @@ bool Tx::setup()
 #endif
 
    // serial must always be first to initialize
-   bool ret1 = serialLink_.setup(&command_);
+   serialLink_.setup(&command_);
    
    // Setup input sensors
    setupInputDevice();
 
    // Setup Timer for PPM signal generation
    setupOutputDevice();
-   bool ret2 = command_.setup(this);
+   command_.setup(this);
    
    rcl_.setup(sensor_, ppmOutputValue_, currentModel_, this);
    
@@ -193,16 +208,6 @@ bool Tx::setup()
   rcl_.setupRCL(3, "i3");
   rcl_.setupRCL(4, "i4[0;512]+i5[512;0]");
 */
-   mesure_.stop();
-   STDOUT << F("Tx\t\tOK\n") << mesure_.getAverage() << F(" µs") << endl;
-
-#ifdef QUARKTX_TEENSY
-   STDOUT << F("Teensy 3.2") << endl; // Teensy signnature
-#else
-   STDOUT << F("Nano") << endl; // Nano signnature
-#endif
-
-   return ret1 | ret2;
 }
 
 void Tx::onIsrTimerChange()
@@ -257,15 +262,15 @@ void Tx::onIsrTimerChange()
    if(toggleTxMode_ != tTransmit)
       return;
       
-   if(irqStartPulse_)
+   if(isrStartPulse_)
    {
       // Falling edge of a channel pulse (in negative shape)
       digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
 
       // All time must be x2, as prescale is set to 0.5 microseconds at 16mhz
-      OCR1A = ppmOutputValue_[irqCurrentChannelNumber_]*2;
-      irqCurrentChannelNumber_++;
-      irqStartPulse_ = false;
+      OCR1A = ppmOutputValue_[isrCurrentChannelNumber_]*2;
+      isrCurrentChannelNumber_++;
+      isrStartPulse_ = false;
    }
    else
    {
@@ -274,15 +279,15 @@ void Tx::onIsrTimerChange()
 
       // Calculate when the next pulse will start
       // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
-      if(irqCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
+      if(isrCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
       {
-         irqCurrentChannelNumber_ = 0;
+         isrCurrentChannelNumber_ = 0;
          OCR1A = PPM_INTER_FRAME_TIME*2;
       }
       else
          OCR1A = PPM_INTER_CHANNEL_TIME*2;
 
-      irqStartPulse_ = true;
+      isrStartPulse_ = true;
    }
 #endif
 }

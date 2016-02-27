@@ -135,6 +135,10 @@ void BatteryMeter::setup(uint8_t pin)
 {
    pin_ = pin;
    pinMode(pin_, INPUT);
+
+   // init buffer
+   for(uint8_t i = 0; i < BATTERY_HISTO_BUFFER_SIZE; i++)
+      getAverageValueInVolt();
 }
 
 void BatteryMeter::reset()

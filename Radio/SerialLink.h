@@ -30,15 +30,17 @@ class SerialLink
    char serialBuffer_[MAX_SERIAL_INPUT_BUFFER+2];
    uint8_t idxBuffer_;
    Command *cmd_;
+   bool isBootSeqAlreadyDisplayed_;
 
    void clearSerialBuffer();
    void displayPrompt();
+   void displayBootingSequence();
 
 public:
    static Stream *currentStream_;
 
    SerialLink();
-   bool setup(Command *cmd);
+   void setup(Command *cmd);
    void loop();
 };
 

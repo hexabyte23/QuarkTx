@@ -110,7 +110,7 @@ public:
 #endif
 
    // Public functions
-   bool setup();
+   void setup();
    void loop();
    Model* getCurrentModel() const {return currentModel_;}
    uint8_t getModelIndex(Model *model);

@@ -28,12 +28,9 @@ Command::Command()
 {
 }
 
-bool Command::setup(Tx *tx)
+void Command::setup(Tx *tx)
 {
    tx_ = tx;
-
-   STDOUT << F("Command\t\tOK") << endl;
-   return true;
 }
 
 void Command::onNewCommand(const char* cmdStr)
