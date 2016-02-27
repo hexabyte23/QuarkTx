@@ -114,16 +114,16 @@ e-cstl | Command string too long | Your command line is greater than `MAX_SERIAL
 
 ## <a name"sensors-pane"></a> Hardware
 
-### Arduino nano schema
+### Arduino Nano schema
 ![schema](nano_sch.png)
 
-### Teensy schema
+### Teensy 3.2 schema
 ![schema](teensy_sch.png)
 
 ### Arduino board
 To be define
 
-### Teensy board
+### Teensy 3.2 board
 ![schema](teensy_pcb.png)
 
 ### Sensors
@@ -194,7 +194,7 @@ Name | Description
 `BATTERY_R2`| to be define
 
 ## <a name"rcl-pane"></a> Radio Control Language
-This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board for a simple script.
+This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board clocked to 96 MHz for a simple script.
 
 _Exemple_: `s l chan rclStr` will modify the current RCL script of a given output PPM channel `chan`  with the new script string `rclStr`. A script could not be longer than **`MAX_SERIAL_INPUT_BUFFER`** characters (config.h)
 
