@@ -137,7 +137,7 @@ void BatteryMeter::setup(uint8_t pin)
    pinMode(pin_, INPUT);
 
    // init buffer
-   for(uint8_t i = 0; i < BATTERY_HISTO_BUFFER_SIZE; i++)
+   for(int i = 0; i < BATTERY_HISTO_BUFFER_SIZE*50; i++)
       getAverageValueInVolt();
 }
 
@@ -184,9 +184,12 @@ float BatteryMeter::getAverageValueInVolt()
 
 void BatteryMeter::checkLevelTooLow()
 {
+  if(!QUARKTX_SERIAL)
+    return;
+    
   float bl = getAverageValueInVolt();
   
   if(bl < BATTERY_RAISE_ALARM_LEVEL)
-    STDOUT << "e-btl " << bl << endl;
+     STDOUT << "e-btl " << bl << endl;
 }
 

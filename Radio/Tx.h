@@ -47,6 +47,10 @@ class Tx
 
    Mesure mesure_;
 
+   // Booting seq
+   bool isBootSeqAlreadyDisplayed_;
+   void displayBootingSequence();
+
    // Battery level chack
    int battPrevMs_;
    void battLevelCheck();

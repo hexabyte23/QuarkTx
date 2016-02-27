@@ -30,11 +30,8 @@ class SerialLink
    char serialBuffer_[MAX_SERIAL_INPUT_BUFFER+2];
    uint8_t idxBuffer_;
    Command *cmd_;
-   bool isBootSeqAlreadyDisplayed_;
 
    void clearSerialBuffer();
-   void displayPrompt();
-   void displayBootingSequence();
 
 public:
    static Stream *currentStream_;
@@ -42,6 +39,7 @@ public:
    SerialLink();
    void setup(Command *cmd);
    void loop();
+   void displayPrompt();
 };
 
 #ifdef QUARKTX_TEENSY

@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Tx.h"
 
 
-Tx::Tx()
-   :
+Tx::Tx() :
+     isBootSeqAlreadyDisplayed_(false),
      ledState_(HIGH),
      toggleTxMode_(tTransmit),
      toggleDisplayInputUpdate_(false),
@@ -306,7 +306,9 @@ void Tx::loop()
    ledBlinkUpdate();
    serialLink_.loop();
    battLevelCheck();
-
+    
+   if((isBootSeqAlreadyDisplayed_ == false) && QUARKTX_SERIAL)
+      displayBootingSequence();
    if(toggleDisplayInputUpdate_)
       displayInputUpdate();
    if(toggleDisplayOutputUpdate_)
@@ -321,6 +323,26 @@ void Tx::loop()
    }
    
    // 1200 1218 1380
+}
+
+void Tx::displayBootingSequence()
+{
+   if(isBootSeqAlreadyDisplayed_ == true)
+      return;
+
+   isBootSeqAlreadyDisplayed_ = true;
+
+   STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << endl;
+#ifdef QUARKTX_TEENSY
+   STDOUT << F("Teensy 3.2 platform") << endl;
+#else
+   STDOUT << F("Nano platform") << endl;
+#endif
+   STDOUT << F("Booting...\nSerial\t\tOK") << endl;
+   STDOUT << F("Command\t\tOK") << endl;
+   STDOUT << F("Tx\t\tOK\n") << F("Ready") << endl;
+
+   serialLink_.displayPrompt();
 }
 
 void Tx::ledBlinkUpdate()
