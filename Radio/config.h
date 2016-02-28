@@ -35,9 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PPM_MIN_VALUE             500
 #define PPM_MAX_VALUE             1500
 
-#define TRIM_MIN_VALUE            -100
-#define TRIM_MAX_VALUE            100
-
 #define QUARKTX_TX_MODE           1       // mode 1 : left stick operates elevators & rudder,   right stick operates throttle & ailerons
                                           // mode 2 : left stick operates throttle & rudder,    right stick operates elevators & ailerons
                                           // mode 3 : left stick operates elevators & ailerons, right stick operates throttle & rudder
@@ -46,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define LED_BLINK_PERIOD          500     // millisec
 
 #define BATTERY_RATE_PERIOD       1000    // check battery level every 1000 mSec
-#define BATTERY_HISTO_BUFFER_SIZE 16       // for average value computing (warning the higher value the more RAM is consumed, Nano memory is tiny)
+#define BATTERY_HISTO_BUFFER_SIZE 16      // for average value computing (warning the higher value the more RAM is consumed, Nano memory is tiny)
 
   /*
    * R1, R2 resistor choices
@@ -68,7 +65,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  
 #define BATTERY_R1                27000  // Must be modity to you R1 resistor, ex: 27k Ohm
 #define BATTERY_R2                11000  // Must be modity to you R2 resistor, ex: 11k Ohm
-#define BATTERY_RAISE_ALARM_LEVEL 9.6    // Raise alarm when Vcc batt is lower than 9.60 v
+#define BATTERY_RAISE_ALARM_LEVEL 9.60   // Raise alarm when Vcc batt is lower than 9.60 v
 
 
 //

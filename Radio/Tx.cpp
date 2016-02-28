@@ -183,8 +183,8 @@ void Tx::setup()
   analogReference(DEFAULT);      // Arduino nano Vref = 5v, Teensy 3.2 Vref = 3.3
 
 #ifdef QUARKTX_TEENSY
-  //analogReadRes(10);
-  //analogReadAveraging(4);
+  analogReadRes(10);
+  //analogReadAveraging(16);
 #endif
 
    // serial must always be first to initialize
@@ -371,7 +371,7 @@ void Tx::battLevelCheck()
   if(currentMs_ - battPrevMs_ >= BATTERY_RATE_PERIOD)
   {
     battPrevMs_ = currentMs_;
-    battMeter_.checkLevelTooLow();
+    battMeter_.isLevelTooLow();  // todo generate sound
   }
 }
 
@@ -387,7 +387,7 @@ void Tx::displayInputUpdate()
    for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
       STDOUT << sensor_[idx]->getValue() << F("\t");
 
-   STDOUT << battMeter_.getAverageValueInVolt() << F("\t") << endl;
+   STDOUT << battMeter_.getLastAverageValueInVolt() << F("\t") << endl;
 }
 
 void Tx::onToggleDisplayInputUpdate(int period)

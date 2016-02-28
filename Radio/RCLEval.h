@@ -24,9 +24,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Sensor.h"
 #include "Model.h"
 
+/*
 #ifdef QUARKTX_TEENSY
+extern "C" {
 #include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
 #endif
+*/
 
 class Tx;
 

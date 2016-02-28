@@ -138,7 +138,7 @@ void BatteryMeter::setup(uint8_t pin)
 
    // init buffer
    for(int i = 0; i < BATTERY_HISTO_BUFFER_SIZE*50; i++)
-      getAverageValueInVolt();
+      computeAverageValueInVolt();
 }
 
 void BatteryMeter::reset()
@@ -146,6 +146,7 @@ void BatteryMeter::reset()
    calibrMin_ = 0;
    calibrMax_ = ADC_MAX_VALUE;
    trim_ = 0;
+   lastValue_ = 0.0;
 
    currentHistoIdx_ = 0;
    oldestHistoIdx_ = 1;
@@ -163,33 +164,37 @@ float BatteryMeter::getValueInVolt() const
    return getValue()/(float)ADC_MAX_VALUE*VREF*(BATTERY_R1 + BATTERY_R2)/BATTERY_R2;
 }
 
-float BatteryMeter::getAverageValueInVolt()
+float BatteryMeter::computeAverageValueInVolt()
 {
-  //  remove oldest value
+  // Remove oldest value
   levelSum_ -= histoLevel_[oldestHistoIdx_];
 
-  // add a new one
+  // Add a new one
   levelSum_ += histoLevel_[currentHistoIdx_] = getValueInVolt();
 
-  // update indexes
+  // Update indexes
   currentHistoIdx_++;
   currentHistoIdx_ %= BATTERY_HISTO_BUFFER_SIZE;
 
   oldestHistoIdx_++;
   oldestHistoIdx_  %= BATTERY_HISTO_BUFFER_SIZE;
 
-  // compute the average
+  // Compute the average
   return levelSum_/BATTERY_HISTO_BUFFER_SIZE;
 }
 
-void BatteryMeter::checkLevelTooLow()
-{
-  if(!QUARKTX_SERIAL)
-    return;
+bool BatteryMeter::isLevelTooLow()
+{  
+  lastValue_ = computeAverageValueInVolt();
     
-  float bl = getAverageValueInVolt();
-  
-  if(bl < BATTERY_RAISE_ALARM_LEVEL)
-     STDOUT << "e-btl " << bl << endl;
+  if(lastValue_ < BATTERY_RAISE_ALARM_LEVEL)
+  {
+     if(QUARKTX_SERIAL)
+        STDOUT << "e-btl " << lastValue_ << endl;
+
+     return true;
+  }
+
+  return false;
 }
 

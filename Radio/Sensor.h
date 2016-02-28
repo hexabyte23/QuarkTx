@@ -82,11 +82,14 @@ public:
 
 class BatteryMeter : public Sensor
 {
-public:
-
    float levelSum_;
    float histoLevel_[BATTERY_HISTO_BUFFER_SIZE];
    uint16_t currentHistoIdx_, oldestHistoIdx_;
+   float lastValue_;
+
+   float computeAverageValueInVolt();
+
+public:
    
    BatteryMeter();
 
@@ -94,10 +97,10 @@ public:
    virtual void calibrate() {}
    virtual uint16_t getValue() const;
    virtual void reset();
-
+   
    float getValueInVolt() const;
-   float getAverageValueInVolt();
-   void checkLevelTooLow();
+   float getLastAverageValueInVolt() const {return lastValue_;}
+   bool isLevelTooLow();
 };
 
 class Gyroscope : public Sensor

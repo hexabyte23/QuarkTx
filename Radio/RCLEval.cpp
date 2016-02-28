@@ -20,19 +20,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <EEPROM.h>
 #include "RCLEval.h"
 #ifndef QUARKTX_TEST
-
 #include "Tx.h"
 #include "SerialLink.h"
-
 #else
-
 #include <memory>
 #include "Streaming.h"
 #undef STDOUT
 #define STDOUT Serial
-
 #endif
 
+extern "C" {
+
+int kill (pid_t pid, int signum)
+{
+  return 0;
+}
+
+}
 //////////////////////////////////////////////////////////////////////////
 // 
 // Some Misc. funtions
@@ -877,6 +881,13 @@ void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const
       inputTab_[idx] = new SensorInputExp;
       inputTab_[idx]->setup(sensorRef_[idx]);
    }
+
+#ifdef QUARKTX_TEENSY
+    //lua_State *L = luaL_newstate();
+    //luaL_openlibs(L);
+    //luaL_dofile(L,"example.lua");
+    //lua_close(L);
+#endif
 }
 
 /*
