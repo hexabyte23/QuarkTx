@@ -24,6 +24,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Sensor.h"
 #include "Model.h"
 
+#ifdef QUARKTX_TEENSY
+#include <lua.h>
+#endif
+
 class Tx;
 
 struct Variant

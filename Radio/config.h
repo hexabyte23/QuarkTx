@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // General definitions
 
 #define QUARKTX_VERSION           "0.2.0"
-#define QUARKTX_SERIAL            Serial1
+#define QUARKTX_SERIAL            Serial
 #define QUARKTX_SERIAL_SPEED      9600
 
 #define MAX_MODEL                 2

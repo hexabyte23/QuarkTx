@@ -106,11 +106,11 @@ void Command::getUUIDCmd()
   MacAddress ma;
   ma.setup();
   
-  STDOUT << _HEX(ma[0]) << "."
-         << _HEX(ma[1]) << "."
-         << _HEX(ma[2]) << "."
-         << _HEX(ma[3]) << "."
-         << _HEX(ma[4]) << "."
+  STDOUT << _HEX(ma[0]) << ":"
+         << _HEX(ma[1]) << ":"
+         << _HEX(ma[2]) << ":"
+         << _HEX(ma[3]) << ":"
+         << _HEX(ma[4]) << ":"
          << _HEX(ma[5]) << endl;
 #else
   STDOUT << F("e-ni") << endl;  // not implemented

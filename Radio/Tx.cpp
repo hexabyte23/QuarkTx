@@ -193,7 +193,7 @@ void Tx::setup()
    // Setup input sensors
    setupInputDevice();
 
-   // Setup Timer for PPM signal generation
+   // Setup Timer for PPM signal generate
    setupOutputDevice();
    command_.setup(this);
    
