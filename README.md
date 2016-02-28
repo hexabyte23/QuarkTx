@@ -17,6 +17,6 @@ Arduino Nano ATmega328/Teensy 3.2 source code
 Two RF modules has been successfully tested: Jeti TU2 2.4 GHz & FrSky DNT.
 
 ## RCL: a new language
-We introduce RCL, a real time Radio Control Language, that include reverse, dual rate, exponetial and mixer functions per channel.
+We introduce RCL, a real time Radio Control Language, that include keywords for reverse, dual rate, exponetial and mixer functions per channel.
 
 The average update rate of channels is more than 900 Hz for a 6 channels config with simple RCL commands.

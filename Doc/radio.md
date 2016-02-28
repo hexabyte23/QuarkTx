@@ -6,19 +6,19 @@ You should first install the Arduino software (IDE) from the official Arduino si
 
 Once the source code is put in your local PC/Mac, doubleclick on Radio/Radio.ino file. Arduino software will automatically be opened, and Radio.ino source file displayed.
 
->For **Arduino Nano** user
+>For **Arduino Nano** platform
 >
 >Before compiling code, you must first select **Arduino Nano** in the Tools/Board type menu. 
 
 or
   
->For **Teensy** user
+>For **Teensy 3.2** platform
 >
 >Before compiling code, you must first install [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html), then select **Teensy 3.2/3.1** in the Tools/Board type menu. 
+>
+>Then you must install [Lua core functions](https://github.com/hexabyte23/QuarkTx/blob/master/Lua/README.md) to Arduino library path
 
-Then you must install [Lua core functions](https://github.com/hexabyte23/QuarkTx/blob/master/Lua/README.md) to Arduino library path
-
-Once this selection is done, you can plug your device to your local PC/Mac by USB connector, and hit `upload` button from Arduino IDE.
+You can then plug your device to your local PC/Mac with USB connector, and hit `upload` button from Arduino IDE.
 
 ## First start
 
@@ -242,6 +242,8 @@ Name | Description| Default
 `BATTERY_RAISE_ALARM_LEVEL`| Battery min voltage level|Depend of your batt pack(S1, S2..)
 
 ## Radio Control Language
+For Arduino Nano & Teensy 3.2 platform
+
 This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board clocked to 96 MHz for a simple script.
 
 _Exemple_: `s l chan rclStr` will modify the current RCL script of a given output PPM channel `chan`  with the new script string `rclStr`. A script could not be longer than **`MAX_SERIAL_INPUT_BUFFER`** characters (config.h)
@@ -323,3 +325,9 @@ To be define
 Command: *expression***?***action1***:***action2*
 
 _Exemple_: `(i1>512)?i2:i2[1023:0]` will return i2 until i1 < 512 then reverse i2
+
+## Lua scripts
+
+For Teensy 3.2 platform only
+
+To be define
