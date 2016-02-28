@@ -16,7 +16,7 @@ or
 >
 >Before compiling code, you must first install [Teensyduino](https://www.pjrc.com/teensy/teensyduino.html), then select **Teensy 3.2/3.1** in the Tools/Board type menu. 
 
-Then you must install [Lua core functions](https://github.com/hexabyte23/QuarkTx/Lua/README.md) to Arduino library path
+Then you must install [Lua core functions](https://github.com/hexabyte23/QuarkTx/blob/master/Lua/README.md) to Arduino library path
 
 Once this selection is done, you can plug your device to your local PC/Mac by USB connector, and hit `upload` button from Arduino IDE.
 
