@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Sensor.h"
 #include "Model.h"
 
-/*
 #ifdef QUARKTX_TEENSY
 extern "C" {
 #include <lua.h>
@@ -32,7 +31,6 @@ extern "C" {
 #include <lauxlib.h>
 }
 #endif
-*/
 
 class Tx;
 
@@ -220,6 +218,7 @@ class RCLEval
    const Model *currentModel_;
    Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
    SensorInputExp *inputTab_[MAX_INPUT_CHANNEL];
+   lua_State *luaState_;
 
    Expression *parseExp(char *&in);
    Expression *parseOperand(char *&in);

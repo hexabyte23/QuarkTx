@@ -31,7 +31,37 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern "C" {
 
-int kill (pid_t pid, int signum)
+int _kill(pid_t pid, int signum)
+{
+  return 0;
+}
+
+pid_t _getpid()
+{
+  return 1;
+}
+
+int _gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+  return 0;
+}
+
+int _open(const char *pathname, int flags, mode_t mode)
+{
+  return 0;
+}
+
+clock_t _times(struct tms *buf)
+{
+  return 0;
+}
+
+int _link(const char *oldpath, const char *newpath)
+{
+  return 0;
+}
+
+int _unlink(const char *pathname)
 {
   return 0;
 }
@@ -845,7 +875,6 @@ void LimitExp::setup(const Expression *data, const Expression *min, const Expres
 
 Variant LimitExp::evaluate() const
 {
-//   Variant ret((uint16_t)fmap(data_->evaluate().convert2Float(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Float(), max_->evaluate().convert2Float()));
    Variant ret((uint16_t)map(data_->evaluate().convert2Int(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Int(), max_->evaluate().convert2Int()));
    return ret;
 }
@@ -883,10 +912,13 @@ void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const
    }
 
 #ifdef QUARKTX_TEENSY
-    //lua_State *L = luaL_newstate();
-    //luaL_openlibs(L);
-    //luaL_dofile(L,"example.lua");
-    //lua_close(L);
+  luaState_ = luaL_newstate();
+  if(luaState_ != 0)
+    luaL_openlibs(luaState_);
+    
+//    luaL_dostring(luaState_, "return 'try lua script'");
+//    const char * str = lua_tostring(luaState_, -1);
+//    STDOUT << "'" << str << "'" << endl;
 #endif
 }
 

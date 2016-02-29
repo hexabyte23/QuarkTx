@@ -180,10 +180,10 @@ void Tx::setup()
    pinMode(A14, INPUT_PULLUP);   // reseved for future use
 #endif
 
-  analogReference(DEFAULT);      // Arduino nano Vref = 5v, Teensy 3.2 Vref = 3.3
+   analogReference(DEFAULT);      // Arduino nano Vref = 5v, Teensy 3.2 Vref = 3.3
 
 #ifdef QUARKTX_TEENSY
-  analogReadRes(10);
+   analogReadRes(10);
   //analogReadAveraging(16);
 #endif
 
@@ -334,7 +334,7 @@ void Tx::displayBootingSequence()
 
    STDOUT << F("Quark Tx v") << F(QUARKTX_VERSION) << endl;
 #ifdef QUARKTX_TEENSY
-   STDOUT << F("Teensy 3.2 platform") << endl;
+   STDOUT << F("Teensy 3.2 platform\nLua inside") << endl;
 #else
    STDOUT << F("Nano platform") << endl;
 #endif
