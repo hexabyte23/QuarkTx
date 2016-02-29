@@ -1,4 +1,7 @@
 # QuarkTx, up to 17 Channels !!
+
+[![Language](https://img.shields.io/badge/language-C++-blue.svg)](https://github.com/hexabyte23/QuarkTx)
+
 Radio Control system based on Arduino Nano ATmega 328  16 Mhz or Teensy 3.2 96 Mhz, with a simple aim: Provide the most powerfull embedded functions in the smalest piece of hardware.
 
 ## Doc
