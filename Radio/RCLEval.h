@@ -218,7 +218,9 @@ class RCLEval
    const Model *currentModel_;
    Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
    SensorInputExp *inputTab_[MAX_INPUT_CHANNEL];
+#ifdef QUARKTX_TEENSY
    lua_State *luaState_;
+#endif
 
    Expression *parseExp(char *&in);
    Expression *parseOperand(char *&in);

@@ -75,7 +75,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 //#define TERRATOP
-#define NEWRADIO
+//#define NEWRADIO
           
 #define JETI_TU2_MODULE
 
@@ -94,7 +94,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LED_PIN                 6
 
-#else
+#elif defined(NEWRADIO)
+
+#define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
+#define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
+
+#define PPM_PIN                 9
+
+#define SWITCH1_PIN             2
+#define SWITCH2_PIN             3
+#define SWITCH3_PIN             4
+
+#define LED_PIN                 8
+
+#else // generic radio
 
 #define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
 #define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
@@ -108,7 +121,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #endif
 
-
 //
 //  HF Modules
 //
@@ -119,6 +131,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
 #define PPM_INTER_CHANNEL_TIME  500     // microsec
 #define PPM_INTER_FRAME_TIME    4500    // microsec
+
+#else // generic module
+
+#define MAX_PPM_OUTPUT_CHANNEL  4       
+#define PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
+#define PPM_INTER_CHANNEL_TIME  500     // microsec
+#define PPM_INTER_FRAME_TIME    12000   // microsec
 
 #endif
 
