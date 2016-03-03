@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern "C" {
 
+// Some empty functions, need for Lua link.
+
 int _kill(pid_t pid, int signum)
 {
   return 0;
@@ -898,6 +900,14 @@ RCLEval::RCLEval()
    memset((void*)expression_, 0, sizeof(expression_));
 }
 
+static int l_sin (lua_State *L) 
+{
+    // check if the argument is a number
+    double d = luaL_checknumber(L, 1);
+    lua_pushnumber(L, sin(d)); // Push the result
+    return 1;  // number of results
+}
+
 void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel, const Tx *tx)
 {
    sensorRef_ = sensorRef;
@@ -915,6 +925,10 @@ void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const
   luaState_ = luaL_newstate();
   if(luaState_ != 0)
     luaL_openlibs(luaState_);
+
+    // Expose the mysin function to the lua environment
+    lua_pushcfunction(luaState_, l_sin);
+    lua_setglobal(luaState_, "mysin");
     
 //    luaL_dostring(luaState_, "return 'try lua script'");
 //    const char * str = lua_tostring(luaState_, -1);
