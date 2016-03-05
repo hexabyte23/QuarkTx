@@ -72,7 +72,11 @@ void Command::helpCmd()
                 "help command\n"
                 "a: Load from EEPROM\n"
                 "c: Toggle sensors calibration\n"
-                "d [m]|[e]|[s]|[l]: Dump model, EEPROM, sensor or RCL\n"
+#ifdef QUARKTX_TEENSY
+                "d [m]|[e]|[s]|[l]|[d]: Dump Model, EEPROM, Sensor, RCL or Directory\n"
+#else
+                "d [m]|[e]|[s]|[l]: Dump Model, EEPROM, Sensor or RCL\n"
+#endif
                 "f: Get free memory\n"
                 "h: Help\n"
                 "i [freq]: Toggle input sensor update\n"

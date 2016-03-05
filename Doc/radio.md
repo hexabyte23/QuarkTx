@@ -163,6 +163,13 @@ To be define
 To be define
 
 ### Teensy 3.2 board
+- 10 analog inputs (for gimbal & potentiometer)
+- 6 digital inputs (for switches)
+- 1 bluetooth
+- 1 audio
+- 2 SPI
+
+
 ![schema](teensy_pcb.png)
 
 ### Sensors

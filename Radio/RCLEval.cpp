@@ -49,22 +49,7 @@ int _gettimeofday(struct timeval *tv, struct timezone *tz)
   return 0;
 }
 
-int _open(const char *pathname, int flags, mode_t mode)
-{
-  return 0;
-}
-
 clock_t _times(struct tms *buf)
-{
-  return 0;
-}
-
-int _link(const char *oldpath, const char *newpath)
-{
-  return 0;
-}
-
-int _unlink(const char *pathname)
 {
   return 0;
 }

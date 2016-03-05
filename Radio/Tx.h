@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "Sensor.h"
 #include "RCLEval.h"
 #include "Mesure.h"
+#include "Fs.h"
 
 
 class Tx
@@ -41,6 +42,9 @@ class Tx
    volatile uint16_t ppmOutputValue_[QUARKTX_MAX_PPM_OUTPUT_CHANNEL];
    unsigned int displayInputPeriod_, displayInputPrevMs_, displayOutputPeriod_, displayOutputPrevMs_;
    unsigned long currentMs_;
+#ifdef QUARKTX_TEENSY
+   QuarkTxFileSystem fs_;
+#endif
 
    // For mixers, dual rate, expo...
    RCLEval rcl_;
@@ -48,7 +52,7 @@ class Tx
    Mesure mesure_;
 
    // Booting seq
-   bool isBootSeqAlreadyDisplayed_;
+   bool isBootSeqAlreadyDisplayed_, serialOk, sdOk;
    void displayBootingSequence();
 
    // Battery level chack
@@ -76,6 +80,9 @@ class Tx
    void dumpModel();
    void dumpSensor();
    void dumpRCL(const char* param);
+#ifdef QUARKTX_TEENSY
+   void dumpDirectory(const char* param);
+#endif
    void resetModel();
    void resetSensor();
    void resetRCL();

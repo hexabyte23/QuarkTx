@@ -19,30 +19,35 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <arduino.h>
 #include "SerialLink.h"
-#include "Streaming.h"
+#include "Command.h"
 
-
-Stream *SerialLink::currentStream_ = NULL;
+#ifdef QUARKTX_TEENSY
+usb_serial_class *SerialLink::currentStream_ = NULL;
+#else
+HardwareSerial *SerialLink::currentStream_ = NULL;
+#endif
 
 SerialLink::SerialLink()
-   : cmd_(NULL)
+   : cmdRef_(NULL)
 {
-   clearSerialBuffer();
+   reset();
 }
 
-void SerialLink::setup(Command *cmd)
+bool SerialLink::setup(Command *cmd)
 {
-   cmd_ = cmd;
+   cmdRef_ = cmd;
 
    currentStream_ = &QUARKTX_SERIAL;
+   currentStream_->begin(QUARKTX_SERIAL_SPEED);
    
-   QUARKTX_SERIAL.begin(QUARKTX_SERIAL_SPEED);
 #ifdef QUARKTX_TEENSY
    delay(300);
 #endif
+
+  return true;
 }
 
-void SerialLink::clearSerialBuffer() 
+void SerialLink::reset() 
 {
    idxBuffer_ = 0;
    memset((void*)serialBuffer_, 0, sizeof(serialBuffer_));
@@ -68,9 +73,9 @@ void SerialLink::loop()
          serialBuffer_[idxBuffer_] = 0;
          serialBuffer_[idxBuffer_+1] = 0;
 
-         if(cmd_ != NULL)
+         if(cmdRef_ != NULL)
          {
-            cmd_->onNewCommand(serialBuffer_);
+            cmdRef_->onNewCommand(serialBuffer_);
             idxBuffer_ = 0;
             displayPrompt();
          }

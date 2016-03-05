@@ -75,7 +75,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 
 //#define QUARKTX_TERRATOP
-//#define QUARKTX_NEWRADIO
+#define QUARKTX_NEWRADIO
           
 #define QUARKTX_JETI_TU2_MODULE
 
@@ -106,6 +106,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define QUARKTX_SWITCH3_PIN             4
 
 #define QUARKTX_LED_PIN                 8
+
+#define QUARKTX_SPI_CS1_PIN             10
+
+#define QUARKTX_SERIAL_BT               Serial1
+#define QUARKTX_SERIAL_SPEED_BT         9600
 
 #else // generic radio
 

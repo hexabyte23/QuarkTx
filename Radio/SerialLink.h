@@ -22,22 +22,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stream.h>
 #include "config.h"
-#include "Command.h"
 #include "Streaming.h"
+
+class Command;
 
 class SerialLink
 {
    char serialBuffer_[QUARKTX_MAX_SERIAL_BUFFER+2];
    uint8_t idxBuffer_;
-   Command *cmd_;
+   Command *cmdRef_;
 
-   void clearSerialBuffer();
+   void reset();
 
 public:
-   static Stream *currentStream_;
+#ifdef QUARKTX_TEENSY
+  static usb_serial_class *currentStream_;
+#else
+   static HardwareSerial *currentStream_;
+#endif
 
    SerialLink();
-   void setup(Command *cmd);
+   bool setup(Command *cmd);
    void loop();
    void displayPrompt();
 };

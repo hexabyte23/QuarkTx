@@ -188,7 +188,7 @@ void Tx::setup()
 #endif
 
    // serial must always be first to initialize
-   serialLink_.setup(&command_);
+   serialOk = serialLink_.setup(&command_);
    
    // Setup input sensors
    setupInputDevice();
@@ -198,7 +198,11 @@ void Tx::setup()
    command_.setup(this);
    
    rcl_.setup(sensor_, ppmOutputValue_, currentModel_, this);
-   
+
+#ifdef QUARKTX_TEENSY
+   sdOk = fs_.setup();
+#endif
+
    onLoadFromEEPROM();
    
 /*
@@ -307,7 +311,7 @@ void Tx::loop()
    serialLink_.loop();
    battLevelCheck();
     
-   if((isBootSeqAlreadyDisplayed_ == false) && QUARKTX_SERIAL)
+   if((isBootSeqAlreadyDisplayed_ == false) && STDOUT)
       displayBootingSequence();
    if(toggleDisplayInputUpdate_)
       displayInputUpdate();
@@ -338,9 +342,15 @@ void Tx::displayBootingSequence()
 #else
    STDOUT << F("Nano platform") << endl;
 #endif
-   STDOUT << F("Booting...\nSerial\t\tOK") << endl;
+   STDOUT << F("Booting...") << endl;
+   STDOUT << F("Serial\t\t");
+   if(serialOk) STDOUT << F("OK") << endl; else STDOUT << F("KO") << endl;
    STDOUT << F("Command\t\tOK") << endl;
-   STDOUT << F("Tx\t\tOK\n") << F("Ready") << endl;
+#ifdef QUARKTX_TEENSY
+   STDOUT << F("SD reader\t");
+   if(sdOk) STDOUT << F("OK") << endl; else STDOUT << F("KO") << endl;
+#endif
+   STDOUT << F("Tx\t\tOK\nReady") << endl;
 
    serialLink_.displayPrompt();
 }
@@ -527,6 +537,13 @@ void Tx::dumpRCL(const char* param)
    }
 }
 
+#ifdef QUARKTX_TEENSY
+void Tx::dumpDirectory(const char* param)
+{
+  fs_.dumpDirectory(param);
+}
+#endif
+
 void Tx::onDump(const char* param)
 {
    switch(param[0])
@@ -535,6 +552,9 @@ void Tx::onDump(const char* param)
       case 'l': dumpRCL(param+1);break;
       case 'm': dumpModel();break;
       case 's': dumpSensor();break;
+#ifdef QUARKTX_TEENSY
+      case 'd': dumpDirectory(param+2);break;
+#endif
       default:
          dumpSensor();
          dumpModel();
