@@ -41,7 +41,7 @@ This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPR
 ### Calibration
 
 #### Gimbal & switches calibration
-Sensors calibration would setup limits of all sensors curses. to do so, make sure first that all sensors are connected to the board (as describe on [electric diagram](#Arduino-Nano-schema)), then execute toggle command `c`. This command make you enter in the calibration mode. You must execute `c` command again to exit from this mode.
+Sensors calibration would setup limits of all sensors curses. to do so, make sure first that all sensors are connected to the board (as describe on [electric schema](#arduino-nano-schema)), then execute toggle command `c`. This command make you enter in the calibration mode. You must execute `c` command again to exit from this mode.
 
 In calibration mode you will see real time data moving as:
 
