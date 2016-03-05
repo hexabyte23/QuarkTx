@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 // General definitions
 
-#define QUARKTX_VERSION           "0.2.0"
+#define QUARKTX_VERSION           "0.3.1"
 #define QUARKTX_SERIAL            Serial
 #define QUARKTX_SERIAL_SPEED      9600
 
@@ -145,20 +145,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //    WARNING Never modify lower defines
 //////////////////////////////////////////
 
-#define QUARKTX_EEPROM_FORMAT   0x0001   // format version for preventing format collision (lost of data)
+#define QUARKTX_EEPROM_FORMAT           0x0001   // Format version for prevents format collision (lost of data)
 
 #define QUARKTX_MAX_INPUT_CHANNEL       QUARKTX_MAX_ADC_INPUT_CHANNEL + QUARKTX_MAX_DIG_INPUT_CHANNEL
-#define STDOUT                  *SerialLink::currentStream_
+#define STDOUT                          *SerialLink::currentStream_
 
-#if defined(__MK20DX256__)
+#ifdef __MK20DX256__
 #define QUARKTX_TEENSY
-#define VREF 3.3
+#define QUARKTX_VREF 3.3
 #else
 #define QUARKTX_NANO
-#define VREF 5.0
+#define QUARKTX_VREF 5.0
 #endif
 
-#if defined(QT_CORE_LIB)
+#ifdef QT_CORE_LIB
 #define QUARKTX_TEST
 #endif
 

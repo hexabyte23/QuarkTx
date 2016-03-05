@@ -161,7 +161,7 @@ uint16_t BatteryMeter::getValue() const
 
 float BatteryMeter::getValueInVolt() const
 {
-   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*VREF*(QUARKTX_BATTERY_R1 + QUARKTX_BATTERY_R2)/QUARKTX_BATTERY_R2;
+   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*QUARKTX_VREF*(QUARKTX_BATTERY_R1 + QUARKTX_BATTERY_R2)/QUARKTX_BATTERY_R2;
 }
 
 float BatteryMeter::computeAverageValueInVolt()
