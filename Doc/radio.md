@@ -18,7 +18,7 @@ or
 >
 >Then you must install [Lua core functions](https://github.com/hexabyte23/QuarkTx/blob/master/Lua/README.md) to Arduino library path
 
-You can then plug your device to your local PC/Mac with USB connector, and hit `upload` button from Arduino IDE.
+You can then plug your device to your local PC/Mac with USB connector, and hit `upload` button from Arduino IDE for flashing compiled program into your device.
 
 ## First start
 
