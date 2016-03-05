@@ -21,11 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "SerialLink.h"
 #include "Command.h"
 
-#ifdef QUARKTX_TEENSY
-usb_serial_class *SerialLink::currentStream_ = NULL;
-#else
-HardwareSerial *SerialLink::currentStream_ = NULL;
-#endif
+Stream *SerialLink::currentStream_ = NULL;
 
 SerialLink::SerialLink()
    : cmdRef_(NULL)
@@ -37,10 +33,51 @@ bool SerialLink::setup(Command *cmd)
 {
    cmdRef_ = cmd;
 
-   currentStream_ = &QUARKTX_SERIAL;
-   currentStream_->begin(QUARKTX_SERIAL_SPEED);
+   /*
+    * We first initiate primary serial
+    */
+    
+   currentStream_ = &QUARKTX_PRIM_SERIAL;
+#ifdef QUARKTX_TEENSY
+   ((usb_serial_class*)currentStream_)->begin(QUARKTX_PRIM_SERIAL_SPEED);
+#else
+   ((HardwareSerial*)currentStream_)->begin(QUARKTX_PRIM_SERIAL_SPEED);
+#endif
+
+#ifdef QUARKTX_ALT_SERIAL
+
+  /*
+   * We try to connect to alternate serial until primary serial is not active. 
+   * Alternate serial is generally bluetooth dedicated
+   * when Tx running in standalone mode
+   */
+
+   unsigned long d = millis();
+   bool timeout = false;
+
+   while(true)
+   {
+      if(*((usb_serial_class*)currentStream_) == true) // only teensy have alternate serial
+        break;
+
+      if((millis()-d) > 4000)
+      {
+         timeout = true;
+         break;
+      }
+   }
+   
+   if(timeout)
+   {
+      currentStream_ = &QUARKTX_ALT_SERIAL;
+      ((HardwareSerial*)currentStream_)->begin(QUARKTX_ALT_SERIAL_SPEED);
+
+   }
+
+#endif
    
 #ifdef QUARKTX_TEENSY
+   // To fix STDOUT writing Teensy problem just after Serial.begin()
    delay(300);
 #endif
 

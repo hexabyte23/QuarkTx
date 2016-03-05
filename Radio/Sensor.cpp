@@ -136,7 +136,7 @@ void BatteryMeter::setup(uint8_t pin)
    pin_ = pin;
    pinMode(pin_, INPUT);
 
-   levelSum_ = QUARKTX_BATTERY_ALARM_LVL*BATTERY_HISTO_BUFFER_SIZE;
+   levelSum_ = QUARKTX_BATTERY_ALARM_LEVEL*BATTERY_HISTO_BUFFER_SIZE;
 }
 
 void BatteryMeter::reset()
@@ -185,10 +185,9 @@ bool BatteryMeter::isLevelTooLow()
 {  
   lastValue_ = computeAverageValueInVolt();
     
-  if(lastValue_ < QUARKTX_BATTERY_ALARM_LVL)
+  if(lastValue_ < QUARKTX_BATTERY_ALARM_LEVEL)
   {
-     if(STDOUT)
-        STDOUT << "e-btl " << lastValue_ << endl;
+     STDOUT << "e-btl " << lastValue_ << endl;
 
      return true;
   }

@@ -311,7 +311,7 @@ void Tx::loop()
    serialLink_.loop();
    battLevelCheck();
     
-   if((isBootSeqAlreadyDisplayed_ == false) && STDOUT)
+   if(isBootSeqAlreadyDisplayed_ == false)
       displayBootingSequence();
    if(toggleDisplayInputUpdate_)
       displayInputUpdate();

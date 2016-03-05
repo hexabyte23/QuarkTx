@@ -35,11 +35,8 @@ class SerialLink
    void reset();
 
 public:
-#ifdef QUARKTX_TEENSY
-  static usb_serial_class *currentStream_;
-#else
-   static HardwareSerial *currentStream_;
-#endif
+
+   static Stream *currentStream_;
 
    SerialLink();
    bool setup(Command *cmd);
