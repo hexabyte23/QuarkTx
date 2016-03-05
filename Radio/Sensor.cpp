@@ -94,7 +94,7 @@ void Stick::calibrate()
 
 uint16_t Stick::getValue() const
 {
-   return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+   return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, QUARKTX_ADC_MIN_VALUE, QUARKTX_ADC_MAX_VALUE);
 }
 
 ////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ void Switch::calibrate()
 
 uint16_t Switch::getValue() const
 {
-   return map(digitalRead(pin_), calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+   return map(digitalRead(pin_), calibrMin_, calibrMax_, QUARKTX_ADC_MIN_VALUE, QUARKTX_ADC_MAX_VALUE);
 }
 
 ////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ void BatteryMeter::setup(uint8_t pin)
 void BatteryMeter::reset()
 {
    calibrMin_ = 0;
-   calibrMax_ = ADC_MAX_VALUE;
+   calibrMax_ = QUARKTX_ADC_MAX_VALUE;
    trim_ = 0;
    lastValue_ = 0.0;
 
@@ -156,12 +156,12 @@ void BatteryMeter::reset()
 
 uint16_t BatteryMeter::getValue() const
 {
-   return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, ADC_MIN_VALUE, ADC_MAX_VALUE);
+   return map(analogRead(pin_)+trim_, calibrMin_, calibrMax_, QUARKTX_ADC_MIN_VALUE, QUARKTX_ADC_MAX_VALUE);
 }
 
 float BatteryMeter::getValueInVolt() const
 {
-   return getValue()/(float)ADC_MAX_VALUE*VREF*(BATTERY_R1 + BATTERY_R2)/BATTERY_R2;
+   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*VREF*(QUARKTX_BATTERY_R1 + QUARKTX_BATTERY_R2)/QUARKTX_BATTERY_R2;
 }
 
 float BatteryMeter::computeAverageValueInVolt()
@@ -187,7 +187,7 @@ bool BatteryMeter::isLevelTooLow()
 {  
   lastValue_ = computeAverageValueInVolt();
     
-  if(lastValue_ < BATTERY_RAISE_ALARM_LEVEL)
+  if(lastValue_ < QUARKTX_BATTERY_ALARM_LVL)
   {
      if(QUARKTX_SERIAL)
         STDOUT << "e-btl " << lastValue_ << endl;

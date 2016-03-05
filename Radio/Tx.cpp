@@ -354,7 +354,7 @@ void Tx::ledBlinkUpdate()
    
    if(toggleTxMode_ == tTransmit)
    {
-      if(currentMs_ - ledPrevMs_ >= LED_BLINK_PERIOD)
+      if(currentMs_ - ledPrevMs_ >= QUARKTX_LED_BLINK_PERIOD)
       {
          ledPrevMs_ = currentMs_;
          ledState_ = (ledState_ == LOW)?HIGH:LOW;
@@ -435,14 +435,14 @@ void Tx::onToggleTxMode()
 
 void Tx::onChangeCurrentModel(int idx)
 {
-   if(idx < MAX_MODEL)
+   if(idx < QUARKTX_MAX_MODEL)
    {
       STDOUT << F("Current model ") << idx << endl;
       currentModel_ = &modelList_[idx];
       rcl_.changeModel(currentModel_);
    }
    else
-      STDOUT << F("e-bp ") << idx << F(" ") << MAX_MODEL-1 << endl;  // Bad parameter
+      STDOUT << F("e-bp ") << idx << F(" ") << QUARKTX_MAX_MODEL-1 << endl;  // Bad parameter
 }
 
 void Tx::dumpEEPROM()
@@ -481,7 +481,7 @@ void Tx::dumpEEPROM()
 
 void Tx::dumpModel()
 {
-   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_MODEL; idx++)
    {
       char c = (currentModel_ == &modelList_[idx])?'*':' ';
       STDOUT << F("Model ") << idx << " " << c << endl;
@@ -576,7 +576,7 @@ bool Tx::onLoadFromEEPROM()
 
    // get current model used index
    EEPROM.get(addr, i);
-   if(i >= MAX_MODEL)    // EEPROM is corrupted
+   if(i >= QUARKTX_MAX_MODEL)    // EEPROM is corrupted
    {
       i = 0;
       STDOUT << F("e-edic") << endl;    //  EEPROM data is corrupted
@@ -586,7 +586,7 @@ bool Tx::onLoadFromEEPROM()
    addr += sizeof(uint8_t);
 
    // get Model data
-   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_MODEL; idx++)
       modelList_[idx].loadFromEEPROM(addr);
 
    // get Sensors data
@@ -614,7 +614,7 @@ void Tx::onSaveToEEPROM()
    addr += sizeof(uint8_t);
 
    // save Model data
-   for(uint8_t idx=0; idx < MAX_MODEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_MODEL; idx++)
       modelList_[idx].saveToEEPROM(addr);
 
    // save Sensor data
@@ -628,7 +628,7 @@ void Tx::onSaveToEEPROM()
 
 void Tx::resetModel()
 {
-   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
+   for(uint8_t idx = 0; idx < QUARKTX_MAX_MODEL; idx++)
       modelList_[idx].reset();
 
    currentModel_ = &modelList_[0];
@@ -696,7 +696,7 @@ uint8_t Tx::getSensorIndex(uint8_t pinPort) const
 
 uint8_t Tx::getModelIndex(Model *model)
 {
-   for(uint8_t idx = 0; idx < MAX_MODEL; idx++)
+   for(uint8_t idx = 0; idx < QUARKTX_MAX_MODEL; idx++)
    {
       if(model == &modelList_[idx])
          return idx;

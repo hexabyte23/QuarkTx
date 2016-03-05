@@ -79,11 +79,11 @@ void SerialLink::loop()
       {
          serialBuffer_[idxBuffer_] = c;
 
-         if(idxBuffer_ < MAX_SERIAL_INPUT_BUFFER)
+         if(idxBuffer_ < QUARKTX_MAX_SERIAL_BUFFER)
             idxBuffer_++;
          else
          {
-            STDOUT << F("e-cstl ") << MAX_SERIAL_INPUT_BUFFER << endl;    // Command string too long
+            STDOUT << F("e-cstl ") << QUARKTX_MAX_SERIAL_BUFFER << endl;    // Command string too long
             idxBuffer_ = 0;
             return;
          }

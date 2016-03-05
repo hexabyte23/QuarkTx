@@ -31,21 +31,21 @@ ServoCommand::ServoCommand()
 
 uint16_t ServoCommand::getValue(uint16_t rawInputValue) const
 {
-   uint16_t ret = map(rawInputValue, ADC_MIN_VALUE, ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
+   uint16_t ret = map(rawInputValue, QUARKTX_ADC_MIN_VALUE, QUARKTX_ADC_MAX_VALUE, isRevert_?maxOutCurse_:minOutCurse_, isRevert_?minOutCurse_:maxOutCurse_) + neutral_;
 
    // apply PPM bound limitations
-   if(ret > PPM_MAX_VALUE)
-      ret = PPM_MAX_VALUE;
-   if(ret < PPM_MIN_VALUE)
-      ret = PPM_MIN_VALUE;
+   if(ret > QUARKTX_PPM_MAX_VALUE)
+      ret = QUARKTX_PPM_MAX_VALUE;
+   if(ret < QUARKTX_PPM_MIN_VALUE)
+      ret = QUARKTX_PPM_MIN_VALUE;
 
    return ret;
 }
 
 void ServoCommand::reset()
 {
-   maxOutCurse_ = PPM_MAX_VALUE;
-   minOutCurse_ = PPM_MIN_VALUE;
+   maxOutCurse_ = QUARKTX_PPM_MAX_VALUE;
+   minOutCurse_ = QUARKTX_PPM_MIN_VALUE;
    neutral_ = 0;
    isRevert_ = false;
 }

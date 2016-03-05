@@ -75,14 +75,14 @@ int _unlink(const char *pathname)
 //
 //////////////////////////////////////////////////////////////////////////
 
-static char g_dump[MAX_SERIAL_INPUT_BUFFER];
+static char g_dump[QUARKTX_MAX_SERIAL_BUFFER];
 static uint8_t g_idxDump = 0;
 static uint8_t g_tab4Dump = 0;
 static bool g_hierachyDump = true;
 
 char addChar(char c)
 {
-   if(g_idxDump < MAX_SERIAL_INPUT_BUFFER)
+   if(g_idxDump < QUARKTX_MAX_SERIAL_BUFFER)
       g_dump[g_idxDump++] = c;
 
    return c;
@@ -877,7 +877,7 @@ void LimitExp::setup(const Expression *data, const Expression *min, const Expres
 
 Variant LimitExp::evaluate() const
 {
-   Variant ret((uint16_t)map(data_->evaluate().convert2Int(), ADC_MIN_VALUE, ADC_MAX_VALUE, min_->evaluate().convert2Int(), max_->evaluate().convert2Int()));
+   Variant ret((uint16_t)map(data_->evaluate().convert2Int(), QUARKTX_ADC_MIN_VALUE, QUARKTX_ADC_MAX_VALUE, min_->evaluate().convert2Int(), max_->evaluate().convert2Int()));
    return ret;
 }
 
@@ -1182,8 +1182,8 @@ Expression *RCLEval::parseExp(char *&in)
 
 bool RCLEval::setupRCL(uint8_t chan, const char *expStr)
 {
-   char buffer[MAX_SERIAL_INPUT_BUFFER];
-   strncpy(buffer, expStr, MAX_SERIAL_INPUT_BUFFER);
+   char buffer[QUARKTX_MAX_SERIAL_BUFFER];
+   strncpy(buffer, expStr, QUARKTX_MAX_SERIAL_BUFFER);
 
    if(expression_[chan] != NULL)
       clearRCL(chan);
@@ -1206,7 +1206,7 @@ void RCLEval::saveToEEPROM(uint16_t &addr) const
       dump(idx);
 
       EEPROM.put(addr, g_dump);
-      addr += MAX_SERIAL_INPUT_BUFFER;
+      addr += QUARKTX_MAX_SERIAL_BUFFER;
    }
 
    g_hierachyDump = true;
@@ -1214,12 +1214,12 @@ void RCLEval::saveToEEPROM(uint16_t &addr) const
 
 void RCLEval::loadFromEEPROM(uint16_t &addr)
 {
-   char buffer[MAX_SERIAL_INPUT_BUFFER];
+   char buffer[QUARKTX_MAX_SERIAL_BUFFER];
 
    for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       EEPROM.get(addr, buffer);
-      addr += MAX_SERIAL_INPUT_BUFFER;
+      addr += QUARKTX_MAX_SERIAL_BUFFER;
 
       setupRCL(idx, buffer);
    }
@@ -1246,7 +1246,7 @@ void RCLEval::loop()
       if(expression_[idx] != NULL)
          outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().convert2Int());
       else
-         outputValueRef_[idx] = PPM_MIN_VALUE;
+         outputValueRef_[idx] = QUARKTX_PPM_MIN_VALUE;
    }
 }
 

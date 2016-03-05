@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class SerialLink
 {
-   char serialBuffer_[MAX_SERIAL_INPUT_BUFFER+2];
+   char serialBuffer_[QUARKTX_MAX_SERIAL_BUFFER+2];
    uint8_t idxBuffer_;
    Command *cmd_;
 

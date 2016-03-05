@@ -34,7 +34,7 @@ class Tx
 {
    SerialLink serialLink_;
    Command command_;
-   Model modelList_[MAX_MODEL];
+   Model modelList_[QUARKTX_MAX_MODEL];
    Model *currentModel_;
    BatteryMeter battMeter_;
    Sensor *sensor_[MAX_INPUT_CHANNEL];
