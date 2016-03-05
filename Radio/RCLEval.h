@@ -216,8 +216,8 @@ class RCLEval
    Sensor **sensorRef_;
    volatile uint16_t *outputValueRef_;
    const Model *currentModel_;
-   Expression *expression_[MAX_PPM_OUTPUT_CHANNEL];
-   SensorInputExp *inputTab_[MAX_INPUT_CHANNEL];
+   Expression *expression_[QUARKTX_MAX_PPM_OUTPUT_CHANNEL];
+   SensorInputExp *inputTab_[QUARKTX_MAX_INPUT_CHANNEL];
 #ifdef QUARKTX_TEENSY
    lua_State *luaState_;
 #endif

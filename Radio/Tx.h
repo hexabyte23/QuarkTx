@@ -37,8 +37,8 @@ class Tx
    Model modelList_[QUARKTX_MAX_MODEL];
    Model *currentModel_;
    BatteryMeter battMeter_;
-   Sensor *sensor_[MAX_INPUT_CHANNEL];
-   volatile uint16_t ppmOutputValue_[MAX_PPM_OUTPUT_CHANNEL];
+   Sensor *sensor_[QUARKTX_MAX_INPUT_CHANNEL];
+   volatile uint16_t ppmOutputValue_[QUARKTX_MAX_PPM_OUTPUT_CHANNEL];
    unsigned int displayInputPeriod_, displayInputPrevMs_, displayOutputPeriod_, displayOutputPrevMs_;
    unsigned long currentMs_;
 

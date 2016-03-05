@@ -48,7 +48,7 @@ struct OutputChannel
 
 class Model
 {
-   OutputChannel channel_[MAX_PPM_OUTPUT_CHANNEL];
+   OutputChannel channel_[QUARKTX_MAX_PPM_OUTPUT_CHANNEL];
 
 public:
 

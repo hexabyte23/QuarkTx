@@ -127,7 +127,7 @@ void Model::dump()
 #ifndef QUARKTX_TEST
    STDOUT << F("Servo\n# Min   Max   Neutral   Rev") << endl;
 
-   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(int idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       STDOUT << idx << " " << channel_[idx].servo_.minOutCurse_ << "\t" <<
                 channel_[idx].servo_.maxOutCurse_ << "\t" <<
@@ -139,19 +139,19 @@ void Model::dump()
 
 void Model::reset()
 {
-   for(int idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(int idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       channel_[idx].servo_.reset();
 }
 
 void Model::saveToEEPROM(uint16_t &addr) const
 {
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       channel_[idx].saveToEEPROM(addr);
 }
 
 void Model::loadFromEEPROM(uint16_t &addr)
 {
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       channel_[idx].loadFromEEPROM(addr);
 
 }

@@ -170,9 +170,9 @@ void Command::saveToEEPROMCmd()
 uint8_t getChannel(const char *str)
 {
    uint8_t channel = str[0] - '0';
-   if(channel > MAX_PPM_OUTPUT_CHANNEL-1)
+   if(channel > QUARKTX_MAX_PPM_OUTPUT_CHANNEL-1)
    {
-      STDOUT << F("e-bp ") << channel << (" ") << MAX_PPM_OUTPUT_CHANNEL-1 << endl;  // Bad parameter
+      STDOUT << F("e-bp ") << channel << (" ") << QUARKTX_MAX_PPM_OUTPUT_CHANNEL-1 << endl;  // Bad parameter
       return -1;
    }
 
@@ -182,9 +182,9 @@ uint8_t getChannel(const char *str)
 uint8_t getSensorID(const char *str)
 {
    uint8_t sensorID = str[0] - '0';
-   if(sensorID > MAX_INPUT_CHANNEL-1)
+   if(sensorID > QUARKTX_MAX_INPUT_CHANNEL-1)
    {
-      STDOUT << F("e-bp ") << sensorID << (" ") << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
+      STDOUT << F("e-bp ") << sensorID << (" ") << QUARKTX_MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
       return -1;
    }
 

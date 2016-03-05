@@ -39,10 +39,10 @@ Tx::Tx() :
 
    currentModel_ = &modelList_[0];
 
-   for(uint8_t i=0; i < MAX_ADC_INPUT_CHANNEL; i++)
+   for(uint8_t i=0; i < QUARKTX_MAX_ADC_INPUT_CHANNEL; i++)
       sensor_[i] = new Stick;
 
-   for(uint8_t i=MAX_ADC_INPUT_CHANNEL; i < MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL; i++)
+   for(uint8_t i=QUARKTX_MAX_ADC_INPUT_CHANNEL; i < (QUARKTX_MAX_ADC_INPUT_CHANNEL + QUARKTX_MAX_DIG_INPUT_CHANNEL); i++)
       sensor_[i] = new Switch;
 
    onSoftwareReset("");
@@ -104,12 +104,12 @@ void Tx::setupInputDevice()
 void Tx::setupOutputDevice()
 {
    // PPM for RF module
-   pinMode(PPM_PIN, OUTPUT);
-   digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
+   pinMode(QUARKTX_PPM_PIN, OUTPUT);
+   digitalWrite(QUARKTX_PPM_PIN, QUARKTX_PPM_SHAPE_SIGNAL);  //set the PPM signal pin to the default state
    
    // LED
-   pinMode(LED_PIN, OUTPUT);
-   digitalWrite(LED_PIN, HIGH);
+   pinMode(QUARKTX_LED_PIN, OUTPUT);
+   digitalWrite(QUARKTX_LED_PIN, HIGH);
 
    // Init irq variables
    isrStartPulse_ = true;
@@ -120,7 +120,7 @@ void Tx::setupOutputDevice()
    SIM_SCGC6 |= SIM_SCGC6_PIT;  // Enable PIT clock
    PIT_MCR = 0x00;              // turn on PIT
    PIT_TCTRL1 = 0x00;           // stop Timer
-   PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_FRAME_TIME-1;
+   PIT_LDVAL1 = (F_BUS/1000000)*QUARKTX_PPM_INTER_FRAME_TIME-1;
    PIT_TCTRL1 = 0x03;           // enable Timer interrupts + start
    PIT_TFLG1 = 1;
    NVIC_SET_PRIORITY(1, 128);
@@ -133,7 +133,7 @@ void Tx::setupOutputDevice()
    TCCR1A = 0;               // set entire TCCR1 register to 0
    TCCR1B = 0;
 
-   OCR1A = PPM_INTER_FRAME_TIME*2;  // compare match register, initial value
+   OCR1A = QUARKTX_PPM_INTER_FRAME_TIME*2;  // compare match register, initial value
 
    TCCR1B |= (1 << WGM12);   // turn on CTC mode
    TCCR1B |= (1 << CS11);    // prescaler to 8 -> 0.5 microseconds at 16mhz
@@ -229,7 +229,7 @@ void Tx::onIsrTimerChange()
    if(isrStartPulse_)
    {
       // Falling edge of a channel pulse (in negative shape)
-      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
+      digitalWrite(QUARKTX_PPM_PIN, QUARKTX_PPM_SHAPE_SIGNAL);
       
       PIT_LDVAL1 = (F_BUS/1000000)*ppmOutputValue_[isrCurrentChannelNumber_]-1;
       isrCurrentChannelNumber_++;
@@ -238,16 +238,16 @@ void Tx::onIsrTimerChange()
    else
    {
       // Raising edge of a channel pulse (in negative shape)
-      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
+      digitalWrite(QUARKTX_PPM_PIN, !QUARKTX_PPM_SHAPE_SIGNAL);
 
       // Calculate when the next pulse will start
-      if(isrCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
+      if(isrCurrentChannelNumber_ >= QUARKTX_MAX_PPM_OUTPUT_CHANNEL)
       {
          isrCurrentChannelNumber_ = 0;
-         PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_FRAME_TIME-1;
+         PIT_LDVAL1 = (F_BUS/1000000)*QUARKTX_PPM_INTER_FRAME_TIME-1;
       }
       else
-         PIT_LDVAL1 = (F_BUS/1000000)*PPM_INTER_CHANNEL_TIME-1;
+         PIT_LDVAL1 = (F_BUS/1000000)*QUARKTX_PPM_INTER_CHANNEL_TIME-1;
 
       isrStartPulse_ = true;
    }
@@ -265,7 +265,7 @@ void Tx::onIsrTimerChange()
    if(isrStartPulse_)
    {
       // Falling edge of a channel pulse (in negative shape)
-      digitalWrite(PPM_PIN, !PPM_SHAPE_SIGNAL);
+      digitalWrite(QUARKTX_PPM_PIN, !QUARKTX_PPM_SHAPE_SIGNAL);
 
       // All time must be x2, as prescale is set to 0.5 microseconds at 16mhz
       OCR1A = ppmOutputValue_[isrCurrentChannelNumber_]*2;
@@ -275,17 +275,17 @@ void Tx::onIsrTimerChange()
    else
    {
       // Raising edge of a channel pulse (in negative shape)
-      digitalWrite(PPM_PIN, PPM_SHAPE_SIGNAL);
+      digitalWrite(QUARKTX_PPM_PIN, QUARKTX_PPM_SHAPE_SIGNAL);
 
       // Calculate when the next pulse will start
       // and put this time in OCR1A (x2 as prescaler is set to 0.5 microsec)
-      if(isrCurrentChannelNumber_ >= MAX_PPM_OUTPUT_CHANNEL)
+      if(isrCurrentChannelNumber_ >= QUARKTX_MAX_PPM_OUTPUT_CHANNEL)
       {
          isrCurrentChannelNumber_ = 0;
-         OCR1A = PPM_INTER_FRAME_TIME*2;
+         OCR1A = QUARKTX_PPM_INTER_FRAME_TIME*2;
       }
       else
-         OCR1A = PPM_INTER_CHANNEL_TIME*2;
+         OCR1A = QUARKTX_PPM_INTER_CHANNEL_TIME*2;
 
       isrStartPulse_ = true;
    }
@@ -359,11 +359,11 @@ void Tx::ledBlinkUpdate()
          ledPrevMs_ = currentMs_;
          ledState_ = (ledState_ == LOW)?HIGH:LOW;
 
-         digitalWrite(LED_PIN, ledState_);
+         digitalWrite(QUARKTX_LED_PIN, ledState_);
       }
    }
    else
-      digitalWrite(LED_PIN, HIGH);
+      digitalWrite(QUARKTX_LED_PIN, HIGH);
 }
 
 void Tx::battLevelCheck()
@@ -384,7 +384,7 @@ void Tx::displayInputUpdate()
    
    STDOUT << F("<\t");
 
-   for(uint8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx = 0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
       STDOUT << sensor_[idx]->getValue() << F("\t");
 
    STDOUT << battMeter_.getLastAverageValueInVolt() << F("\t") << endl;
@@ -405,7 +405,7 @@ void Tx::displayOutputUpdate()
     
     STDOUT << F(">\t");
     
-    for(uint8_t idx = 0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+    for(uint8_t idx = 0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       STDOUT << ppmOutputValue_[idx] << "\t";
     
     STDOUT << endl;
@@ -492,10 +492,10 @@ void Tx::dumpModel()
 
 void Tx::dumpSensor()
 {
-   STDOUT << F("Sensors (") << MAX_INPUT_CHANNEL << F(")\n# Pin   Trim    Min     Max") << endl;
+   STDOUT << F("Sensors (") << QUARKTX_MAX_INPUT_CHANNEL << F(")\n# Pin   Trim    Min     Max") << endl;
 
    // Sensors
-   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
    {
       STDOUT << idx << " ";
       sensor_[idx]->dump();
@@ -513,7 +513,7 @@ void Tx::dumpRCL(const char* param)
 {
    if(param[0] == 0)
    {
-      for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+      for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       {
          STDOUT << "# " << idx << endl;
          rcl_.dump(idx);
@@ -550,7 +550,7 @@ void Tx::onToggleCalibrateSensor()
 
 void Tx::calibrateSensor()
 {  
-   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
    {
       sensor_[idx]->calibrate();
 
@@ -590,7 +590,7 @@ bool Tx::onLoadFromEEPROM()
       modelList_[idx].loadFromEEPROM(addr);
 
    // get Sensors data
-   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->loadFromEEPROM(addr);
 
    battMeter_.loadFromEEPROM(addr);
@@ -618,7 +618,7 @@ void Tx::onSaveToEEPROM()
       modelList_[idx].saveToEEPROM(addr);
 
    // save Sensor data
-   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->saveToEEPROM(addr);
 
    battMeter_.saveToEEPROM(addr);
@@ -636,7 +636,7 @@ void Tx::resetModel()
 
 void Tx::resetSensor()
 {
-   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
       sensor_[idx]->reset();
       
    battMeter_.reset();
@@ -645,7 +645,7 @@ void Tx::resetSensor()
 void Tx::resetRCL()
 {
    // Clean all
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       rcl_.clearRCL(idx);
 
    // Set to default
@@ -654,9 +654,9 @@ void Tx::resetRCL()
    buf[2] = 0;
 
    uint8_t i=0;
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
-      if(i >= MAX_INPUT_CHANNEL)
+      if(i >= QUARKTX_MAX_INPUT_CHANNEL)
          i = 0;
 
       buf[1] = '0'+i;
@@ -685,7 +685,7 @@ void Tx::onSoftwareReset(const char* param)
 
 uint8_t Tx::getSensorIndex(uint8_t pinPort) const
 {
-   for(uint8_t idx=0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
    {
       if(sensor_[idx]->getPin() == pinPort)
          return idx;

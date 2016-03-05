@@ -80,11 +80,11 @@ As you may see when you send dump sensors command `d s`, there a special sensor 
 	b 21	55	0	1023
 
 
-This sensor measure de battery level and must be calibrate to make sure that radio will raise a error signal at the rigth voltage level if battery goes down `BATTERY_RAISE_ALARM_LEVEL` (check [Configuration](#Configuration))
+This sensor measure de battery level and must be calibrate to make sure that radio will raise a error signal at the rigth voltage level if battery goes down `QUARKTX_BATTERY_ALARM_LVL` (check [Configuration](#Configuration))
 
 To do so you must plug a voltmeter between Vcc and GND of your battery connector, then send `i` toggle command to display the voltage level (last colomn), then fine tune the trim xx value by sending as many command `s t b xx` as needed to match the voltmeter value with the last column value.
 
-The best approach is to make this calibration a little bit upper `BATTERY_RAISE_ALARM_LEVEL` you setup by using a stab power supply. 
+The best approach is to make this calibration a little bit upper `QUARKTX_BATTERY_ALARM_LVL` you setup by using a stab power supply. 
 
 ***Warning***:: Do not forget to save to EPPROM once calibration step seems ok for you.
 
@@ -187,12 +187,12 @@ FrSky | DHT 8ch DIY | tested, up to 4 | 4500 | 1500
 ### Output PPM signal
 To fine tune PPM signal, depending of the RF module you use, you can modify 2 constants below (config.h):
 
-* `PPM_INTER_CHANNEL_TIME` 
-* `PPM_INTER_FRAME_TIME`
+* `QUARKTX_PPM_INTER_CHANNEL_TIME` 
+* `QUARKTX_PPM_INTER_FRAME_TIME`
 
 ![PPM](PPM.png)
 
-***Warning*** Depending of your RF module, dont set `PPM_INTER_CHANNEL_TIME` value lower than 500 uSec and `PPM_INTER_FRAME_TIME` lower than 4000 uSec 
+***Warning*** Depending of your RF module, dont set `QUARKTX_PPM_INTER_CHANNEL_TIME` value lower than 500 uSec and `QUARKTX_PPM_INTER_FRAME_TIME` lower than 4000 uSec. 
 
 Exemple of Arduino scope screen copy with 4 gimbals/3 switches/6 channels hardware config
 
@@ -226,21 +226,21 @@ All constant parameters is group in a single config.h file.
 Name | Description| Default
 --------|---------|--------
 `QUARKTX_SERIAL_SPEED`| Serial speed for USB console or BT|9600
-`MAX_MODEL`| Max number of models store in EEPROM|2
-`MAX_SERIAL_INPUT_BUFFER`| to be define
-`ADC_MIN_VALUE`| Sensors value|0
-`ADC_MAX_VALUE`| Sensors value|1023
-`PPM_MIN_VALUE`| See [Output PPM signal](#output-ppm-signal)|500 usec
-`PPM_MAX_VALUE`| See [Output PPM signal](#output-ppm-signal)|1500 usec
-`TRIM_MIN_VALUE`| to be define
-`TRIM_MAX_VALUE`| to be define
-`TX_MODE`| to be define
-`LED_BLINK_PERIOD`| to be define
+`QUARKTX_MAX_MODEL`| Max number of models store in EEPROM|2
+`QUARKTX_MAX_SERIAL_BUFFER`| to be define
+`QUARKTX_ADC_MIN_VALUE`| Sensors value|0
+`QUARKTX_ADC_MAX_VALUE`| Sensors value|1023
+`QUARKTX_PPM_MIN_VALUE`| See [Output PPM signal](#output-ppm-signal)|500 usec
+`QUARKTX_PPM_MAX_VALUE`| See [Output PPM signal](#output-ppm-signal)|1500 usec
+`QUARKTX_TRIM_MIN_VALUE`| to be define
+`QUARKTX_TRIM_MAX_VALUE`| to be define
+`QUARKTX_TX_MODE`| to be define
+`QUARKTX_LED_BLINK_PERIOD`| to be define
 `BATTERY_RATE_UPDATE`| to be define
 `BATTERY_HISTO_BUFFER_SIZE`| to be define
-`BATTERY_R1`| to be define
-`BATTERY_R2`| to be define
-`BATTERY_RAISE_ALARM_LEVEL`| Battery min voltage level|Depend of your batt pack(S1, S2..)
+`QUARKTX_BATTERY_R1`| to be define
+`QUARKTX_BATTERY_R2`| to be define
+`QUARKTX_BATTERY_ALARM_LVL`| Battery min voltage level|Depend of your batt pack(S1, S2..)
 
 ## Radio Control Language
 For Arduino Nano & Teensy 3.2 platform

@@ -83,41 +83,41 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef QUARKTX_TERRATOP
 
-#define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
-#define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
+#define QUARKTX_MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
+#define QUARKTX_MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
 
-#define PPM_PIN                 10
+#define QUARKTX_PPM_PIN                 10
 
-#define SWITCH1_PIN             2
-#define SWITCH2_PIN             3
-#define SWITCH3_PIN             4
+#define QUARKTX_SWITCH1_PIN             2
+#define QUARKTX_SWITCH2_PIN             3
+#define QUARKTX_SWITCH3_PIN             4
 
-#define LED_PIN                 6
+#define QUARKTX_LED_PIN                 6
 
 #elif defined(QUARKTX_NEWRADIO)
 
-#define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
-#define MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
+#define QUARKTX_MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
+#define QUARKTX_MAX_DIG_INPUT_CHANNEL   3       // Mechanical switches
 
-#define PPM_PIN                 9
+#define QUARKTX_PPM_PIN                 9
 
-#define SWITCH1_PIN             2
-#define SWITCH2_PIN             3
-#define SWITCH3_PIN             4
+#define QUARKTX_SWITCH1_PIN             2
+#define QUARKTX_SWITCH2_PIN             3
+#define QUARKTX_SWITCH3_PIN             4
 
-#define LED_PIN                 8
+#define QUARKTX_LED_PIN                 8
 
 #else // generic radio
 
-#define MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
-#define MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
+#define QUARKTX_MAX_ADC_INPUT_CHANNEL   4       // Gimballs or pot
+#define QUARKTX_MAX_DIG_INPUT_CHANNEL   2       // Mechanical switches
 
-#define PPM_PIN                 10
+#define QUARKTX_PPM_PIN                 10
 
-#define SWITCH1_PIN             2
-#define SWITCH2_PIN             3
+#define QUARKTX_SWITCH1_PIN             2
+#define QUARKTX_SWITCH2_PIN             3
 
-#define LED_PIN                 13
+#define QUARKTX_LED_PIN                 13
 
 #endif
 
@@ -127,17 +127,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef QUARKTX_JETI_TU2_MODULE
 
-#define MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti TU2 module
-#define PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
-#define PPM_INTER_CHANNEL_TIME  500     // microsec
-#define PPM_INTER_FRAME_TIME    4500    // microsec
+#define QUARKTX_MAX_PPM_OUTPUT_CHANNEL  6       // 17 channels max with Jeti TU2 module
+#define QUARKTX_PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
+#define QUARKTX_PPM_INTER_CHANNEL_TIME  500     // microsec
+#define QUARKTX_PPM_INTER_FRAME_TIME    4500    // microsec
 
 #else // generic module
 
-#define MAX_PPM_OUTPUT_CHANNEL  4       
-#define PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
-#define PPM_INTER_CHANNEL_TIME  500     // microsec
-#define PPM_INTER_FRAME_TIME    12000   // microsec
+#define QUARKTX_MAX_PPM_OUTPUT_CHANNEL  4       
+#define QUARKTX_PPM_SHAPE_SIGNAL        HIGH    // LOW is positive, HIGH is negative
+#define QUARKTX_PPM_INTER_CHANNEL_TIME  500     // microsec
+#define QUARKTX_PPM_INTER_FRAME_TIME    12000   // microsec
 
 #endif
 
@@ -147,7 +147,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define QUARKTX_EEPROM_FORMAT   0x0001   // format version for preventing format collision (lost of data)
 
-#define MAX_INPUT_CHANNEL       MAX_ADC_INPUT_CHANNEL+MAX_DIG_INPUT_CHANNEL
+#define QUARKTX_MAX_INPUT_CHANNEL       QUARKTX_MAX_ADC_INPUT_CHANNEL + QUARKTX_MAX_DIG_INPUT_CHANNEL
 #define STDOUT                  *SerialLink::currentStream_
 
 #if defined(__MK20DX256__)

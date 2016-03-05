@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define STDOUT Serial
 #endif
 
+#ifdef QUARKTX_TEENSY
 extern "C" {
 
 // Some empty functions, need for Lua link.
@@ -69,6 +70,7 @@ int _unlink(const char *pathname)
 }
 
 }
+#endif
 //////////////////////////////////////////////////////////////////////////
 // 
 // Some Misc. funtions
@@ -900,6 +902,7 @@ RCLEval::RCLEval()
    memset((void*)expression_, 0, sizeof(expression_));
 }
 
+#ifdef QUARKTX_TEENSY
 static int l_sin (lua_State *L) 
 {
     // check if the argument is a number
@@ -907,6 +910,7 @@ static int l_sin (lua_State *L)
     lua_pushnumber(L, sin(d)); // Push the result
     return 1;  // number of results
 }
+#endif
 
 void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const Model *currentModel, const Tx *tx)
 {
@@ -915,7 +919,7 @@ void RCLEval::setup(Sensor **sensorRef, volatile uint16_t *outputValueRef, const
    currentModel_ = currentModel;
    SensorInputExp::tx_ = tx;
 
-   for(int8_t idx = 0; idx < MAX_INPUT_CHANNEL; idx++)
+   for(int8_t idx = 0; idx < QUARKTX_MAX_INPUT_CHANNEL; idx++)
    {
       inputTab_[idx] = new SensorInputExp;
       inputTab_[idx]->setup(sensorRef_[idx]);
@@ -1032,9 +1036,9 @@ Expression *RCLEval::parseOperand(char *&in)
             return NULL;
          }
          uint8_t c = in[0] - '0';
-         if(c >= MAX_INPUT_CHANNEL)
+         if(c >= QUARKTX_MAX_INPUT_CHANNEL)
          {
-            STDOUT << F("e-bp ") << c << " " << MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
+            STDOUT << F("e-bp ") << c << " " << QUARKTX_MAX_INPUT_CHANNEL-1 << endl;  // Bad parameter
             return NULL;
          }
 
@@ -1198,7 +1202,7 @@ void RCLEval::saveToEEPROM(uint16_t &addr) const
 {
    g_hierachyDump = false;
 
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       g_idxDump = 0;
       memset((void*)g_dump,0,sizeof(g_dump));
@@ -1216,7 +1220,7 @@ void RCLEval::loadFromEEPROM(uint16_t &addr)
 {
    char buffer[QUARKTX_MAX_SERIAL_BUFFER];
 
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       EEPROM.get(addr, buffer);
       addr += QUARKTX_MAX_SERIAL_BUFFER;
@@ -1241,7 +1245,7 @@ void RCLEval::loop()
 {
    // Evaluate expression for all channels
 
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
    {
       if(expression_[idx] != NULL)
          outputValueRef_[idx] = currentModel_->getValue(idx, expression_[idx]->evaluate().convert2Int());
@@ -1260,7 +1264,7 @@ void RCLEval::dump(uint8_t outChannelID) const
 
 void RCLEval::reset()
 {
-   for(uint8_t idx=0; idx < MAX_PPM_OUTPUT_CHANNEL; idx++)
+   for(uint8_t idx=0; idx < QUARKTX_MAX_PPM_OUTPUT_CHANNEL; idx++)
       clearRCL(idx);
 }
 
