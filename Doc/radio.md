@@ -166,12 +166,21 @@ To be define
 ![schema](teensy_pcb.png)
 
 ### Sensors
-Sensors are all physical device (Gimbal, switch, button) that you can add in QuarkTx board.
+Sensors are all physical devices (Gimbal, switch, button) that you can add in QuarkTx board.
 
 #### Gimbal
-To be define
+Turnigy gimbals are used:
+
+>[Left gimbal](http://www.hobbyking.com/hobbyking/store/__39504__Transmitter_Gimbal_Set_Left_Turnigy_9XR_Transmitter_Mode_2.html)
+>
+>[Right gimbal](http://www.hobbyking.com/hobbyking/store/__39506__Transmitter_Gimbal_Set_Right_Turnigy_9XR_Transmitter_Mode_2.html)
 
 #### Switch
+To be define
+
+#### Sd card reader
+Only for teensy
+
 To be define
 
 ## RF module
