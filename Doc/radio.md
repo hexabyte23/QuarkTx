@@ -185,13 +185,14 @@ Jeti | TU2 2.4 Ghz | tested, up to 17 | 4500 | 1500
 FrSky | DHT 8ch DIY | tested, up to 4 | 4500 | 1500 
 
 ### Output PPM signal
-To fine tune PPM signal, depending of the RF module you use, you can modify the 2 constants below (config.h):
+To fine tune PPM signal, depending of the RF module you use, you can modify 2 constants below (config.h):
 
 * `PPM_INTER_CHANNEL_TIME` 
 * `PPM_INTER_FRAME_TIME`
 
 ![PPM](PPM.png)
 
+***Warning*** Depending of your RF module, dont set `PPM_INTER_CHANNEL_TIME` value lower than 500 uSec and `PPM_INTER_FRAME_TIME` lower than 4000 uSec 
 
 Exemple of Arduino scope screen copy with 4 gimbals/3 switches/6 channels hardware config
 
