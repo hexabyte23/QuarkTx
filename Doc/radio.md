@@ -247,15 +247,15 @@ For Arduino Nano & Teensy 3.2 platform
 
 This new script language has been designed to be able to describe all dependencies between input sensors and PPM output channels. To simplify dependency graph, there is only one script per PPM output channel. Every script is evaluated in real time. Up to 300 update/sec on Arduino Nano board and up to 900 update/sec on Teensy 3.2 board clocked to 96 MHz for a simple script.
 
-_Exemple_: `s l chan rclStr` will modify the current RCL script of a given output PPM channel `chan`  with the new script string `rclStr`. A script could not be longer than **`MAX_SERIAL_INPUT_BUFFER`** characters (config.h)
+_Exemple_: `s l chan rclStr` will modify the current RCL script of a given output PPM channel `chan`  with the new script string `rclStr`. A script could not be longer than **`QUARKTX_MAX_SERIAL_BUFFER`** characters (config.h)
 
 ***Warning***: No white space is allowed between identifier/operator/modifier.
 
 
 ### Sensor variable
-A sensor variable is define by a single character `i` followed by the sensor index (with index range [O, **`MAX_INPUT_CHANNEL `**]). For exemple `i2` is used for the _third_ sensor, as index started from 0.
+A sensor variable is define by a single character `i` followed by the sensor index (with index range [O, **`QUARKTX_MAX_INPUT_CHANNEL `**]). For exemple `i2` is used for the _third_ sensor, as index started from 0.
 
-By default, the minimal script below is present on every PPM channels during the first booting sequence:  `i*x*` (with x range [0, **`MAX_INPUT_CHANNEL`**]). This is the smalest script you can write to associate one single input sensor to an output channel.
+By default, the minimal script below is present on every PPM channels during the first booting sequence:  `i*x*` (with x range [0, **`QUARKTX_MAX_INPUT_CHANNEL`**]). This is the smalest script you can write to associate one single input sensor to an output channel.
 
 Every time you use reset command `r`, this minimal script will be set on all channels.
 
