@@ -62,7 +62,7 @@ void printDirectory(File dir, int numTabs)
 
 void QuarkTxFileSystem::dumpDirectory(const char* path)
 {
-  STDOUT << "'" << path << "'" << endl;
+  STDOUT << "Path '" << path << "'" << endl;
   
   printDirectory(SD.open(path), 0);
 }

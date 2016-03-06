@@ -61,7 +61,7 @@ class Tx
 
    // LED
    int ledState_;
-   unsigned long ledPrevMs_;
+   unsigned long ledPrevMs_, ledBlinkPeriod_;
    void ledBlinkUpdate();
 
    // toggles

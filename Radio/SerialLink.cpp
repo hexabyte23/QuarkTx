@@ -32,6 +32,7 @@ SerialLink::SerialLink()
 bool SerialLink::setup(Command *cmd)
 {
    cmdRef_ = cmd;
+   primaryActive_ = true;
 
    /*
     * We first initiate primary serial
@@ -60,7 +61,7 @@ bool SerialLink::setup(Command *cmd)
       if(*((usb_serial_class*)currentStream_) == true) // only teensy have alternate serial
         break;
 
-      if((millis()-d) > 4000)
+      if((millis()-d) > 2000)
       {
          timeout = true;
          break;
@@ -71,7 +72,7 @@ bool SerialLink::setup(Command *cmd)
    {
       currentStream_ = &QUARKTX_ALT_SERIAL;
       ((HardwareSerial*)currentStream_)->begin(QUARKTX_ALT_SERIAL_SPEED);
-
+      primaryActive_ = false;
    }
 
 #endif
@@ -104,7 +105,7 @@ void SerialLink::loop()
    {
       char c = (char)currentStream_->read();
 
-      // accept both
+      // Accept both termination
       if((c == '\r') || (c == '\n'))
       {
          serialBuffer_[idxBuffer_] = 0;

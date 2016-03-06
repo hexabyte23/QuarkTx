@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 Tx::Tx() :
      isBootSeqAlreadyDisplayed_(false),
      ledState_(HIGH),
+     ledBlinkPeriod_(QUARKTX_LED_BLINK_PERIOD),
      toggleTxMode_(tTransmit),
      toggleDisplayInputUpdate_(false),
      toggleDisplayOutputUpdate_(false),
@@ -147,28 +148,15 @@ void Tx::setupOutputDevice()
 
 void Tx::setup()
 {
-   // For battery extended duration put all unused pin off
-   pinMode(2, INPUT_PULLUP);
-   pinMode(3, INPUT_PULLUP);
-   pinMode(4, INPUT_PULLUP);
-   pinMode(5, INPUT_PULLUP);
-   pinMode(6, INPUT_PULLUP);
-   pinMode(7, INPUT_PULLUP);
-   pinMode(8, INPUT_PULLUP);
-   pinMode(9, INPUT_PULLUP);
-   pinMode(10, INPUT_PULLUP);
-   pinMode(11, INPUT_PULLUP);
-   pinMode(12, INPUT_PULLUP);
+   // For battery duration put all unused pin in pullup mode
+
+   // Digital pins
+   for(uint8_t i = 0; i < 13; i++)
+      pinMode(i, INPUT_PULLUP);
 
    // Analog pins
-   pinMode(A0, INPUT);           // gimbal 1
-   pinMode(A1, INPUT);           // gimbal 2
-   pinMode(A2, INPUT);           // gimbal 3
-   pinMode(A3, INPUT);           // gimbal 4
-   pinMode(A4, INPUT_PULLUP);    // reseved for future use
-   pinMode(A5, INPUT_PULLUP);    // reseved for future use
-   pinMode(A6, INPUT_PULLUP);    // reseved for future use
-   pinMode(A7, INPUT);           // Battery level A11
+   for(uint8_t i = A0; i != A7; i++)
+      pinMode(i, INPUT_PULLUP);
 
 #ifdef QUARKTX_TEENSY
    pinMode(A8,  INPUT_PULLUP);   // reseved for future use A10
@@ -189,6 +177,8 @@ void Tx::setup()
 
    // serial must always be first to initialize
    serialOk = serialLink_.setup(&command_);
+   if(!serialLink_.isPrimaryActive())
+      ledBlinkPeriod_ = QUARKTX_LED_BLINK_PERIOD/2;
    
    // Setup input sensors
    setupInputDevice();
@@ -364,7 +354,7 @@ void Tx::ledBlinkUpdate()
    
    if(toggleTxMode_ == tTransmit)
    {
-      if(currentMs_ - ledPrevMs_ >= QUARKTX_LED_BLINK_PERIOD)
+      if(currentMs_ - ledPrevMs_ >= ledBlinkPeriod_)
       {
          ledPrevMs_ = currentMs_;
          ledState_ = (ledState_ == LOW)?HIGH:LOW;

@@ -105,7 +105,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define QUARKTX_SWITCH2_PIN             3
 #define QUARKTX_SWITCH3_PIN             4
 
-#define QUARKTX_LED_PIN                 8
+#define QUARKTX_LED_PIN                 0
 
 #define QUARKTX_SPI_CS1_PIN             10
 
@@ -155,7 +155,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifdef __MK20DX256__
 #define QUARKTX_TEENSY
 #define QUARKTX_VREF 3.3
-#define QUARKTX_ALT_SERIAL              Serial1
+#define QUARKTX_ALT_SERIAL              Serial3
 #define QUARKTX_ALT_SERIAL_SPEED        9600
 #else
 #define QUARKTX_NANO

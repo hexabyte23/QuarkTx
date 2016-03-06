@@ -47,6 +47,7 @@ void Command::onNewCommand(const char* cmdStr)
    switch(cmdStr[0])
    {
       case 'a': loadFromEEPROMCmd();break;
+      case 'b': rebootCmd();break;
       case 'c': toggleCalibrateAnalogicSensorCmd();break;
       case 'd': dumpCmd(cmdStr+2);break;
       case 'f': getFreeMemoryCmd();break;
@@ -58,6 +59,7 @@ void Command::onNewCommand(const char* cmdStr)
       case 'o': toggleDisplayOutputUpdateCmd(cmdStr+2);break;
       case 'r': resetCmd(cmdStr+2);break;
       case 's': setCmd(cmdStr+2);break;
+      case 't': btATCmd(cmdStr+2);break;
       case 'u': getUUIDCmd();break;
       case 'v': saveToEEPROMCmd();break;
       default:
@@ -94,6 +96,7 @@ void Command::helpCmd()
                 "s u sensorID val: Set simulate value\n"
                 "s v sensorID val: Set sensor Min\n"
                 "s w sensorID val: Set sensor Max\n"
+                "t cmd: Bluetooth module AT cmd\n"
                 "u: getUUID\n"
                 "v: Save to EEPROM\n"
                 );
@@ -102,6 +105,19 @@ void Command::helpCmd()
 void Command::toggleTxModeCmd()
 {
    tx_->onToggleTxMode();
+}
+
+void Command::rebootCmd()
+{
+  
+}
+
+void Command::btATCmd(const char* param)
+{
+  delay(1000);
+  STDOUT << "AT" << param;
+  delay(1000);
+  STDOUT << endl;
 }
 
 void Command::getUUIDCmd()

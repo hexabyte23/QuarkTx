@@ -32,6 +32,8 @@ class Command
 
    // internal commands
    void helpCmd();
+   void rebootCmd();
+   void btATCmd(const char* param);
    void toggleTxModeCmd();
    void displayVersionCmd();
    void getUUIDCmd();

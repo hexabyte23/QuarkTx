@@ -31,6 +31,7 @@ class SerialLink
    char serialBuffer_[QUARKTX_MAX_SERIAL_BUFFER+2];
    uint8_t idxBuffer_;
    Command *cmdRef_;
+   bool primaryActive_;
 
    void reset();
 
@@ -42,6 +43,7 @@ public:
    bool setup(Command *cmd);
    void loop();
    void displayPrompt();
+   bool isPrimaryActive() {return primaryActive_;}
 };
 
 #ifdef QUARKTX_TEENSY
