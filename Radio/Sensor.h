@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <inttypes.h>
 #include "config.h"
+#ifdef QUARKTX_TEENSY
+#include <ArduinoJson.h>
+#endif
 
 class Sensor
 {
@@ -51,6 +54,10 @@ public:
    virtual void setup(uint8_t pin) = 0;
    virtual void calibrate() = 0;
    virtual uint16_t getValue() const = 0;
+#ifdef QUARKTX_TEENSY
+   virtual void saveToJSon(DynamicJsonBuffer &buf) const;
+   virtual void loadFfromJSon(const DynamicJsonBuffer &buf);
+#endif
    virtual void saveToEEPROM(uint16_t &addr) const;
    virtual void loadFromEEPROM(uint16_t &addr);
    virtual void reset();

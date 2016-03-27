@@ -52,7 +52,7 @@ class Tx
    Mesure mesure_;
 
    // Booting seq
-   bool isBootSeqAlreadyDisplayed_, serialOk, sdOk;
+   bool isBootSeqAlreadyDisplayed_, serialOk_, sdOk_, sdLoad_;
    void displayBootingSequence();
 
    // Battery level chack
@@ -103,6 +103,10 @@ public:
    void onToggleDisplayInputUpdate(int period);
    void onToggleDisplayOutputUpdate(int period);
    void onToggleCalibrateSensor();
+#ifdef QUARKTX_TEENSY
+   bool onLoadFromFile();
+   bool onSaveToFile();
+#endif
    bool onLoadFromEEPROM();
    void onSaveToEEPROM();
    void onSoftwareReset(const char* param);

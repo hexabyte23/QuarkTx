@@ -36,6 +36,18 @@ void Sensor::calibration(uint16_t val)
       calibrMax_ = val;
 }
 
+#ifdef QUARKTX_TEENSY
+void Sensor::saveToJSon(DynamicJsonBuffer &buf) const
+{
+  
+}
+
+void Sensor::loadFfromJSon(const DynamicJsonBuffer &buf)
+{
+  
+}
+#endif
+
 void Sensor::saveToEEPROM(uint16_t &addr) const
 {
    EEPROM.put(addr,pin_);

@@ -20,13 +20,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef FS_H
 #define FS_H
 
+#ifdef QUARKTX_TEENSY
+
+#include <SPI.h>
+#include <SD.h>
+
+#endif
+
 class QuarkTxFileSystem
 {
   public:
 
   bool setup();
   void dumpDirectory(const char* path);
-  
+  int open(const char *pathname);
+  const char* read(int handle);
 };
 
 #endif

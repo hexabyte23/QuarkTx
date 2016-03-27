@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Tx::Tx() :
      isBootSeqAlreadyDisplayed_(false),
+     sdLoad_(false),
      ledState_(HIGH),
      ledBlinkPeriod_(QUARKTX_LED_BLINK_PERIOD),
      toggleTxMode_(tTransmit),
@@ -176,7 +177,7 @@ void Tx::setup()
 #endif
 
    // serial must always be first to initialize
-   serialOk = serialLink_.setup(&command_);
+   serialOk_ = serialLink_.setup(&command_);
    if(!serialLink_.isPrimaryActive())
       ledBlinkPeriod_ = QUARKTX_LED_BLINK_PERIOD/2;
    
@@ -190,10 +191,12 @@ void Tx::setup()
    rcl_.setup(sensor_, ppmOutputValue_, currentModel_, this);
 
 #ifdef QUARKTX_TEENSY
-   sdOk = fs_.setup();
+   sdOk_ = fs_.setup();
+   sdLoad_ = onLoadFromFile();
 #endif
 
-   onLoadFromEEPROM();
+   if(!sdLoad_)
+      onLoadFromEEPROM();
    
 /*
   rcl_.setupRCL(0, "i0");
@@ -334,11 +337,11 @@ void Tx::displayBootingSequence()
 #endif
    STDOUT << F("Booting...") << endl;
    STDOUT << F("Serial\t\t");
-   if(serialOk) STDOUT << F("OK") << endl; else STDOUT << F("KO") << endl;
+   if(serialOk_) STDOUT << F("OK") << endl; else STDOUT << F("KO") << endl;
    STDOUT << F("Command\t\tOK") << endl;
 #ifdef QUARKTX_TEENSY
    STDOUT << F("SD reader\t");
-   if(sdOk) STDOUT << F("OK") << endl; else STDOUT << F("KO") << endl;
+   if(sdOk_) STDOUT << F("OK") << endl; else STDOUT << F("KO") << endl;
 #endif
    STDOUT << F("Tx\t\tOK\nReady") << endl;
 
@@ -569,6 +572,31 @@ void Tx::calibrateSensor()
 
    STDOUT << endl;
 }
+
+#ifdef QUARKTX_TEENSY
+ bool Tx::onLoadFromFile()
+ {
+    DynamicJsonBuffer buf;
+
+    int file = fs_.open("/MODEL/0001ORCA.json");
+    const char *str = fs_.read(file);
+
+    STDOUT << str;
+    
+    JsonObject& root = buf.parseObject(str);
+
+    root.printTo(Serial);
+    
+    return false;
+ }
+ 
+ bool Tx::onSaveToFile()
+ {
+    DynamicJsonBuffer buf;
+
+    return false;
+ }
+#endif
 
 bool Tx::onLoadFromEEPROM()
 {
