@@ -93,7 +93,7 @@ Have fun.
 ## Audio settings
 For Teensy 3.2 only
 
-To be define
+For future use
 
 ## Commands
 
@@ -229,12 +229,17 @@ Exemple of Teensy scope screen copy with 4 gimbals/3 switches/24 channels hardwa
 ![scope ardiono](ppm-scope-teensy-24c.png)
 
 ## Bluetooth
-QuartTx support HC-06 electronic module below:
+QuartTx support HC-06 electronic modules below:
 
 Brand name| Voltage|QuartTx type
 ----------|--------|---------------
 Itead studio| 3.3 V DC| Teensy 3.2 board
 
+## SD Card
+
+For Teensy 3.2 platform only
+
+Mother board is able to handle 2 SPI devices. One of them could be a SDCard reader.
 
 ## Configuration
 All constant parameters is group in a single config.h file.
@@ -347,4 +352,4 @@ _Exemple_: `(i1>512)?i2:i2[1023:0]` will return i2 until i1 < 512 then reverse i
 
 For Teensy 3.2 platform only
 
-To be define
+For future use
