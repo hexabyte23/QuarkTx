@@ -151,7 +151,9 @@ e-ni| Not implemented |
 ## Hardware
 
 ### RC Box
-To be define
+![schema](rcbox-front.png)
+![schema](rcbox-back.png)
+![schema](rcbox-empty.png)
 
 ### Arduino Nano schema
 ![schema](nano_sch.png)
