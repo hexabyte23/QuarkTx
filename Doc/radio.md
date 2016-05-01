@@ -150,7 +150,8 @@ e-ni| Not implemented |
 
 ## Hardware
 
-### RC Box
+### RC Mini Box
+OpenScad software is use to design RC Mini Box. Check file in <https://github.com/hexabyte23/QuarkTx/tree/master/Cad>
 ![schema](rcbox-front.png)
 ![schema](rcbox-back.png)
 ![schema](rcbox-empty.png)
