@@ -4,7 +4,7 @@
 // All measures are in millimeters
 //
 
-showComponents = true;
+showComponents = false;
 showBottom = false;
 haveScreen = false;
 haveBatteryPanel = true;
@@ -18,9 +18,9 @@ boxRound = 12;
 bottomPosZ = 0;
 
 switchLenX = 7;
-switchLenY = 10;
-switchLenZ = 4;
-switchRadius = 3;
+switchLenY = 12.5;
+switchLenZ = 9.5;
+switchRadius = 3.3;
 switchBorder = 12;
 switchMainPosY = -30;
 switchMainPosZ = 15;
@@ -187,6 +187,36 @@ union()
             }
         }
     }
+    
+    // Gimbal support
+    color([0.64, 0.8, 0.4])
+    {
+        translate([-gimbalPosX+gimbalSupportX/2, gimbalPosY+gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+        translate([-gimbalPosX-gimbalSupportX/2, gimbalPosY+gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+        translate([-gimbalPosX-gimbalSupportX/2, gimbalPosY-gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+         translate([-gimbalPosX+gimbalSupportX/2, gimbalPosY-gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+
+        translate([gimbalPosX+gimbalSupportX/2, gimbalPosY+gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+        translate([gimbalPosX-gimbalSupportX/2, gimbalPosY+gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+        translate([gimbalPosX-gimbalSupportX/2, gimbalPosY-gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+         translate([gimbalPosX+gimbalSupportX/2, gimbalPosY-gimbalSupportX/2, -boxLenZ/2+boxThickness/2+4])
+            rotate([90, 0, 0])
+                PCBLeg([0, 0, 0], 4);
+    }
 
     // Screwing parts
     translate([boxLenX/2-screwPlateLenX/2-boxThickness, -35, boxLenZ/2-screwPlateLenZ/2-boxThickness])
@@ -324,10 +354,10 @@ if(showComponents == true)
         }
 
         // Switches
-        switch([-boxLenX/2+switchBorder, -boxLenY/2+switchBorder, -boxLenZ/2+boxThickness+2]);
-        switch([ boxLenX/2-switchBorder, -boxLenY/2+switchBorder, -boxLenZ/2+boxThickness+2]);
-        switch([-boxLenX/2+switchBorder*2, -boxLenY/2+switchBorder, -boxLenZ/2+boxThickness+2]);
-        switch([ boxLenX/2-switchBorder*2, -boxLenY/2+switchBorder, -boxLenZ/2+boxThickness+2]);
+        switch([-boxLenX/2+switchBorder,   -boxLenY/2+switchBorder, -boxLenZ/2+switchLenZ/2+boxThickness]);
+        switch([ boxLenX/2-switchBorder,   -boxLenY/2+switchBorder, -boxLenZ/2+switchLenZ/2+boxThickness]);
+        switch([-boxLenX/2+switchBorder*2, -boxLenY/2+switchBorder, -boxLenZ/2+switchLenZ/2+boxThickness]);
+        switch([ boxLenX/2-switchBorder*2, -boxLenY/2+switchBorder, -boxLenZ/2+switchLenZ/2+boxThickness]);
 
         // main switch
         translate([0, switchMainPosY+screenLenY/2, -boxLenZ/2-boxThickness])
@@ -358,9 +388,9 @@ module switch(v)
     {
         roundCube([switchLenX, switchLenY, switchLenZ], 0.5, center=true);
         
-        translate([0, -1.3, -9])
+        translate([0, -1.3, -14])
             rotate([-10, 0, 0])
-                cylinder(8, 1, 0.5);
+                cylinder(10, 1, 0.5);
     }
 }
 
