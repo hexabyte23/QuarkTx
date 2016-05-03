@@ -4,8 +4,8 @@
 // All measures are in millimeters
 //
 
-showComponents = false;
-showBottom = false;
+showComponents = true;
+showBottom = true;
 haveScreen = false;
 haveBatteryPanel = true;
 
@@ -15,7 +15,7 @@ boxLenZ = 42;
 boxThickness = 2;
 boxRound = 12;
 
-bottomPosZ = 0;
+bottomPosZ = 13;
 
 switchLenX = 7;
 switchLenY = 12.5;
@@ -54,7 +54,7 @@ batteryLenY = 16;
 batteryLenZ = 35;
 BatteryPosZ = 0;
 
-batteryPanelY = boxLenY/2 - batteryLenY - 6;
+batteryPanelY = boxLenY/2 - batteryLenY - 4;
 
 PCBLenX = 110;
 PCBLenY = 1;
@@ -79,7 +79,7 @@ antenaRadius = 3;
 
 gripUpLenZ = 6;
 
-$fn = 90;
+$fn = 190;
 
 //
 // Main drawing
@@ -219,14 +219,14 @@ union()
     }
 
     // Screwing parts
-    translate([boxLenX/2-screwPlateLenX/2-boxThickness, -35, boxLenZ/2-screwPlateLenZ/2-boxThickness])
+    translate([boxLenX/2-screwPlateLenX/2-boxThickness, -25, boxLenZ/2-screwPlateLenZ/2-boxThickness])
         screwPlate([screwPlateLenX, screwPlateLenY, screwPlateLenZ], screwPlateHoleRadius, center=true);
-    translate([boxLenX/2-screwPlateLenX/2-boxThickness, 35, boxLenZ/2-screwPlateLenZ/2-boxThickness])
-        screwPlate([screwPlateLenX, screwPlateLenY, 2], screwPlateHoleRadius, center=true);
-    translate([-boxLenX/2+screwPlateLenX/2+boxThickness, -35, boxLenZ/2-screwPlateLenZ/2-boxThickness])
+    translate([boxLenX/2-screwPlateLenX/2-boxThickness, 18, boxLenZ/2-screwPlateLenZ/2-boxThickness])
+        screwPlate([screwPlateLenX, screwPlateLenY, screwPlateLenZ], screwPlateHoleRadius, center=true);
+    translate([-boxLenX/2+screwPlateLenX/2+boxThickness, -25, boxLenZ/2-screwPlateLenZ/2-boxThickness])
         rotate([0, 180, 0])
             screwPlate([screwPlateLenX, screwPlateLenY, screwPlateLenZ], screwPlateHoleRadius, center=true);
-    translate([-boxLenX/2+screwPlateLenX/2+boxThickness, 35, boxLenZ/2-screwPlateLenZ/2-boxThickness])
+    translate([-boxLenX/2+screwPlateLenX/2+boxThickness, 18, boxLenZ/2-screwPlateLenZ/2-boxThickness])
         rotate([0, 180, 0])
             screwPlate([screwPlateLenX, screwPlateLenY, screwPlateLenZ], screwPlateHoleRadius, center=true);
 
@@ -259,14 +259,35 @@ if(showBottom == true)
             translate([0, 0, boxLenZ/2-boxThickness/2])
                 roundCube([boxLenX-boxThickness*2-0.1, boxLenY-boxThickness*2-0.1, boxThickness], boxRound, center=true);
             
-            translate([boxLenX/2-screwPlateLenX/2-boxThickness+0.5, -35, boxLenZ/2-boxThickness])
+            // holes
+            translate([boxLenX/2-screwPlateLenX/2-boxThickness+0.5, -25, boxLenZ/2-boxThickness])
             {
                 cylinder(boxThickness+3, screwPlateHoleRadius, screwPlateHoleRadius, center=true);
                 
                 translate([0, 0, 1.5])
                     cylinder(3, 0, 3, center=true);
             }
-            
+            translate([boxLenX/2-screwPlateLenX/2-boxThickness+0.5, 18, boxLenZ/2-boxThickness])
+            {
+                cylinder(boxThickness+3, screwPlateHoleRadius, screwPlateHoleRadius, center=true);
+                
+                translate([0, 0, 1.5])
+                    cylinder(3, 0, 3, center=true);
+            }
+            translate([-boxLenX/2+screwPlateLenX/2+boxThickness-0.5, -25, boxLenZ/2-boxThickness])
+            {
+                cylinder(boxThickness+3, screwPlateHoleRadius, screwPlateHoleRadius, center=true);
+                
+                translate([0, 0, 1.5])
+                    cylinder(3, 0, 3, center=true);
+            }
+            translate([-boxLenX/2+screwPlateLenX/2+boxThickness-0.5, 18, boxLenZ/2-boxThickness])
+            {
+                cylinder(boxThickness+3, screwPlateHoleRadius, screwPlateHoleRadius, center=true);
+                
+                translate([0, 0, 1.5])
+                    cylinder(3, 0, 3, center=true);
+            }           
         }
 
         // handle left
