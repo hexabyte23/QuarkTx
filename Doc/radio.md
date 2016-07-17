@@ -2,9 +2,9 @@
 
 ## First compilation
 
-You should first install the Arduino software (IDE) from the official Arduino site <http://www.arduino.cc> in download section. Then, get a copy of QuarkTx source code from <https://github.com/hexabyte23/QuarkTx> by using `Download ZIP` button or by using [GitHub desktop](https://desktop.github.com).
+You should first install the Arduino IDE from the official Arduino site <http://www.arduino.cc> in download section. Then, get a copy of QuarkTx source code from <https://github.com/hexabyte23/QuarkTx> by using `Download ZIP` button or by using [GitHub desktop](https://desktop.github.com).
 
-Once the source code is put in your local PC/Mac, doubleclick on Radio/Radio.ino file. Arduino software will automatically be opened, and Radio.ino source file displayed.
+Once source code is put in your local PC/Mac, open Arduino IDE by doubleclicking on Radio/Radio.ino file.
 
 >For **Arduino Nano** platform
 >
@@ -35,7 +35,7 @@ Open Serial Monitor from Arduino IDE. The booting sequence messages should be as
 
 The line started with **e-** is an error raised during booting sequence. (See [Error messages](#error-messages) pane for errors detail).
 
-This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption problem or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected, then save the result.
+This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption problem or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected, then use command `v` to save the result.
  
 
 ### Calibration
@@ -80,15 +80,13 @@ As you may see when you send dump sensors command `d s`, there a special sensor 
 	b 21	55	0	1023
 
 
-This sensor measure de battery level and must be calibrate to make sure that radio will raise a error signal at the rigth voltage level if battery goes down `QUARKTX_BATTERY_ALARM_LVL` (check [Configuration](#Configuration))
+This sensor measure battery level and must be calibrate to make sure that radio will raise a error signal at the rigth voltage level when battery goes down `QUARKTX_BATTERY_ALARM_LVL` (check [Configuration](#Configuration))
 
 To do so you must plug a voltmeter between Vcc and GND of your battery connector, then send `i` toggle command to display the voltage level (last colomn), then fine tune the trim xx value by sending as many command `s t b xx` as needed to match the voltmeter value with the last column value.
 
 The best approach is to make this calibration a little bit upper `QUARKTX_BATTERY_ALARM_LVL` you setup by using a stab power supply. 
 
 ***Warning***:: Do not forget to save to EPPROM once calibration step seems ok for you.
-
-Have fun.
 
 ## Audio settings
 For Teensy 3.2 only
@@ -104,10 +102,10 @@ Command | Sub command | Description
 a||Load settings (calibration, curses, RCL scripts) from EEPROM
 c||Toggle sensors calibration mode
 d||Dump all (Sensor, Model, EEPROM, RCL Script)
-d|m|Dump only model
-d|e|Dump only EEPROM
-d|s|Dump only sensors
-d|l|Dump only RCL scripts
+d|m|Dump model only
+d|e|Dump EEPROM only
+d|s|Dump sensors only
+d|l|Dump RCL scripts only
 f||Get free memory (in byte)
 h||Display commands list
 i|[freq]| Toggle input sensor update
@@ -116,9 +114,9 @@ m||Toggle Tx mode (transmit or debug)
 n||Display version
 o||[freq]| Toggle output PPM update
 r||Reset all (Sensor, Model, RCL script)
-r|m|Reset only model
-r|s|Reset only sensors
-r|l|Reset only RCL script
+r|m|Reset model only
+r|s|Reset sensors only
+r|l|Reset RCL script only
 s|a chan val| Set current model servo max
 s|i chan val| Set current model servo min
 s|l chan rclStr| Set RCL code to PPM chan
@@ -137,8 +135,8 @@ All serial message starting with **e-** is an error message code. It's not direc
 Error msg | Short description| Long description
 ----------|------------------|-----------------
 e-bp | Bad parameter | You are using a bad parameter in the current command
-e-bpim | Bad parameter: index is missing |
-e-edic | EEPROM data is corrupted | Error during EEPROM read
+e-bpim | Bad parameter | index is missing 
+e-edic | EEPROM data corrupted | Error during EEPROM read
 e-pf | RCL parsing failed | Usually syntax error in RCL formula
 e-bcf | Bad command format | No space found between first command letter and following parameters
 e-cu | Command unknown | Check [Commands](#commands) list
@@ -149,17 +147,28 @@ e-ni| Not implemented |
 
 
 ## Hardware
+Two version of box has been designed. OpenScad software is used to design RC Box. Check files in <https://github.com/hexabyte23/QuarkTx/tree/master/Cad>
+> Ligth version without screen
+>
+>
 
-### RC Mini Box
-OpenScad software is use to design RC Mini Box. Check file in <https://github.com/hexabyte23/QuarkTx/tree/master/Cad>
+or
+
+> Full version with screen
+> 
+
+### RC Box witout screen
+
 ![schema](rcbox-front.png)
 ![schema](rcbox-back.png)
 ![schema](rcbox-empty.png)
 
-### Arduino Nano schema
+### RC Box with screen
+
+### Arduino Nano schema (no screen)
 ![schema](nano_sch.png)
 
-### Teensy 3.2 schema
+### Teensy 3.2 schema (with screen)
 ![schema](teensy_sch.png)
 
 ### Arduino board
@@ -194,7 +203,7 @@ Only for teensy
 To be define
 
 ## RF module
-QuarkTx is able to generate PPM signal for different type of RF module.
+QuarkTx is able to generate PPM signal for different type of RF modules.
 
 ### Tested modules
 
