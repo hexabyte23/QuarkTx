@@ -148,14 +148,6 @@ e-ni| Not implemented |
 
 ## Hardware
 Two version of box has been designed. OpenScad software is used to design RC Box. Check files in <https://github.com/hexabyte23/QuarkTx/tree/master/Cad>
-> Ligth version without screen
->
->
-
-or
-
-> Full version with screen
-> 
 
 ### RC Box witout screen
 
@@ -164,6 +156,9 @@ or
 ![schema](rcbox-empty-noscreen.png)
 
 ### RC Box with screen
+![schema](rcbox-front-screen.png)
+![schema](rcbox-empty-screen.png)
+
 
 ### Arduino Nano schema (no screen)
 ![schema](nano_sch.png)
