@@ -159,9 +159,9 @@ or
 
 ### RC Box witout screen
 
-![schema](rcbox-front.png)
-![schema](rcbox-back.png)
-![schema](rcbox-empty.png)
+![schema](rcbox-front-noscreen.png)
+![schema](rcbox-back-noscreen.png)
+![schema](rcbox-empty-noscreen.png)
 
 ### RC Box with screen
 
