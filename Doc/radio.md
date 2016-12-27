@@ -29,18 +29,18 @@ Open Serial Monitor from Arduino IDE. The booting sequence messages should be as
 	Booting...	Serial		OK
 	Command		OK
 	e-edic
-	Tx		OK
+	Tx		    OK
 	Ready
 	>
 
-The line started with **e-** is an error raised during booting sequence. (See [Error messages](#error-messages) pane for errors detail).
+All lines started with **e-** are errors, in that case this error is raised during booting sequence. (See [Error messages](#error-messages) pane for errors detail).
 
 This specific '**e-edic**' error can occurs in 2 cases : You really have an EEPROM data corruption problem or this is the first time ever you start QuartTx. To clean this error you must calibrate all sensors connected, then use command `v` to save the result.
  
 
 ### Calibration
 
-#### Gimbal & switches calibration
+#### Gimbals & switches calibration
 Sensors calibration would setup limits of all sensors curses. to do so, make sure first that all sensors are connected to the board (as describe on [electric schema](#arduino-nano-schema)), then execute toggle command `c`. This command make you enter in the calibration mode. You must execute `c` command again to exit from this mode.
 
 In calibration mode you will see real time data moving as:
@@ -86,7 +86,7 @@ To do so you must plug a voltmeter between Vcc and GND of your battery connector
 
 The best approach is to make this calibration a little bit upper `QUARKTX_BATTERY_ALARM_LVL` you setup by using a stab power supply. 
 
-***Warning***:: Do not forget to save to EPPROM once calibration step seems ok for you.
+***Warning***:: Do not forget to save to EPPROM (`v` command) once calibration step seems ok for you, otherwise you must recalibrate again every time you reboot system.
 
 ## Audio settings
 For Teensy 3.2 only
