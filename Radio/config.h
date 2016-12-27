@@ -1,5 +1,5 @@
 /*
-Config.h - QuarkTx
+config.h - QuarkTx
 Copyright (c) 2015-2016 Thierry & Bertrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
