@@ -90,14 +90,14 @@ void Tx::setupInputDevice()
    sensor_[3]->setup(A1);   // rudder
 #endif
    
-#ifdef SWITCH1_PIN
-   sensor_[4]->setup(SWITCH1_PIN);
+#ifdef QUARKTX_SWITCH1_PIN
+   sensor_[4]->setup(QUARKTX_SWITCH1_PIN);
 #endif   
-#ifdef SWITCH2_PIN
-   sensor_[5]->setup(SWITCH2_PIN);
+#ifdef QUARKTX_SWITCH2_PIN
+   sensor_[5]->setup(QUARKTX_SWITCH2_PIN);
 #endif
-#ifdef SWITCH3_PIN
-   sensor_[6]->setup(SWITCH3_PIN);
+#ifdef QUARKTX_SWITCH3_PIN
+   sensor_[6]->setup(QUARKTX_SWITCH3_PIN);
 #endif
 
    battMeter_.setup(A7);
