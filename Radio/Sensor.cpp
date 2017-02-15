@@ -148,7 +148,7 @@ void BatteryMeter::setup(uint8_t pin)
    pin_ = pin;
    pinMode(pin_, INPUT);
 
-   levelSum_ = QUARKTX_BATTERY_ALARM_LEVEL*BATTERY_HISTO_BUFFER_SIZE;
+   levelSum_ = 0;//QUARKTX_BATTERY_ALARM_LEVEL*BATTERY_HISTO_BUFFER_SIZE;
 }
 
 void BatteryMeter::reset()
@@ -171,7 +171,7 @@ uint16_t BatteryMeter::getValue() const
 
 float BatteryMeter::getValueInVolt() const
 {
-   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*QUARKTX_VREF*(QUARKTX_BATTERY_R1 + QUARKTX_BATTERY_R2)/QUARKTX_BATTERY_R2;
+   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*QUARKTX_VREF*((float)QQUARKTX_BATTERY_R1 + (float)QQUARKTX_BATTERY_R2)/(float)QQUARKTX_BATTERY_R2;
 }
 
 float BatteryMeter::computeAverageValueInVolt()
