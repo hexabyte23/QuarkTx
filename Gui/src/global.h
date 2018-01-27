@@ -1,6 +1,6 @@
 /*
 Command.cpp - QuarkTx
-Copyright (c) 2015-2016 Thierry & Betrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2018 Thierry & Betrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ Q_DECLARE_LOGGING_CATEGORY(QUARKTX_MAIN)
 Q_DECLARE_LOGGING_CATEGORY(QUARKTX_LINK_SERIAL)
 Q_DECLARE_LOGGING_CATEGORY(QUARKTX_LINK_BT)
 Q_DECLARE_LOGGING_CATEGORY(QUARKTX_LINK_COMMAND)
+Q_DECLARE_LOGGING_CATEGORY(QUARKTX_RCL)
 
 #define QUARKTX_MIN_WAIT_DEVICE  3000
 
