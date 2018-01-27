@@ -1,6 +1,6 @@
 /*
 Command.cpp - QuarkTx
-Copyright (c) 2015-2016 Thierry & Bertrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2018 Thierry & Bertrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

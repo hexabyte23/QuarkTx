@@ -1,6 +1,6 @@
 /*
 Sensor.cpp - QuarkTx
-Copyright (c) 2015-2016 Thierry & Bertrand WILMOT.  All rights reserved.
+Copyright (c) 2015-2018 Thierry & Bertrand WILMOT.  All rights reserved.
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -171,7 +171,7 @@ uint16_t BatteryMeter::getValue() const
 
 float BatteryMeter::getValueInVolt() const
 {
-   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*QUARKTX_VREF*((float)QQUARKTX_BATTERY_R1 + (float)QQUARKTX_BATTERY_R2)/(float)QQUARKTX_BATTERY_R2;
+   return getValue()/(float)QUARKTX_ADC_MAX_VALUE*QUARKTX_VREF*((float)QUARKTX_BATTERY_R1 + (float)QUARKTX_BATTERY_R2)/(float)QUARKTX_BATTERY_R2;
 }
 
 float BatteryMeter::computeAverageValueInVolt()
