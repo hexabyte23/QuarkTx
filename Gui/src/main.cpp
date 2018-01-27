@@ -20,8 +20,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "src/main.h"
 #include "src/global.h"
-#include "BatteryModel.h"
-#include "MainModel.h"
+#include "src/BatteryModel.h"
+#include "src/MainModel.h"
+#include "src/RclMainWindow.h"
 
 
 Q_LOGGING_CATEGORY(QUARKTX_MAIN, "quarktx.main")
@@ -109,7 +110,10 @@ int main(int argc, char *argv[])
 
    QQmlApplicationEngine engine;
    g_model.init(engine.rootContext());
-   engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+//   engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+
+   RclMainWindow w;
+   w.show();
 
    int ret = app.exec();
 

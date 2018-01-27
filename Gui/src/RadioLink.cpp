@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "RadioLink.h"
-#include <QThread>
+//#include <QThread>
 
 Q_LOGGING_CATEGORY(QUARKTX_LINK_SERIAL, "quarktx.link.serial")
 Q_LOGGING_CATEGORY(QUARKTX_LINK_BT, "quarktx.link.bt")

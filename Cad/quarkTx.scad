@@ -1,10 +1,10 @@
 //
 // QuarkTx openScad blue print for 3D printer
-// (c) 2016 Thierry Wilmot
+// (c) 2016-2018 Thierry Wilmot
 // All measures are millimeters
 //
 
-showComponents = false;
+showComponents = true;
 showFramework = true;
 showBottom = false;
 haveScreen = true;

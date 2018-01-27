@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RclMainWindow</class>
+ <widget class="QMainWindow" name="RclMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>719</width>
+    <height>409</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>RCL editor</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="1">
+     <widget class="QScrollBar" name="verticalScrollBar">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QCustomPlot" name="plot" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QScrollBar" name="horizontalScrollBar">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="2">
+     <widget class="QLineEdit" name="lineEdit"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionInsert_Plot">
+   <property name="text">
+    <string>Insert Plot</string>
+   </property>
+  </action>
+  <action name="actionSave_Document">
+   <property name="text">
+    <string>Save Document...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header>src/qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
