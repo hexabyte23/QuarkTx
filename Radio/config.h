@@ -154,12 +154,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifdef __MK20DX256__
 #define QUARKTX_TEENSY
-#define QUARKTX_VREF 3.3
+#define QUARKTX_VREF                    3.3
 #define QUARKTX_ALT_SERIAL              Serial3
 #define QUARKTX_ALT_SERIAL_SPEED        9600
 #else
 #define QUARKTX_NANO
-#define QUARKTX_VREF 5.0
+#define QUARKTX_VREF                    5.0
 #endif
 
 #ifdef QT_CORE_LIB
